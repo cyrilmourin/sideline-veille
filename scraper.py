@@ -699,6 +699,16 @@ def deduire_types(item):
 def generer_id(item):
     return hashlib.md5((item.get("title","") + item.get("source_id","")).encode()).hexdigest()[:12]
 
+def _parse_date(date_str):
+    """Parse une date quelle que soit son format."""
+    if not date_str:
+        return datetime(2000, 1, 1)
+    s = str(date_str)[:10]
+    try:
+        return datetime.strptime(s, "%Y-%m-%d")
+    except ValueError:
+        return datetime(2000, 1, 1)
+
 def est_urgent(date_limite):
     if not date_limite:
         return False
@@ -939,7 +949,7 @@ def lancer_veille(test_mode=False, only=None):
     toutes = nouvelles_opps + opps_existantes
     cutoff = datetime.now() - timedelta(days=90)
     toutes = [o for o in toutes if not o.get("source_auto") or
-              datetime.strptime(o.get("datePublication","2000-01-01")[:10], "%Y-%m-%d") > cutoff]
+              parse_date(o.get("datePublication","2000-01-01")) > cutoff]
     toutes = sorted(toutes, key=lambda x: x["score"], reverse=True)[:200]
 
     sauvegarder_donnees(toutes)
