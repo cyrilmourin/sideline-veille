@@ -226,20 +226,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    # Agence Nationale du Sport
-    {
-        "id": "agence_sport",
-        "label": "Agence Nationale du Sport — Marches publics",
-        "type": "marche-public",
-        "url": "https://www.agencedusport.fr/marches-publics",
-        "parser": "html",
-        "selector": ".views-row, article, .field-content, .card",
-        "title_sel": "h2, h3, .views-field-title",
-        "desc_sel": "p, .views-field-body",
-        "link_sel": "a",
-        "timeout": 5,
-        "verify_ssl": False,
-    },
+    
     # Maximilien — portail marches publics Ile-de-France
     {
         "id": "maximilien_sport",
