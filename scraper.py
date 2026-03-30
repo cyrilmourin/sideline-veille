@@ -949,7 +949,7 @@ def lancer_veille(test_mode=False, only=None):
     toutes = nouvelles_opps + opps_existantes
     cutoff = datetime.now() - timedelta(days=90)
     toutes = [o for o in toutes if not o.get("source_auto") or
-              parse_date(o.get("datePublication","2000-01-01")) > cutoff]
+              _parse_date(o.get("datePublication","2000-01-01")) > cutoff]
     toutes = sorted(toutes, key=lambda x: x["score"], reverse=True)[:200]
 
     sauvegarder_donnees(toutes)
