@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 """
-Sideline Conseil — Moteur de veille marchés sportifs v2
+Sideline Conseil — Moteur de veille marches sportifs v3
 ========================================================
-Trois moteurs de détection :
-  1. RSS/HTML  — flux officiels et sites de federations/institutions
-  2. Google    — recherche par mots-cles sur tout le web (Google Custom Search API)
-  3. LinkedIn  — veille signaux faibles via Google indexe sur LinkedIn
+Trois moteurs de detection :
+  1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
+  2. SerpAPI   — recherche Google par mots-cles (15 requetes/run)
+  3. LinkedIn  — signaux faibles via SerpAPI (site:linkedin.com)
 
-Configuration requise :
-  EMAIL_CONFIG       -> identifiants Gmail (App Password)
-  GOOGLE_API_KEY     -> cle API Google Custom Search (gratuite, 100 req/jour)
-  GOOGLE_CX          -> ID moteur de recherche personnalise Google CSE
+Sources Couche 1 (marches publics) :
+  BOAMP CPV 79400000, 79340000, 79416000, 79000000, 73200000, 92600000
+  TED/JOUE Europe
+  France Marches (requetes Sideline)
+  Maximilien IDF
+  CNOSF plateforme marches
+
+Sources Couche 2 (federations / acteurs sport) :
+  FFR, FFF, FFBB, FFHandball, FFVolley, FFN, FFT, FFJudo, FFR XIII, FFA
+
+Sources Couche 3 (signaux de marche / medias sectoriels) :
+  SportBusiness Club, SPORSORA, News Tank Sport, Le Cafe du Sport Biz
+  LFP, LNR (communiques)
 
 Usage :
   python scraper.py              # veille complete + email
-  python scraper.py --test       # sans envoi email, genere preview HTML
+  python scraper.py --test       # sans envoi email
   python scraper.py --only rss   # un seul moteur (rss | google | linkedin)
-  Cron OVH :
-  0 8 * * * /usr/bin/python3 /home/LOGIN/sideline/scraper.py >> /home/LOGIN/sideline/logs/cron.log 2>&1
 """
 
 import json
@@ -54,7 +61,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# ── Identifiants a renseigner ─────────────────────────────────────────────────
+# ── Identifiants ──────────────────────────────────────────────────────────────
 EMAIL_CONFIG = {
     "expediteur":   "cyrilmourin@gmail.com",
     "smtp_login":   os.environ.get("GMAIL_USER", ""),
@@ -64,14 +71,12 @@ EMAIL_CONFIG = {
     "smtp_port":    587,
 }
 
-# Google Custom Search API — gratuit 100 requetes/jour
-# Creer sur   : https://programmablesearchengine.google.com/
-# Cle API     : https://console.cloud.google.com/ -> "Custom Search JSON API"
 SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "")
 
 
-# ─── MOTS-CLES ────────────────────────────────────────────────────────────────
+# ─── MOTS-CLES DE SCORING ────────────────────────────────────────────────────
 
+# Groupe A — dimension sport (au moins 1 obligatoire)
 KEYWORDS_SPORT = [
     "sport", "sportif", "sportive", "federation sportive", "ligue sportive",
     "club sportif", "olympique", "paralympique", "athlete", "competition",
@@ -82,98 +87,148 @@ KEYWORDS_SPORT = [
     "cnosf", "cpsf", "drajes", "creps", "insep",
     "agence nationale du sport", "cnds", "lfp", "lnr", "ffr", "fff",
     "ffbb", "ffvb", "ffhandball", "ffnatation", "fftennis", "ffjudo",
+    "sportbusiness", "sporsora", "news tank sport",
+    # Termes indirects (missions sans le mot sport)
+    "politique sportive", "attractivite territoriale", "rayonnement",
+    "grand evenement", "candidature olympique",
 ]
 
+# Groupe B — dimension metier Sideline (au moins 1 obligatoire)
 KEYWORDS_METIER = [
     "affaires publiques", "public affairs", "conseil strategique",
     "strategie", "communication institutionnelle", "influence",
     "lobbying", "plaidoyer", "relations institutionnelles",
-    "relations publiques", "accompagnement", "consultant", "prestataire",
-    "expertise", "etude", "diagnostic", "positionnement", "marque",
-    "image de marque", "gouvernance", "developpement", "rayonnement",
-    "attractivite", "mecenat", "sponsoring", "partenariat strategique",
-    "plan de communication", "strategie de communication",
-    "intelligence economique", "veille strategique", "analyse",
+    "relations publiques", "relations presse", "accompagnement",
+    "consultant", "prestataire", "expertise", "etude", "diagnostic",
+    "positionnement", "marque", "image de marque", "gouvernance",
+    "developpement", "rayonnement", "attractivite", "mecenat",
+    "sponsoring", "partenariat strategique", "plan de communication",
+    "strategie de communication", "intelligence economique",
+    "veille strategique", "analyse", "amo", "assistance maitrise ouvrage",
     "appel d offres", "appel a projets", "marche public", "prestation",
     "mission de conseil", "mission d accompagnement",
+    "audit", "schema directeur", "plan strategique",
 ]
 
+# Mots a exclure (pour reduire le bruit travaux/fournitures)
+KEYWORDS_EXCLUSION = [
+    "travaux", "construction", "rehabilitation", "batiment",
+    "gros oeuvre", "fourniture", "equipement sportif", "sol sportif",
+    "gazon", "vestiaires", "piscine travaux", "stade travaux",
+    "maintenance", "entretien", "nettoyage", "gardiennage",
+]
+
+# Poids de scoring
 SCORE_WEIGHTS = {
     "affaires publiques": 22, "public affairs": 20,
     "influence": 16, "lobbying": 16, "plaidoyer": 16,
     "conseil strategique": 14, "strategie": 10,
     "communication institutionnelle": 12, "communication": 8,
+    "relations presse": 12, "relations publiques": 10,
     "federation": 12, "federation sportive": 15,
     "sponsoring": 12, "mecenat": 12,
     "sport": 5, "conseil": 8,
     "cnosf": 15, "agence nationale du sport": 15,
     "olympique": 10, "paralympique": 10,
     "appel d offres": 10, "appel a projets": 8,
-    "partenariat strategique": 12,
+    "partenariat strategique": 12, "amo": 10,
+    "audit": 8, "schema directeur": 10, "plan strategique": 10,
+    "attractivite": 8, "rayonnement": 8,
 }
 
 SCORE_MINIMUM = 25
 
 
-# ─── REQUETES GOOGLE ──────────────────────────────────────────────────────────
+# ─── REQUETES SERPAPI (remplace Google Custom Search) ─────────────────────────
+# Budget SerpAPI gratuit : 100 recherches/mois
+# On limite a 10 requetes/run pour rester dans le quota
 # Format : (requete, type_source, label)
-# Budget : 100 req/jour gratuites -> max ~15 requetes/run
 GOOGLE_QUERIES = [
-    # Marches publics sport + conseil
-    ("appel offres sport conseil communication", "marche-public", "Google — AO sport/conseil"),
-    ("appel offres federation sportive prestataire", "federation", "Google — AO federations"),
-    ("appel projets sport strategie influence 2026", "federation", "Google — AAP sport strategie"),
-    ("marche public sport affaires publiques", "marche-public", "Google — MP affaires publiques"),
-    # Institutions publiques sport
-    ("appel offres site:agencedusport.fr", "marche-public", "Google — ANS"),
-    ("appel offres appel projets site:franceolympique.com", "federation", "Google — CNOSF"),
-    ("appel offres site:sports.gouv.fr", "marche-public", "Google — Ministere Sports"),
-    ("avis marche sport conseil communication site:boamp.fr", "marche-public", "Google — BOAMP sport"),
-    # Federations
-    ("appel offres site:ffr.fr OR site:fff.fr OR site:ffbb.com", "federation", "Google — FFR/FFF/FFBB"),
-    ("appel offres site:ffhandball.fr OR site:ffvb.org", "federation", "Google — FFH/FFV"),
-    ("appel offres site:lnr.fr OR site:lfp.fr", "prive", "Google — LNR/LFP"),
-    # Signaux prives
-    ("recherche prestataire expression besoin sport strategie conseil", "prive", "Google — Signaux prives"),
-    ("nous recherchons agence conseil sport communication 2026", "prive", "Google — Signaux agence"),
-    # Collectivites
-    ("appel offres collectivite sport communication strategie 2026", "marche-public", "Google — Collectivites"),
-    ("appel projets sport region departement conseil accompagnement 2026", "marche-public", "Google — Regions"),
+    # Requetes combinées recommandées par ChatGPT
+    ("sport fédération conseil stratégie prestation appel offres", "marche-public", "SerpAPI — Sport+conseil AO"),
+    ("sport communication relations presse appel offres marché public", "marche-public", "SerpAPI — Sport+com AO"),
+    ("sport étude audit plan stratégique mission appel offres", "marche-public", "SerpAPI — Sport+etudes AO"),
+    ("fédération sportive appel offres prestataire 2026", "federation", "SerpAPI — Federations AO"),
+    # Signaux prives — entreprises cherchant agence sport
+    ("recherche prestataire agence sport stratégie communication conseil", "prive", "SerpAPI — Signaux prives"),
+    ("sponsoring sportif mécénat stratégie appel offres entreprise", "prive", "SerpAPI — Sponsoring"),
+    # Opportunites cachees (sans le mot sport)
+    ("communication stratégie attractivité territoire appel offres collectivité", "marche-public", "SerpAPI — Opportunites cachees"),
+    # Institutions cles
+    ("appel offres site:agencedusport.fr OR site:sports.gouv.fr", "marche-public", "SerpAPI — ANS+Ministere"),
+    ("appel offres site:ffr.fr OR site:fff.fr OR site:ffbb.com OR site:ffhandball.fr", "federation", "SerpAPI — Federations sites"),
+    # Signaux LinkedIn
+    ("site:linkedin.com appel offres sport conseil communication fédération", "prive", "SerpAPI — LinkedIn signaux"),
 ]
 
-# ─── REQUETES LINKEDIN ────────────────────────────────────────────────────────
+# ─── REQUETES LINKEDIN (via SerpAPI) ─────────────────────────────────────────
 LINKEDIN_QUERIES = [
-    "appel offres sport conseil communication federation",
-    "recherche prestataire strategie sport federation",
-    "expression besoin agence sport influence",
-    "mission conseil sport affaires publiques",
-    "appel offres sponsoring sport entreprise",
+    "site:linkedin.com recherche prestataire stratégie sport fédération",
+    "site:linkedin.com expression besoin agence sport influence affaires publiques",
+    "site:linkedin.com mission conseil sport communication sponsoring",
 ]
+
 
 # ─── SOURCES RSS/HTML ─────────────────────────────────────────────────────────
 SOURCES = [
 
-    # ── MARCHES PUBLICS — Flux RSS CPV BOAMP ─────────────────────────────────
-    # CPV 79 = Conseil, communication, relations publiques
+    # ══════════════════════════════════════════════════════════════════════════
+    # COUCHE 1 — MARCHES PUBLICS
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── BOAMP — CPV enrichis (recommandation ChatGPT) ─────────────────────────
+    # CPV 79400000 — Conseil en gestion (le plus important pour Sideline)
+    {
+        "id": "boamp_conseil_gestion",
+        "label": "BOAMP — Conseil en gestion (CPV 794)",
+        "type": "marche-public",
+        "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=79400000",
+        "parser": "rss",
+    },
+    # CPV 79340000 — Communication / marketing
+    {
+        "id": "boamp_communication",
+        "label": "BOAMP — Communication & marketing (CPV 7934)",
+        "type": "marche-public",
+        "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=79340000",
+        "parser": "rss",
+    },
+    # CPV 79416000 — Relations publiques
+    {
+        "id": "boamp_rp",
+        "label": "BOAMP — Relations publiques (CPV 7941)",
+        "type": "marche-public",
+        "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=79416000",
+        "parser": "rss",
+    },
+    # CPV 79000000 — Services aux entreprises (large)
     {
         "id": "boamp_conseil",
-        "label": "BOAMP — Conseil & communication (CPV 79)",
+        "label": "BOAMP — Services aux entreprises (CPV 79)",
         "type": "marche-public",
         "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=79000000",
         "parser": "rss",
     },
-    # CPV 73 = Recherche, etudes, expertise
+    # CPV 73200000 — Etudes / conseil en R&D
     {
-        "id": "boamp_rd",
-        "label": "BOAMP — Etudes & expertise (CPV 73)",
+        "id": "boamp_etudes",
+        "label": "BOAMP — Etudes & conseil (CPV 732)",
         "type": "marche-public",
-        "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=73000000",
+        "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=73200000",
         "parser": "rss",
     },
-    # CPV 92 = Services sportifs, culturels, recreatifs
+    # CPV 92600000 — Services sportifs
     {
         "id": "boamp_sport",
-        "label": "BOAMP — Services sportifs (CPV 92)",
+        "label": "BOAMP — Services sportifs (CPV 926)",
+        "type": "marche-public",
+        "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=92600000",
+        "parser": "rss",
+    },
+    # CPV 92000000 — Services recreatifs, culturels, sportifs (large)
+    {
+        "id": "boamp_recreatif",
+        "label": "BOAMP — Services recreatifs & sportifs (CPV 92)",
         "type": "marche-public",
         "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=92000000",
         "parser": "rss",
@@ -187,8 +242,8 @@ SOURCES = [
         "parser": "rss",
     },
 
-    # ── FRANCE MARCHES — Agregateur principal avec mots-cles Sideline ───────Et fou
-    # Source la plus fiable et la plus exhaustive — requete fournie par Cyril
+    # ── FRANCE MARCHES — Agregateur principal ────────────────────────────────
+    # Requete principale fournie par Cyril
     {
         "id": "francemarches_sideline",
         "label": "France Marches — Sport & conseil (requete Sideline)",
@@ -196,6 +251,23 @@ SOURCES = [
         "url": "https://www.francemarches.com/rss/appels-offres?q=%22sport%22+OU+%22sportif%22+OU+%22sportive%22+OU+%22Agence+Nationale+du+Sport%22+OU+%22Minist%C3%A8re+des+Sports%22&types%5B%5D=171&etat=en-cours",
         "parser": "rss",
     },
+    # Communication sport
+    {
+        "id": "francemarches_com_sport",
+        "label": "France Marches — Communication sport",
+        "type": "marche-public",
+        "url": "https://www.francemarches.com/rss/appels-offres?q=sport+communication+OU+sport+%22relations+presse%22",
+        "parser": "rss",
+    },
+    # Strategie sport
+    {
+        "id": "francemarches_strat_sport",
+        "label": "France Marches — Strategie & conseil sport",
+        "type": "marche-public",
+        "url": "https://www.francemarches.com/rss/appels-offres?q=sport+conseil+OU+sport+strat%C3%A9gie+OU+sport+%C3%A9tude",
+        "parser": "rss",
+    },
+    # Sponsoring / mecenat
     {
         "id": "francemarches_sponsoring",
         "label": "France Marches — Sponsoring & mecenat sportif",
@@ -203,16 +275,25 @@ SOURCES = [
         "url": "https://www.francemarches.com/rss/appels-offres?q=sponsoring+sportif+OU+mecenat+sportif",
         "parser": "rss",
     },
+    # Affaires publiques sport
     {
         "id": "francemarches_ap",
         "label": "France Marches — Affaires publiques sport",
         "type": "marche-public",
-        "url": "https://www.francemarches.com/rss/appels-offres?q=%22affaires+publiques%22+sport+OU+%22influence%22+sport",
+        "url": "https://www.francemarches.com/rss/appels-offres?q=%22affaires+publiques%22+sport+OU+influence+sport",
+        "parser": "rss",
+    },
+    # Opportunites cachees — sans le mot sport (attractivite, territoire)
+    {
+        "id": "francemarches_hors_sport",
+        "label": "France Marches — Opportunites cachees (attractivite/territoire)",
+        "type": "marche-public",
+        "url": "https://www.francemarches.com/rss/appels-offres?q=%22attractivit%C3%A9%22+communication+OU+%22rayonnement%22+strat%C3%A9gie+OU+%22grand+%C3%A9v%C3%A9nement%22+communication",
         "parser": "rss",
     },
 
-    # ── PLATEFORMES MARCHES PUBLICS SPORT ────────────────────────────────────
-    # CNOSF — plateforme dediee aux marches du mouvement olympique
+    # ── PLATEFORMES SPECIALISEES ──────────────────────────────────────────────
+    # CNOSF — plateforme marches mouvement olympique
     {
         "id": "cnosf_marches",
         "label": "CNOSF — Plateforme marches publics",
@@ -225,11 +306,24 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    
-    # Maximilien — portail marches publics Ile-de-France
+    # Agence Nationale du Sport
+    {
+        "id": "agence_sport",
+        "label": "Agence Nationale du Sport — Marches publics",
+        "type": "marche-public",
+        "url": "https://www.agencedusport.fr/marches-publics",
+        "parser": "html",
+        "selector": ".views-row, article, .field-content, .card",
+        "title_sel": "h2, h3, .views-field-title",
+        "desc_sel": "p, .views-field-body",
+        "link_sel": "a",
+        "timeout": 8,
+        "verify_ssl": False,
+    },
+    # Maximilien IDF — sport + conseil
     {
         "id": "maximilien_sport",
-        "label": "Maximilien — Marches publics IDF (sport/conseil)",
+        "label": "Maximilien IDF — Sport & conseil",
         "type": "marche-public",
         "url": "https://marches.maximilien.fr/?page=Entreprise.EntrepriseAdvancedSearch&AllMots=sport+conseil&TypeMarche=S",
         "parser": "html",
@@ -239,8 +333,24 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 15,
     },
+    # Maximilien IDF — communication sport
+    {
+        "id": "maximilien_com",
+        "label": "Maximilien IDF — Sport & communication",
+        "type": "marche-public",
+        "url": "https://marches.maximilien.fr/?page=Entreprise.EntrepriseAdvancedSearch&AllMots=sport+communication&TypeMarche=S",
+        "parser": "html",
+        "selector": "tr, .result, .avis, article",
+        "title_sel": "td, h2, h3, a",
+        "desc_sel": "td, p",
+        "link_sel": "a",
+        "timeout": 15,
+    },
 
-    # ── FEDERATIONS SPORTIVES — URLs corrigees ────────────────────────────────
+    # ══════════════════════════════════════════════════════════════════════════
+    # COUCHE 2 — FEDERATIONS SPORTIVES (pages consultations directes)
+    # ══════════════════════════════════════════════════════════════════════════
+
     {
         "id": "ffr",
         "label": "FFR — Federation Francaise de Rugby",
@@ -309,7 +419,7 @@ SOURCES = [
     },
     {
         "id": "fftennis",
-        "label": "FFT — Federation Francaise de Tennis — Consultations",
+        "label": "FFT — Federation Francaise de Tennis",
         "type": "federation",
         "url": "https://www.fft.fr/consultations",
         "parser": "html",
@@ -340,7 +450,6 @@ SOURCES = [
         "desc_sel": "p, .excerpt",
         "link_sel": "a",
     },
-    # FFA — actualites (pas de page dediee AO, on surveille les actus)
     {
         "id": "ffa",
         "label": "FFA — Federation Francaise d Athletisme",
@@ -353,8 +462,44 @@ SOURCES = [
         "link_sel": "a",
     },
 
+    # ══════════════════════════════════════════════════════════════════════════
+    # COUCHE 3 — MEDIAS SECTORIELS (signaux de marche)
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # SportBusiness Club — media sectoriel sport business
+    {
+        "id": "sportbusiness_club",
+        "label": "SportBusiness Club — Signaux marche",
+        "type": "prive",
+        "url": "https://www.sportbusiness.club/feed/",
+        "parser": "rss",
+    },
+    # SPORSORA — federation marketing sportif
+    {
+        "id": "sporsora",
+        "label": "SPORSORA — Marketing sportif",
+        "type": "prive",
+        "url": "https://www.sporsora.com/feed/",
+        "parser": "rss",
+    },
+    # News Tank Sport — media pro sport business
+    {
+        "id": "newstank_sport",
+        "label": "News Tank Sport — Actualites pro",
+        "type": "prive",
+        "url": "https://www.newstanksport.fr/rss/actualites/",
+        "parser": "rss",
+    },
+    # Le Cafe du Sport Biz
+    {
+        "id": "cafe_sport_biz",
+        "label": "Le Cafe du Sport Biz — Signaux",
+        "type": "prive",
+        "url": "https://www.lecafedusportbiz.fr/feed/",
+        "parser": "rss",
+    },
+
     # ── LIGUES PROFESSIONNELLES ───────────────────────────────────────────────
-    # LFP — communiques (pas de page AO publique)
     {
         "id": "lfp",
         "label": "LFP — Ligue de Football Professionnel",
@@ -366,7 +511,6 @@ SOURCES = [
         "desc_sel": "p",
         "link_sel": "a",
     },
-    # LNR — actualites (pas de page AO publique)
     {
         "id": "lnr",
         "label": "LNR — Ligue Nationale de Rugby",
@@ -377,22 +521,6 @@ SOURCES = [
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
-    },
-
-    # ── GRANDES COLLECTIVITES — Maximilien (IDF) ──────────────────────────────
-    # Maximilien = portail officiel marches publics Ile-de-France
-    # Recherche par mots-cles sport + conseil sur la salle des marches
-    {
-        "id": "maximilien_sport2",
-        "label": "Maximilien IDF — Sport & communication",
-        "type": "marche-public",
-        "url": "https://marches.maximilien.fr/?page=Entreprise.EntrepriseAdvancedSearch&AllMots=sport+communication&TypeMarche=S",
-        "parser": "html",
-        "selector": "tr, .result, .avis, article",
-        "title_sel": "td, h2, h3, a",
-        "desc_sel": "td, p",
-        "link_sel": "a",
-        "timeout": 15,
     },
 ]
 
@@ -423,8 +551,13 @@ def parse_rss(source):
 def parse_html(source):
     items = []
     try:
-        headers = {"User-Agent": "Mozilla/5.0 (compatible; SidelineVeille/2.0)"}
-        r = requests.get(source["url"], headers=headers, timeout=source.get("timeout", 20), verify=source.get("verify_ssl", True))
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; SidelineVeille/3.0)"}
+        r = requests.get(
+            source["url"],
+            headers=headers,
+            timeout=source.get("timeout", 20),
+            verify=source.get("verify_ssl", True)
+        )
         r.raise_for_status()
         soup = BeautifulSoup(r.text, "html.parser")
         cards = soup.select(source.get("selector", "article"))
@@ -455,17 +588,17 @@ def parse_html(source):
     return items
 
 
-# ─── MODULE 2 — GOOGLE CUSTOM SEARCH ─────────────────────────────────────────
+# ─── MODULE 2 — SERPAPI ───────────────────────────────────────────────────────
 
-def recherche_google(query, label, type_source, nb_results=10):
+def recherche_serpapi(query, label, type_source, nb_results=10):
     """
-    Interroge l'API Google Custom Search.
-    Gratuit : 100 requetes/jour, 10 resultats/requete.
-    Doc : https://developers.google.com/custom-search/v1/using_rest
+    Interroge SerpAPI (Google Search).
+    Gratuit : 100 recherches/mois.
+    Doc : https://serpapi.com/search-api
     """
     items = []
     if not SERPAPI_KEY:
-        log.warning("[GOOGLE] Cle API non configuree — module desactive")
+        log.warning("[SERPAPI] Cle non configuree — module desactive")
         return items
     params = {
         "q":       query,
@@ -473,10 +606,10 @@ def recherche_google(query, label, type_source, nb_results=10):
         "hl":      "fr",
         "gl":      "fr",
         "num":     min(nb_results, 10),
-        "tbs":     "qdr:m3",
+        "tbs":     "qdr:m3",   # 3 derniers mois
     }
     try:
-        r = requests.get("https://serpapi.com/search", params=params, timeout=15)
+        r = requests.get("https://serpapi.com/search", params=params, timeout=20)
         r.raise_for_status()
         resultats = r.json().get("organic_results", [])
         log.info(f"[SERPAPI] '{query[:50]}' -> {len(resultats)} resultats")
@@ -500,28 +633,17 @@ def recherche_google(query, label, type_source, nb_results=10):
 def lancer_google():
     tous = []
     for query, type_src, label in GOOGLE_QUERIES:
-        tous.extend(recherche_google(query, label, type_src))
-    log.info(f"[GOOGLE] Total : {len(tous)} resultats bruts")
+        tous.extend(recherche_serpapi(query, label, type_src))
+    log.info(f"[SERPAPI] Total : {len(tous)} resultats bruts")
     return tous
 
 
-# ─── MODULE 3 — LINKEDIN (via Google) ────────────────────────────────────────
+# ─── MODULE 3 — LINKEDIN (via SerpAPI) ───────────────────────────────────────
 
 def lancer_linkedin():
-    """
-    Detecte les signaux LinkedIn via Google (site:linkedin.com/posts).
-    Ne necessite pas de compte LinkedIn.
-    Pour une extraction plus fiable, envisager Phantombuster (phantombuster.com).
-    """
     tous = []
     for query in LINKEDIN_QUERIES:
-        query_google = f"site:linkedin.com/posts {query}"
-        items = recherche_google(
-            query_google,
-            label=f"LinkedIn — {query[:40]}",
-            type_source="prive",
-            nb_results=5,
-        )
+        items = recherche_serpapi(query, "LinkedIn (signal)", "prive", nb_results=5)
         for item in items:
             item["source_id"]    = f"linkedin_{hashlib.md5(query.encode()).hexdigest()[:6]}"
             item["source_label"] = "LinkedIn (signal)"
@@ -539,28 +661,38 @@ def nettoyer(texte):
 
 def scorer(item):
     corpus = nettoyer(item.get("title","") + " " + item.get("description",""))
+
+    # Exclusions — bruit travaux/fournitures
+    nb_exclusions = sum(1 for kw in KEYWORDS_EXCLUSION if kw in corpus)
+    if nb_exclusions >= 2:
+        return 0
+
     if not any(kw in corpus for kw in KEYWORDS_SPORT):
         return 0
     if not any(kw in corpus for kw in KEYWORDS_METIER):
         return 0
+
     score = 30
     for kw, poids in SCORE_WEIGHTS.items():
         if kw in corpus:
             score += poids
-    if item.get("moteur") in ("google","linkedin"):
+
+    # Bonus moteur actif
+    if item.get("moteur") in ("google", "linkedin"):
         score = min(score + 5, 100)
+
     return min(score, 100)
 
 def deduire_types(item):
     corpus = nettoyer(item.get("title","") + " " + item.get("description",""))
     types = []
-    if any(k in corpus for k in ["affaires publiques","lobbying","plaidoyer","institutionnel","parlement","ministere","public affairs"]):
+    if any(k in corpus for k in ["affaires publiques","lobbying","plaidoyer","institutionnel","parlement","ministere","public affairs","amo"]):
         types.append("affaires-publiques")
-    if any(k in corpus for k in ["strategie","positionnement","developpement","gouvernance","diagnostic"]):
+    if any(k in corpus for k in ["strategie","positionnement","developpement","gouvernance","diagnostic","audit","schema directeur"]):
         types.append("strategie")
-    if any(k in corpus for k in ["communication","marque","image","notoriete","medias","presse","digitale"]):
+    if any(k in corpus for k in ["communication","marque","image","notoriete","medias","presse","digitale","relations presse"]):
         types.append("communication")
-    if any(k in corpus for k in ["influence","rayonnement","attractivite","reputation","relations publiques"]):
+    if any(k in corpus for k in ["influence","rayonnement","attractivite","reputation","relations publiques","lobbying"]):
         types.append("influence")
     return types or ["strategie"]
 
@@ -638,7 +770,7 @@ EMAIL_TEMPLATE = """<!DOCTYPE html>
   .hdr p{{color:#666;font-size:11px;margin:0;font-family:monospace;letter-spacing:1px}}
   .body{{padding:24px 32px}}
   .intro{{color:#555;font-size:14px;margin-bottom:24px;line-height:1.6}}
-  .section-title{{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#999;margin:24px 0 12px;font-family:monospace}}
+  .section-title{{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#999;margin:24px 0 12px;font-family:monospace;border-bottom:1px solid #eee;padding-bottom:6px}}
   .card{{border:1px solid #e0dbd4;border-radius:10px;padding:16px 18px;margin-bottom:12px}}
   .card-score{{float:right;color:#c8a86b;font-weight:bold;font-size:16px;font-family:monospace}}
   .card-title{{font-size:15px;font-weight:bold;color:#0d0d0d;margin:0 0 4px;line-height:1.3}}
@@ -657,17 +789,17 @@ EMAIL_TEMPLATE = """<!DOCTYPE html>
 <div class="wrap">
   <div class="hdr">
     <h1>Sideline Veille</h1>
-    <p>RAPPORT {date} -- {nb_nouvelles} NOUVELLES OPPORTUNITES -- {nb_total} AU TOTAL</p>
+    <p>RAPPORT {date} -- {nb_nouvelles} NOUVELLES -- {nb_total} AU TOTAL</p>
   </div>
   <div class="body">
     <p class="intro">Bonjour Cyril,<br><br>
-    <strong>{nb_nouvelles} nouvelles opportunites</strong> detectees &mdash; dont
-    <strong>{nb_urgentes} urgente(s)</strong> (echeance &le;15j),
-    <strong>{nb_google}</strong> via Google et
+    <strong>{nb_nouvelles} nouvelles opportunites</strong> detectees dont
+    <strong>{nb_urgentes} urgente(s)</strong>,
+    <strong>{nb_google}</strong> via Google/SerpAPI et
     <strong>{nb_linkedin}</strong> via LinkedIn.</p>
     {sections}
   </div>
-  <div class="footer">Sideline Conseil &middot; Veille automatique &middot; {date}</div>
+  <div class="footer">Sideline Conseil &middot; Veille automatique v3 &middot; {date}</div>
 </div></body></html>"""
 
 CARTE = """<div class="card">
@@ -713,13 +845,13 @@ def construire_email(nouvelles, total):
     li_items  = [o for o in nouvelles if o.get("moteur")=="linkedin"]
     sections = ""
     if urgentes:
-        sections += '<div class="section-title">URGENTES -- Deadline dans 15 jours ou moins</div>'
+        sections += '<div class="section-title">URGENTES — Deadline dans 15 jours ou moins</div>'
         sections += "".join(_carte(o) for o in urgentes[:5])
     if rss_items:
         sections += '<div class="section-title">MARCHES PUBLICS & FEDERATIONS</div>'
-        sections += "".join(_carte(o) for o in rss_items[:6])
+        sections += "".join(_carte(o) for o in rss_items[:8])
     if goo_items:
-        sections += '<div class="section-title">DETECTES VIA GOOGLE</div>'
+        sections += '<div class="section-title">DETECTES VIA GOOGLE (SerpAPI)</div>'
         sections += "".join(_carte(o) for o in goo_items[:5])
     if li_items:
         sections += '<div class="section-title">SIGNAUX LINKEDIN</div>'
@@ -736,7 +868,7 @@ def envoyer_email(html, nouvelles):
     nb_u = sum(1 for o in nouvelles if o.get("urgent"))
     sujet = f"[Sideline Veille] {len(nouvelles)} opportunites"
     if nb_u:
-        sujet += f" -- {nb_u} urgente(s)"
+        sujet += f" — {nb_u} urgente(s)"
     msg = MIMEMultipart("alternative")
     msg["Subject"] = sujet
     msg["From"]    = cfg["expediteur"]
@@ -771,7 +903,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v2 -- Demarrage")
+    log.info("Sideline Veille v3 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -792,12 +924,12 @@ def lancer_veille(test_mode=False, only=None):
         log.info(f"[RSS/HTML] {len(items_rss)} items bruts")
         nouvelles_opps.extend(traiter_items(items_rss, vus))
 
-    # Moteur 2 : Google Custom Search
+    # Moteur 2 : SerpAPI (Google)
     if only in (None, "google"):
         items_google = lancer_google()
         nouvelles_opps.extend(traiter_items(items_google, vus))
 
-    # Moteur 3 : LinkedIn (via Google)
+    # Moteur 3 : LinkedIn (via SerpAPI)
     if only in (None, "linkedin"):
         items_li = lancer_linkedin()
         nouvelles_opps.extend(traiter_items(items_li, vus))
@@ -830,7 +962,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v2")
+    ap = argparse.ArgumentParser(description="Sideline Veille v3")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
