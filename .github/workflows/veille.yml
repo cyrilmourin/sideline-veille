@@ -66,17 +66,14 @@ jobs:
             python scraper.py
           fi
 
-      # 7. Déposer le JSON sur le serveur Elementor via SFTP
-      - name: Déposer opportunites.json sur Elementor
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: ${{ secrets.SFTP_USER }}
-          server: ${{ secrets.SFTP_HOST }}
-          port: ${{ secrets.SFTP_PORT }}
-          password: ${{ secrets.SFTP_PASSWORD }}
-          local_path: ./data/opportunites.json
-          remote_path: /var/www/html/data/
-          sftp_only: true
+      # 7. Commiter le JSON mis à jour dans le dépôt
+      - name: Sauvegarder opportunites.json dans le dépôt
+        run: |
+          git config user.name "Sideline Veille Bot"
+          git config user.email "cyrilmourin@gmail.com"
+          git add data/opportunites.json data/seen_ids.json || true
+          git diff --staged --quiet || git commit -m "data: mise a jour opportunites [skip ci]"
+          git push
 
       # 8. Archiver les logs en artefact GitHub (conservés 7 jours)
       - name: Archiver les logs
