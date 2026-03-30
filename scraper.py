@@ -56,7 +56,8 @@ log = logging.getLogger(__name__)
 
 # ── Identifiants a renseigner ─────────────────────────────────────────────────
 EMAIL_CONFIG = {
-    "expediteur":   os.environ.get("GMAIL_USER", ""),
+    "expediteur":   "cyrilmourin@gmail.com",
+    "smtp_login":   os.environ.get("GMAIL_USER", ""),
     "mot_de_passe": os.environ.get("GMAIL_PASSWORD", ""),
     "destinataire": os.environ.get("GMAIL_DESTINATAIRE", ""),
     "smtp_host":    "smtp-relay.brevo.com",
@@ -739,7 +740,7 @@ def envoyer_email(html, nouvelles):
     try:
         with smtplib.SMTP(cfg["smtp_host"], cfg["smtp_port"]) as srv:
             srv.starttls()
-            srv.login(cfg["expediteur"], cfg["mot_de_passe"])
+            srv.login(cfg["smtp_login"], cfg["mot_de_passe"])
             srv.sendmail(cfg["expediteur"], cfg["destinataire"], msg.as_string())
         log.info(f"Email envoye -> {cfg['destinataire']}")
     except Exception as e:
