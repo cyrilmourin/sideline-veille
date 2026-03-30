@@ -1,0 +1,84 @@
+name: Sideline Veille — Scraping quotidien
+
+on:
+  # Lancement automatique tous les jours à 7h00 UTC (= 8h00 Paris heure d'été)
+  schedule:
+    - cron: '0 7 * * *'
+  # Permet aussi de lancer manuellement depuis l'interface GitHub
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Mode de lancement'
+        required: false
+        default: 'normal'
+        type: choice
+        options:
+          - normal
+          - test
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # 1. Récupérer le code du dépôt
+      - name: Checkout du dépôt
+        uses: actions/checkout@v4
+
+      # 2. Installer Python
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # 3. Installer les dépendances
+      - name: Installer les dépendances Python
+        run: pip install -r requirements.txt
+
+      # 4. Créer les dossiers nécessaires
+      - name: Préparer l'arborescence
+        run: |
+          mkdir -p data logs
+
+      # 5. Restaurer les données existantes depuis Google Drive
+      - name: Restaurer opportunites.json depuis Google Drive
+        env:
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_FILE_ID: ${{ secrets.GDRIVE_FILE_ID }}
+        run: python scripts/gdrive_download.py
+        continue-on-error: true  # pas bloquant si le fichier n'existe pas encore
+
+      # 6. Lancer la veille
+      - name: Lancer le scraper
+        env:
+          GMAIL_USER:        ${{ secrets.GMAIL_USER }}
+          GMAIL_PASSWORD:    ${{ secrets.GMAIL_PASSWORD }}
+          GMAIL_DESTINATAIRE: ${{ secrets.GMAIL_DESTINATAIRE }}
+          GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_CX:         ${{ secrets.GOOGLE_CX }}
+          RUN_MODE:          ${{ github.event.inputs.mode || 'normal' }}
+        run: |
+          if [ "$RUN_MODE" = "test" ]; then
+            python scraper.py --test
+          else
+            python scraper.py
+          fi
+
+      # 7. Sauvegarder le JSON mis à jour sur Google Drive
+      - name: Sauvegarder opportunites.json sur Google Drive
+        env:
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_FILE_ID:     ${{ secrets.GDRIVE_FILE_ID }}
+          GDRIVE_FOLDER_ID:   ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: python scripts/gdrive_upload.py
+
+      # 8. Archiver les logs en artefact GitHub (conservés 7 jours)
+      - name: Archiver les logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-${{ github.run_number }}
+          path: logs/
+          retention-days: 7

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sideline Veille — Marchés & Opportunités</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #0d0d0d;
+    --blanc: #f5f2ee;
+    --or: #c8a86b;
+    --or-pale: #e8d5a8;
+    --vert: #2d5a3d;
+    --vert-clair: #3d7a52;
+    --rouge: #b84040;
+    --gris: #6b6560;
+    --gris-clair: #d4cfc8;
+    --fond: #f0ece5;
+    --card: #faf8f4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--fond); color: var(--noir); font-family: 'Syne', sans-serif; min-height: 100vh; }
+
+  header {
+    background: var(--noir); padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #2a2a2a;
+  }
+  .logo { display: flex; align-items: baseline; gap: 10px; }
+  .logo-mark { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--or); }
+  .logo-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #5a5a5a; letter-spacing: 3px; text-transform: uppercase; }
+  .header-status { display: flex; align-items: center; gap: 16px; }
+  .pulse-dot { width: 8px; height: 8px; background: #4caf7d; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(76,175,125,0.4); } 70% { box-shadow: 0 0 0 6px rgba(76,175,125,0); } 100% { box-shadow: 0 0 0 0 rgba(76,175,125,0); } }
+  .status-text { font-family: 'DM Mono', monospace; font-size: 11px; color: #5a5a5a; }
+  .last-update { font-family: 'DM Mono', monospace; font-size: 11px; color: #3a3a3a; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 32px; }
+  .page-title { margin-bottom: 32px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .page-title h1 { font-family: 'DM Serif Display', serif; font-size: 42px; color: var(--noir); line-height: 1.05; font-weight: 400; }
+  .page-title h1 em { color: var(--or); font-style: italic; }
+  .search-bar-wrap { display: flex; gap: 10px; align-items: center; }
+  .search-input { background: white; border: 1.5px solid var(--gris-clair); border-radius: 8px; padding: 10px 16px; font-family: 'Syne', sans-serif; font-size: 14px; color: var(--noir); width: 260px; outline: none; transition: border-color 0.2s; }
+  .search-input:focus { border-color: var(--or); }
+  .btn { padding: 10px 20px; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-dark { background: var(--noir); color: var(--or); }
+  .btn-dark:hover { background: #1a1a1a; }
+  .btn-primary { background: var(--or); color: var(--noir); }
+  .btn-primary:hover { background: var(--or-pale); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--gris-clair); color: var(--gris); cursor: pointer; }
+  .btn-outline:hover { border-color: var(--or); color: var(--noir); }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: white; border: 1px solid var(--gris-clair); border-radius: 12px; padding: 20px 24px; position: relative; overflow: hidden; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .stat-card.gold::before { background: var(--or); }
+  .stat-card.green::before { background: var(--vert-clair); }
+  .stat-card.red::before { background: var(--rouge); }
+  .stat-card.dark::before { background: var(--noir); }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1; color: var(--noir); margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: var(--gris); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .stat-delta { position: absolute; top: 20px; right: 20px; font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 20px; }
+  .delta-up { background: #e8f5ee; color: var(--vert-clair); }
+
+  .filters-bar { background: white; border: 1px solid var(--gris-clair); border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .filter-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gris); font-weight: 700; }
+  .filter-chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid transparent; transition: all 0.18s; background: var(--fond); color: var(--gris); }
+  .filter-chip:hover { border-color: var(--or); color: var(--noir); }
+  .filter-chip.active { background: var(--noir); color: var(--or); border-color: var(--noir); }
+  .filter-sep { width: 1px; height: 24px; background: var(--gris-clair); margin: 0 4px; }
+
+  .main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+  .opps-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .opp-card { background: var(--card); border: 1px solid var(--gris-clair); border-radius: 14px; padding: 22px 24px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+  .opp-card:hover { border-color: var(--or); box-shadow: 0 4px 20px rgba(200,168,107,0.12); transform: translateY(-1px); }
+  .opp-card.nouvelle::after { content: 'NOUVEAU'; position: absolute; top: 0; right: 0; background: var(--or); color: var(--noir); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; padding: 4px 10px; border-radius: 0 14px 0 8px; }
+  .opp-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .tag { padding: 3px 10px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; font-weight: 500; }
+  .tag-source { background: #f0ece5; color: var(--gris); border: 1px solid var(--gris-clair); }
+  .tag-type-ap { background: #e8f0fd; color: #2a5ab8; }
+  .tag-type-strat { background: #fdf4e8; color: #a06820; }
+  .tag-type-com { background: #f0e8fd; color: #7a30b8; }
+  .tag-type-inf { background: #e8fdf0; color: #1a8040; }
+  .tag-secteur { background: var(--noir); color: var(--or); }
+  .tag-urgent { background: var(--rouge); color: white; }
+  .opp-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+  .opp-title { font-family: 'DM Serif Display', serif; font-size: 17px; line-height: 1.3; color: var(--noir); font-weight: 400; flex: 1; }
+  .opp-body { font-size: 13px; color: var(--gris); line-height: 1.6; margin-bottom: 14px; }
+  .opp-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .opp-emetteur { font-size: 12px; font-weight: 700; color: var(--noir); }
+  .opp-emetteur span { font-weight: 400; color: var(--gris); }
+  .opp-dates { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gris); display: flex; gap: 14px; }
+  .deadline-near { color: var(--rouge); font-weight: 500; }
+  .score-badge { display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: var(--fond); border-radius: 20px; border: 1px solid var(--gris-clair); }
+  .score-num { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--or); }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 20px; }
+  .side-card { background: white; border: 1px solid var(--gris-clair); border-radius: 14px; overflow: hidden; }
+  .side-card-header { padding: 16px 20px; border-bottom: 1px solid var(--gris-clair); display: flex; align-items: center; justify-content: space-between; }
+  .side-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--gris); }
+  .side-card-body { padding: 16px 20px; }
+  .source-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--fond); font-size: 13px; }
+  .source-item:last-child { border-bottom: none; }
+  .source-name { font-weight: 600; color: var(--noir); }
+  .source-cat { font-size: 11px; color: var(--gris); }
+  .source-count { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--or); background: #fdf7ec; padding: 2px 8px; border-radius: 10px; }
+  .source-ok { color: #4caf7d; }
+  .source-warn { color: #e6a020; }
+  .kw-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .kw-chip { padding: 4px 10px; background: var(--fond); border: 1px solid var(--gris-clair); border-radius: 4px; font-size: 11px; color: var(--gris); display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  .kw-chip .rm { color: var(--rouge); font-weight: 700; }
+  .kw-input-row { display: flex; gap: 8px; }
+  .kw-input { flex: 1; background: var(--fond); border: 1px solid var(--gris-clair); border-radius: 6px; padding: 7px 12px; font-size: 12px; font-family: 'Syne', sans-serif; outline: none; color: var(--noir); }
+  .kw-input:focus { border-color: var(--or); }
+  .btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 6px; font-family: 'Syne', sans-serif; font-weight: 700; cursor: pointer; border: none; background: var(--or); color: var(--noir); }
+  .alert-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--fond); }
+  .alert-row:last-child { border-bottom: none; }
+  .alert-name { font-size: 13px; font-weight: 600; color: var(--noir); }
+  .alert-desc { font-size: 11px; color: var(--gris); }
+  .toggle { width: 36px; height: 20px; background: var(--vert-clair); border-radius: 10px; position: relative; cursor: pointer; flex-shrink: 0; }
+  .toggle::after { content: ''; position: absolute; width: 14px; height: 14px; background: white; border-radius: 50%; top: 3px; right: 3px; transition: right 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.off { background: var(--gris-clair); }
+  .toggle.off::after { right: 19px; }
+
+  /* IA panel */
+  .ia-panel { background: var(--noir); border-radius: 14px; padding: 20px; color: white; }
+  .ia-title { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--or); margin-bottom: 4px; font-weight: 400; }
+  .ia-desc { font-size: 12px; color: #8a8a8a; margin-bottom: 14px; line-height: 1.5; }
+  .ia-input { width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-family: 'Syne', sans-serif; color: white; outline: none; resize: none; min-height: 60px; margin-bottom: 10px; transition: border-color 0.2s; }
+  .ia-input:focus { border-color: var(--or); }
+  .ia-response { font-size: 12px; color: #ccc; line-height: 1.6; min-height: 40px; padding: 10px 14px; background: #161616; border-radius: 6px; border: 1px solid #222; font-family: 'DM Mono', monospace; white-space: pre-wrap; }
+  .dots span { animation: blink 1.2s infinite; opacity: 0; }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,0.75); z-index: 200; align-items: center; justify-content: center; padding: 32px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--card); border-radius: 18px; max-width: 680px; width: 100%; max-height: 85vh; overflow-y: auto; border: 1px solid var(--gris-clair); animation: slideUp 0.25s ease; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header { padding: 28px 32px 20px; border-bottom: 1px solid var(--gris-clair); position: sticky; top: 0; background: var(--card); z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+  .modal-close { background: var(--fond); border: 1px solid var(--gris-clair); border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; color: var(--gris); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+  .modal-close:hover { background: var(--rouge); color: white; border-color: var(--rouge); }
+  .modal-body { padding: 24px 32px 32px; }
+  .modal-section { margin-bottom: 22px; }
+  .modal-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--gris); font-weight: 700; margin-bottom: 8px; }
+  .modal-text { font-size: 14px; color: var(--noir); line-height: 1.65; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .info-item { background: var(--fond); border-radius: 8px; padding: 12px 14px; }
+  .info-item-label { font-size: 10px; color: var(--gris); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .info-item-val { font-size: 14px; font-weight: 600; color: var(--noir); }
+  .angle-list { list-style: none; }
+  .angle-list li { padding: 8px 0; border-bottom: 1px solid var(--gris-clair); font-size: 13px; color: var(--noir); display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+  .angle-list li:last-child { border-bottom: none; }
+  .angle-icon { color: var(--or); flex-shrink: 0; }
+
+  /* LOADING */
+  .loading-state { text-align: center; padding: 60px 20px; color: var(--gris); }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--gris-clair); border-top-color: var(--or); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--gris); }
+  .empty-icon { font-size: 40px; margin-bottom: 16px; }
+  .empty-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--noir); margin-bottom: 8px; }
+  .empty-sub { font-size: 14px; line-height: 1.6; }
+
+  /* Bandeau config */
+  .config-banner { background: #fff8ec; border: 1px solid var(--or-pale); border-radius: 10px; padding: 12px 18px; margin-bottom: 24px; font-size: 13px; color: #7a5a20; display: flex; align-items: center; gap: 10px; }
+  .config-banner strong { color: var(--noir); }
+
+  @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } .sidebar { display: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">Sideline</div>
+    <div class="logo-sub">Veille Marchés</div>
+  </div>
+  <div class="header-status">
+    <div class="pulse-dot"></div>
+    <span class="status-text">Surveillance active</span>
+    <span class="last-update" id="lastUpdate">—</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="page-title">
+    <h1>Opportunités<br><em>Sport & Influence</em></h1>
+    <div class="search-bar-wrap">
+      <input type="text" class="search-input" placeholder="Rechercher…" id="searchInput" oninput="filterOpps()">
+      <button class="btn btn-dark" onclick="chargerDonnees()">↻ Actualiser</button>
+    </div>
+  </div>
+
+  <!-- Bandeau info connexion JSON -->
+  <div class="config-banner" id="configBanner">
+    ⚙️ <strong>Mode démo</strong> — Les données affichées sont des exemples. Pour connecter le scraper : placez <code>data/opportunites.json</code> sur votre hébergement OVH au même niveau que ce fichier HTML.
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card gold">
+      <div class="stat-num" id="statTotal">—</div>
+      <div class="stat-label">Opportunités actives</div>
+      <div class="stat-delta delta-up" id="statDelta">—</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-num" id="statNouvelles">—</div>
+      <div class="stat-label">Nouvelles (48h)</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-num" id="statUrgentes">—</div>
+      <div class="stat-label">Échéance &lt; 15j</div>
+    </div>
+    <div class="stat-card dark">
+      <div class="stat-num" id="statScore">—</div>
+      <div class="stat-label">Score moyen</div>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <span class="filter-label">Type</span>
+    <button class="filter-chip active" onclick="setFilter('type','tous')">Tous</button>
+    <button class="filter-chip" onclick="setFilter('type','affaires-publiques')">Affaires Publiques</button>
+    <button class="filter-chip" onclick="setFilter('type','strategie')">Stratégie</button>
+    <button class="filter-chip" onclick="setFilter('type','communication')">Communication</button>
+    <button class="filter-chip" onclick="setFilter('type','influence')">Influence</button>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Source</span>
+    <button class="filter-chip" onclick="setFilter('source','tous')">Toutes</button>
+    <button class="filter-chip" onclick="setFilter('source','marche-public')">Marchés publics</button>
+    <button class="filter-chip" onclick="setFilter('source','federation')">Fédérations</button>
+    <button class="filter-chip" onclick="setFilter('source','prive')">Privé</button>
+  </div>
+
+  <div class="main-grid">
+    <div>
+      <div class="opps-list" id="oppsList">
+        <div class="loading-state"><div class="spinner"></div><div>Chargement des opportunités…</div></div>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="side-card">
+        <div class="side-card-header">
+          <div class="side-card-title">Sources surveillées</div>
+        </div>
+        <div class="side-card-body" id="sourcesList"></div>
+      </div>
+      <div class="side-card">
+        <div class="side-card-header"><div class="side-card-title">Mots-clés actifs</div></div>
+        <div class="side-card-body">
+          <div class="kw-wrap" id="kwWrap"></div>
+          <div class="kw-input-row">
+            <input type="text" class="kw-input" id="kwInput" placeholder="Ajouter un mot-clé…" onkeydown="if(event.key==='Enter') addKw()">
+            <button class="btn-sm" onclick="addKw()">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="side-card">
+        <div class="side-card-header"><div class="side-card-title">Notifications</div></div>
+        <div class="side-card-body">
+          <div class="alert-row">
+            <div><div class="alert-name">Email quotidien</div><div class="alert-desc">Récap nouvelles opportunités</div></div>
+            <div class="toggle" id="tog1" onclick="toggleAlert(1)"></div>
+          </div>
+          <div class="alert-row">
+            <div><div class="alert-name">Alerte urgence</div><div class="alert-desc">Échéance &lt; 10 jours</div></div>
+            <div class="toggle" id="tog2" onclick="toggleAlert(2)"></div>
+          </div>
+          <div class="alert-row">
+            <div><div class="alert-name">Score ≥ 80</div><div class="alert-desc">Opportunités très pertinentes</div></div>
+            <div class="toggle" id="tog3" onclick="toggleAlert(3)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="ia-panel">
+        <div class="ia-title">Analyse IA</div>
+        <div class="ia-desc">Posez une question sur les opportunités visibles.</div>
+        <textarea class="ia-input" id="iaInput" placeholder="Ex: Quelles sont les priorités cette semaine ?" rows="3"></textarea>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="askIA()">Analyser →</button>
+        <div class="ia-response" id="iaResponse">En attente…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="opp-meta" id="modalTags"></div>
+        <div class="opp-title" id="modalTitle" style="font-family:'DM Serif Display',serif;font-size:22px;"></div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ─── DONNÉES DE DÉMO (fallback si JSON absent) ─────────────────────────────
+const DEMO_DATA = [
+  { id:"demo1", title:"Mission conseil en stratégie d'influence — Fédération Française de Rugby", source:"federation", sourceLabel:"FFR", types:["strategie","influence"], secteur:"Rugby", emetteur:"Fédération Française de Rugby", typeEmetteur:"Fédération sportive nationale", description:"La FFR cherche un prestataire pour définir sa stratégie d'influence auprès des pouvoirs publics dans le cadre du développement de la pratique féminine.", datePublication:"2025-03-18", dateLimite:"2025-04-08", budget:"40 000 – 70 000 €", contact:"daf@ffr.fr", nouvelle:true, urgent:true, score:95, lien:"https://www.ffr.fr", angles:["Expérience Ministère des Sports = légitimité directe","Expertise sport féminin très valorisable","Possible développement vers mission permanente"] },
+  { id:"demo2", title:"Appel d'offres — Accompagnement stratégique plan de communication institutionnel", source:"marche-public", sourceLabel:"BOAMP", types:["communication","affaires-publiques"], secteur:"Sport institutionnel", emetteur:"Agence nationale du Sport", typeEmetteur:"Établissement public", description:"L'ANS lance un appel d'offres pour la refonte de sa stratégie de communication externe et relations institutionnelles.", datePublication:"2025-03-15", dateLimite:"2025-04-05", budget:"80 000 – 120 000 €", contact:"marchespublics@agencedusport.fr", nouvelle:true, urgent:true, score:91, lien:"https://www.boamp.fr", angles:["Mission au cœur du métier Sideline","Connaissance du paysage ANS = avantage concurrentiel"] },
+  { id:"demo3", title:"Expression de besoin — Stratégie d'engagement sponsoring sport", source:"prive", sourceLabel:"CAC 40", types:["strategie","influence"], secteur:"Entreprise / Sponsoring", emetteur:"Groupe Société Générale", typeEmetteur:"Grande entreprise (CAC 40)", description:"La direction des affaires publiques et RSE cherche un regard externe pour repenser sa stratégie mécénat/sponsoring sportif.", datePublication:"2025-03-20", dateLimite:"2025-04-25", budget:"Sur devis — 60 000–100 000 €", contact:"Via LinkedIn", nouvelle:true, urgent:false, score:88, lien:null, angles:["Client transversal avec composante sport","Angle ESG/sport = nouvelle frontière des AP entreprises"] },
+  { id:"demo4", title:"Consultation — Stratégie de marque territoriale autour du sport", source:"marche-public", sourceLabel:"PLACE", types:["strategie","communication"], secteur:"Collectivité / Sport", emetteur:"Métropole Aix-Marseille-Provence", typeEmetteur:"Collectivité territoriale", description:"La métropole AMP souhaite construire une stratégie d'attractivité et d'influence territoriale autour de son écosystème sportif.", datePublication:"2025-03-10", dateLimite:"2025-04-15", budget:"50 000 – 90 000 €", contact:"dsi.appels-offres@ampmetropole.fr", nouvelle:false, urgent:false, score:82, lien:"https://www.marches-publics.gouv.fr", angles:["Croisement AP + stratégie sport + territoire = positioning Sideline idéal","Expérience Paris 2024 directement transposable"] },
+  { id:"demo5", title:"Appel à projets — Structuration d'une ligue professionnelle", source:"federation", sourceLabel:"CNOSF", types:["affaires-publiques","strategie"], secteur:"Gouvernance sportive", emetteur:"Fédération Française de Volleyball", typeEmetteur:"Fédération sportive nationale", description:"La FFVB explore la création d'une ligue professionnelle et cherche un conseil en affaires publiques pour les discussions avec le Ministère.", datePublication:"2025-03-12", dateLimite:"2025-05-02", budget:"30 000 – 55 000 €", contact:"president@ffvb.org", nouvelle:false, urgent:false, score:79, lien:"https://www.cnosf.org", angles:["Sujet au cœur de l'expertise Sideline : gouvernance + AP","Réseau Ministère Sports = valeur inégalable"] },
+];
+
+const SOURCES_LIST = [
+  { name:"BOAMP", cat:"Marchés publics", ok:true },
+  { name:"PLACE / marches-publics.gouv", cat:"Marchés publics", ok:true },
+  { name:"TED / JOUE Europe", cat:"Marchés européens", ok:true },
+  { name:"CNOSF", cat:"Fédérations nationales", ok:true },
+  { name:"Agence nationale du Sport", cat:"Établissements publics", ok:true },
+  { name:"FFR, FFF, FFVB…", cat:"Fédérations sportives", ok:true },
+  { name:"LinkedIn (mots-clés)", cat:"Expressions de besoin", ok:true },
+  { name:"Presse spécialisée sport", cat:"Signaux faibles", ok:true },
+];
+
+let TOUTES_OPPS = [];
+let VISIBLE_OPPS = [];
+let activeFilter = { type:'tous', source:'tous' };
+let keywords = JSON.parse(localStorage.getItem('sideline_kw') || '["affaires publiques","stratégie sport","sponsoring","influence","fédération","communication institutionnelle"]');
+let togStates = { 1:true, 2:true, 3:true };
+let modeDemo = true;
+
+// ─── INIT ──────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  renderSources();
+  renderKw();
+  chargerDonnees();
+  updateTimestamp();
+});
+
+function updateTimestamp() {
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent =
+    now.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
+    now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ─── CHARGEMENT DONNÉES ────────────────────────────────────────────────────
+async function chargerDonnees() {
+  document.getElementById('oppsList').innerHTML = '<div class="loading-state"><div class="spinner"></div><div>Chargement…</div></div>';
+  try {
+    const r = await fetch('data/opportunites.json?t=' + Date.now());
+    if (!r.ok) throw new Error('JSON absent');
+    TOUTES_OPPS = await r.json();
+    modeDemo = false;
+    document.getElementById('configBanner').style.display = 'none';
+  } catch {
+    TOUTES_OPPS = DEMO_DATA;
+    modeDemo = true;
+    document.getElementById('configBanner').style.display = 'flex';
+  }
+  updateTimestamp();
+  filterOpps();
+  renderSources();
+}
+
+// ─── RENDU LISTE ──────────────────────────────────────────────────────────
+function renderOpps(opps) {
+  const el = document.getElementById('oppsList');
+  if (!opps.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Aucun résultat</div><div class="empty-sub">Modifiez les filtres ou les mots-clés.</div></div>`;
+    return;
+  }
+  el.innerHTML = opps.map(o => {
+    const daysLeft = o.dateLimite ? Math.ceil((new Date(o.dateLimite) - new Date())/86400000) : null;
+    const urgCls = daysLeft !== null && daysLeft <= 15 ? 'deadline-near' : '';
+    const typeTags = (o.types||[]).map(t => {
+      const m = {'affaires-publiques':['tag-type-ap','AP'],'strategie':['tag-type-strat','Stratégie'],'communication':['tag-type-com','Com'],'influence':['tag-type-inf','Influence']};
+      return m[t] ? `<span class="tag ${m[t][0]}">${m[t][1]}</span>` : '';
+    }).join('');
+    const stars = '★'.repeat(Math.round((o.score||0)/20)) + '☆'.repeat(5-Math.round((o.score||0)/20));
+    return `<div class="opp-card ${o.nouvelle?'nouvelle':''}" onclick="openModal('${o.id}')">
+      <div class="opp-meta">
+        <span class="tag tag-source">${o.sourceLabel||'—'}</span>
+        ${typeTags}
+        <span class="tag tag-secteur">${o.secteur||'Sport'}</span>
+        ${o.urgent ? '<span class="tag tag-urgent">⚡ Urgent</span>' : ''}
+      </div>
+      <div class="opp-header">
+        <div class="opp-title">${o.title}</div>
+        <div class="score-badge"><span class="score-num">${o.score||'—'}</span><span style="color:var(--or);font-size:10px;letter-spacing:-2px">${stars}</span></div>
+      </div>
+      <div class="opp-body">${(o.description||'').substring(0,160)}…</div>
+      <div class="opp-footer">
+        <div class="opp-emetteur">${o.emetteur||''} <span>— ${o.typeEmetteur||''}</span></div>
+        <div class="opp-dates">
+          ${o.datePublication ? `<span><span style="opacity:.7">Publié</span> ${fmtDate(o.datePublication)}</span>` : ''}
+          ${daysLeft !== null ? `<span class="${urgCls}"><span style="opacity:.7">Limite</span> ${fmtDate(o.dateLimite)} (J-${daysLeft})</span>` : '<span style="opacity:.5">Pas de deadline</span>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function fmtDate(d) {
+  try { return new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}); }
+  catch { return d; }
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────
+function renderStats(opps) {
+  document.getElementById('statTotal').textContent = opps.length;
+  document.getElementById('statNouvelles').textContent = opps.filter(o=>o.nouvelle).length;
+  document.getElementById('statUrgentes').textContent = opps.filter(o=>{
+    if(!o.dateLimite) return false;
+    return Math.ceil((new Date(o.dateLimite)-new Date())/86400000) <= 15;
+  }).length;
+  const avg = opps.length ? Math.round(opps.reduce((s,o)=>s+(o.score||0),0)/opps.length) : 0;
+  document.getElementById('statScore').textContent = avg;
+  document.getElementById('statDelta').textContent = `+${opps.filter(o=>o.nouvelle).length} cette semaine`;
+}
+
+// ─── SOURCES ──────────────────────────────────────────────────────────────
+function renderSources() {
+  const counts = {};
+  TOUTES_OPPS.forEach(o => { counts[o.sourceLabel] = (counts[o.sourceLabel]||0)+1; });
+  document.getElementById('sourcesList').innerHTML = SOURCES_LIST.map(s => `
+    <div class="source-item">
+      <div><div class="source-name">${s.name}</div><div class="source-cat">${s.cat}</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${counts[s.name] ? `<span class="source-count">${counts[s.name]}</span>` : ''}
+        <span class="${s.ok?'source-ok':'source-warn'}">${s.ok?'●':'△'}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ─── KW ───────────────────────────────────────────────────────────────────
+function renderKw() {
+  document.getElementById('kwWrap').innerHTML = keywords.map((kw,i) =>
+    `<div class="kw-chip" onclick="removeKw(${i})">${kw} <span class="rm">×</span></div>`
+  ).join('');
+}
+function addKw() {
+  const v = document.getElementById('kwInput').value.trim();
+  if(v && !keywords.includes(v)) { keywords.push(v); saveKw(); renderKw(); }
+  document.getElementById('kwInput').value = '';
+}
+function removeKw(i) { keywords.splice(i,1); saveKw(); renderKw(); }
+function saveKw() { localStorage.setItem('sideline_kw', JSON.stringify(keywords)); }
+
+// ─── FILTRES ──────────────────────────────────────────────────────────────
+function setFilter(key, val) {
+  activeFilter[key] = val;
+  document.querySelectorAll('.filter-chip').forEach(el => {
+    const fn = el.getAttribute('onclick')||'';
+    if(fn.includes(`'${val}'`)) el.classList.add('active');
+    else if(fn.includes(`'${key}'`)) el.classList.remove('active');
+  });
+  filterOpps();
+}
+function filterOpps() {
+  const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  VISIBLE_OPPS = TOUTES_OPPS.filter(o => {
+    if(activeFilter.type !== 'tous' && !(o.types||[]).includes(activeFilter.type)) return false;
+    if(activeFilter.source !== 'tous' && o.source !== activeFilter.source) return false;
+    if(q && !o.title.toLowerCase().includes(q) && !(o.description||'').toLowerCase().includes(q) && !(o.emetteur||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  renderOpps(VISIBLE_OPPS);
+  renderStats(VISIBLE_OPPS);
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────
+function openModal(id) {
+  const o = TOUTES_OPPS.find(x => x.id == id);
+  if(!o) return;
+  const typeTags = (o.types||[]).map(t => {
+    const m = {'affaires-publiques':['tag-type-ap','Affaires Publiques'],'strategie':['tag-type-strat','Stratégie'],'communication':['tag-type-com','Communication'],'influence':['tag-type-inf','Influence']};
+    return m[t] ? `<span class="tag ${m[t][0]}">${m[t][1]}</span>` : '';
+  }).join('');
+  document.getElementById('modalTags').innerHTML = `<span class="tag tag-source">${o.sourceLabel||''}</span>${typeTags}<span class="tag tag-secteur">${o.secteur||'Sport'}</span>`;
+  document.getElementById('modalTitle').textContent = o.title;
+  const daysLeft = o.dateLimite ? Math.ceil((new Date(o.dateLimite)-new Date())/86400000) : null;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-text">${o.description||''}</div></div>
+    <div class="modal-section"><div class="info-grid">
+      <div class="info-item"><div class="info-item-label">Émetteur</div><div class="info-item-val">${o.emetteur||'—'}</div></div>
+      <div class="info-item"><div class="info-item-label">Type</div><div class="info-item-val">${o.typeEmetteur||'—'}</div></div>
+      <div class="info-item"><div class="info-item-label">Budget</div><div class="info-item-val">${o.budget||'À déterminer'}</div></div>
+      <div class="info-item"><div class="info-item-label">Score pertinence</div><div class="info-item-val" style="color:var(--or)">${o.score||'—'} / 100</div></div>
+      <div class="info-item"><div class="info-item-label">Publication</div><div class="info-item-val">${o.datePublication ? new Date(o.datePublication).toLocaleDateString('fr-FR') : '—'}</div></div>
+      <div class="info-item"><div class="info-item-label">Deadline</div><div class="info-item-val ${daysLeft && daysLeft<=15?'deadline-near':''}">${o.dateLimite ? new Date(o.dateLimite).toLocaleDateString('fr-FR')+(daysLeft?` (J-${daysLeft})`:'') : 'Non définie'}</div></div>
+    </div></div>
+    ${(o.angles||[]).length ? `<div class="modal-section"><div class="modal-section-title">Angles Sideline</div><ul class="angle-list">${o.angles.map(a=>`<li><span class="angle-icon">→</span>${a}</li>`).join('')}</ul></div>` : ''}
+    <div class="modal-section"><div class="modal-section-title">Contact / accès</div><div class="modal-text">${o.contact||'—'}${o.lien?` · <a href="${o.lien}" target="_blank" style="color:var(--or)">${o.lien}</a>`:''}</div></div>
+    <div style="display:flex;gap:10px;margin-top:24px">
+      ${o.lien ? `<a href="${o.lien}" target="_blank" class="btn btn-primary" style="flex:1;text-align:center;text-decoration:none">Ouvrir l'appel →</a>` : ''}
+      <button class="btn btn-outline" style="flex:1" onclick="closeModalDirect()">Fermer</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(e) { if(e.target===document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+// ─── TOGGLES ──────────────────────────────────────────────────────────────
+function toggleAlert(n) {
+  togStates[n] = !togStates[n];
+  document.getElementById('tog'+n).classList.toggle('off', !togStates[n]);
+}
+
+// ─── IA ───────────────────────────────────────────────────────────────────
+async function askIA() {
+  const q = document.getElementById('iaInput').value.trim();
+  if(!q) return;
+  const resp = document.getElementById('iaResponse');
+  resp.innerHTML = `<span style="color:var(--or);font-family:'DM Mono',monospace;font-size:11px;">Analyse<span class="dots"><span>.</span><span>.</span><span>.</span></span></span>`;
+  const context = VISIBLE_OPPS.slice(0,10).map(o =>
+    `- "${o.title}" | Score: ${o.score} | Budget: ${o.budget||'?'} | Deadline: ${o.dateLimite||'non définie'} | Types: ${(o.types||[]).join('/')}`
+  ).join('\n');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Tu es l'assistant stratégique de Sideline Conseil, agence de conseil en affaires publiques et intelligence stratégique spécialisée dans le sport, fondée par Cyril, ancien conseiller au Ministère des Sports et à la Présidence de la République (2014–2025), notamment autour des JO Paris 2024. Tu analyses des opportunités de marchés et exprimes des recommandations stratégiques concises, professionnelles et actionnables. Réponds en français, max 200 mots, sans formules de politesse.`,
+        messages:[{role:'user', content:`Opportunités actuellement visibles (${VISIBLE_OPPS.length} au total) :\n${context}\n\nQuestion : ${q}`}]
+      })
+    });
+    const data = await res.json();
+    resp.textContent = data.content?.map(c=>c.text||'').join('')||'Pas de réponse.';
+  } catch(e) {
+    resp.textContent = 'Erreur API. Vérifiez la configuration.';
+  }
+}
+</script>
+</body>
+</html>
