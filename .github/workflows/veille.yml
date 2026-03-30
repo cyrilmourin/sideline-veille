@@ -66,13 +66,17 @@ jobs:
             python scraper.py
           fi
 
-      # 7. Sauvegarder le JSON mis à jour sur Google Drive
-      - name: Sauvegarder opportunites.json sur Google Drive
-        env:
-          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
-          GDRIVE_FILE_ID:     ${{ secrets.GDRIVE_FILE_ID }}
-          GDRIVE_FOLDER_ID:   ${{ secrets.GDRIVE_FOLDER_ID }}
-        run: python scripts/gdrive_upload.py
+      # 7. Déposer le JSON sur le serveur Elementor via SFTP
+      - name: Déposer opportunites.json sur Elementor
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: ${{ secrets.SFTP_USER }}
+          server: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          local_path: ./data/opportunites.json
+          remote_path: /var/www/html/data/
+          sftp_only: true
 
       # 8. Archiver les logs en artefact GitHub (conservés 7 jours)
       - name: Archiver les logs
