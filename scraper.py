@@ -468,32 +468,32 @@ def recherche_google(query, label, type_source, nb_results=10):
         log.warning("[GOOGLE] Cle API non configuree — module desactive")
         return items
     params = {
-        "key":          GOOGLE_API_KEY,
-        "cx":           GOOGLE_CX,
-        "q":            query,
-        "num":          min(nb_results, 10),
-        "lr":           "lang_fr",
-        "dateRestrict": "m3",   # 3 derniers mois
+        "q":       query,
+        "api_key": SERPAPI_KEY,
+        "hl":      "fr",
+        "gl":      "fr",
+        "num":     min(nb_results, 10),
+        "tbs":     "qdr:m3",
     }
     try:
-        r = requests.get("https://www.googleapis.com/customsearch/v1", params=params, timeout=15)
+        r = requests.get("https://serpapi.com/search", params=params, timeout=15)
         r.raise_for_status()
-        resultats = r.json().get("items", [])
-        log.info(f"[GOOGLE] '{query[:50]}' -> {len(resultats)} resultats")
+        resultats = r.json().get("organic_results", [])
+        log.info(f"[SERPAPI] '{query[:50]}' -> {len(resultats)} resultats")
         for res in resultats:
             items.append({
                 "title":            res.get("title", ""),
                 "description":      res.get("snippet", ""),
                 "lien":             res.get("link", ""),
                 "date_publication": datetime.now().strftime("%Y-%m-%d"),
-                "source_id":        f"google_{hashlib.md5(query.encode()).hexdigest()[:6]}",
+                "source_id":        f"serpapi_{hashlib.md5(query.encode()).hexdigest()[:6]}",
                 "source_label":     label,
                 "type_source":      type_source,
                 "moteur":           "google",
             })
-        time.sleep(0.5)
+        time.sleep(1)
     except Exception as e:
-        log.warning(f"[GOOGLE] Erreur '{query[:40]}': {e}")
+        log.warning(f"[SERPAPI] Erreur '{query[:40]}': {e}")
     return items
 
 
