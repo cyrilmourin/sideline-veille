@@ -56,16 +56,18 @@ log = logging.getLogger(__name__)
 
 # ── Identifiants a renseigner ─────────────────────────────────────────────────
 EMAIL_CONFIG = {
-    "expediteur":   "cyrilmourin@gmail.com",
-    "smtp_login":   os.environ.get("GMAIL_USER", ""),
-    "mot_de_passe": os.environ.get("GMAIL_PASSWORD", ""),
-    "destinataire": os.environ.get("GMAIL_DESTINATAIRE", ""),
-    "smtp_host":    "smtp-relay.brevo.com",
+    "expediteur":   "votre.email@gmail.com",      # <- votre Gmail
+    "mot_de_passe": "xxxx xxxx xxxx xxxx",         # <- App Password 16 car.
+    "destinataire": "cyril@sideline-conseil.fr",   # <- destinataire
+    "smtp_host":    "smtp.gmail.com",
     "smtp_port":    587,
 }
 
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
-GOOGLE_CX      = os.environ.get("GOOGLE_CX", "")
+# Google Custom Search API — gratuit 100 requetes/jour
+# Creer sur   : https://programmablesearchengine.google.com/
+# Cle API     : https://console.cloud.google.com/ -> "Custom Search JSON API"
+GOOGLE_API_KEY = "VOTRE_CLE_API_GOOGLE"   # <- a remplacer
+GOOGLE_CX      = "VOTRE_ID_CSE"           # <- a remplacer
 
 
 # ─── MOTS-CLES ────────────────────────────────────────────────────────────────
@@ -151,7 +153,8 @@ LINKEDIN_QUERIES = [
 # ─── SOURCES RSS/HTML ─────────────────────────────────────────────────────────
 SOURCES = [
 
-    # ── MARCHES PUBLICS — Flux RSS CPV ───────────────────────────────────────
+    # ── MARCHES PUBLICS — Flux RSS CPV BOAMP ─────────────────────────────────
+    # CPV 79 = Conseil, communication, relations publiques
     {
         "id": "boamp_conseil",
         "label": "BOAMP — Conseil & communication (CPV 79)",
@@ -159,13 +162,15 @@ SOURCES = [
         "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=79000000",
         "parser": "rss",
     },
+    # CPV 73 = Recherche, etudes, expertise
     {
         "id": "boamp_rd",
-        "label": "BOAMP — R&D & etudes (CPV 73)",
+        "label": "BOAMP — Etudes & expertise (CPV 73)",
         "type": "marche-public",
         "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=73000000",
         "parser": "rss",
     },
+    # CPV 92 = Services sportifs, culturels, recreatifs
     {
         "id": "boamp_sport",
         "label": "BOAMP — Services sportifs (CPV 92)",
@@ -173,6 +178,7 @@ SOURCES = [
         "url": "https://www.boamp.fr/avis/flux-rss/?code_cpv=92000000",
         "parser": "rss",
     },
+    # TED Europe
     {
         "id": "ted_sport",
         "label": "TED/JOUE — Sport & conseil (EU)",
@@ -180,57 +186,73 @@ SOURCES = [
         "url": "https://ted.europa.eu/api/latest/notice/-/rss?q=sport+conseil+communication&scope=0&language=fr",
         "parser": "rss",
     },
+
+    # ── FRANCE MARCHES — Agregateur principal avec mots-cles Sideline ────────
+    # Source la plus fiable et la plus exhaustive — requete fournie par Cyril
     {
-        "id": "francemarches_sport",
-        "label": "France Marches — Sport & conseil",
+        "id": "francemarches_sideline",
+        "label": "France Marches — Sport & conseil (requete Sideline)",
         "type": "marche-public",
-        "url": "https://www.francemarches.com/rss/appels-offres?q=sport+conseil+communication",
+        "url": "https://www.francemarches.com/rss/appels-offres?q=%22sport%22+OU+%22sportif%22+OU+%22sportive%22+OU+%22Agence+Nationale+du+Sport%22+OU+%22Minist%C3%A8re+des+Sports%22&types%5B%5D=171&etat=en-cours",
         "parser": "rss",
     },
     {
         "id": "francemarches_sponsoring",
-        "label": "France Marches — Sponsoring sportif",
+        "label": "France Marches — Sponsoring & mecenat sportif",
         "type": "marche-public",
-        "url": "https://www.francemarches.com/rss/appels-offres?q=sponsoring+sportif",
+        "url": "https://www.francemarches.com/rss/appels-offres?q=sponsoring+sportif+OU+mecenat+sportif",
+        "parser": "rss",
+    },
+    {
+        "id": "francemarches_ap",
+        "label": "France Marches — Affaires publiques sport",
+        "type": "marche-public",
+        "url": "https://www.francemarches.com/rss/appels-offres?q=%22affaires+publiques%22+sport+OU+%22influence%22+sport",
         "parser": "rss",
     },
 
-    # ── INSTITUTIONS SPORTIVES NATIONALES ────────────────────────────────────
+    # ── PLATEFORMES MARCHES PUBLICS SPORT ────────────────────────────────────
+    # CNOSF — plateforme dediee aux marches du mouvement olympique
     {
-        "id": "cnosf",
-        "label": "CNOSF — Appels offres & projets",
+        "id": "cnosf_marches",
+        "label": "CNOSF — Plateforme marches publics",
         "type": "federation",
-        "url": "https://www.franceolympique.com/cat/26-appels_d_offres.html",
+        "url": "https://cnosf.e-marchespublics.com/pack/recherche_d_appels_d_offres_marches_publics_1_aapc___service_____1.html",
         "parser": "html",
-        "selector": "article, .news-item, .actu-item, li.item",
-        "title_sel": "h2, h3, .titre, a",
-        "desc_sel": "p, .chapeau, .resume",
+        "selector": "tr, .avis-item, article, .result-item",
+        "title_sel": "td, h2, h3, a",
+        "desc_sel": "td, p",
         "link_sel": "a",
+        "timeout": 10,
     },
+    # Agence Nationale du Sport
     {
         "id": "agence_sport",
-        "label": "Agence Nationale du Sport",
+        "label": "Agence Nationale du Sport — Marches publics",
         "type": "marche-public",
-        "url": "https://agencedusport.fr/appels-offres",
+        "url": "https://www.agencedusport.fr/marches-publics",
         "parser": "html",
-        "selector": ".views-row, article, .field-content",
+        "selector": ".views-row, article, .field-content, .card",
         "title_sel": "h2, h3, .views-field-title",
         "desc_sel": "p, .views-field-body",
         "link_sel": "a",
+        "timeout": 10,
     },
+    # Maximilien — portail marches publics Ile-de-France
     {
-        "id": "ministere_sports",
-        "label": "Ministere des Sports",
+        "id": "maximilien_sport",
+        "label": "Maximilien — Marches publics IDF (sport/conseil)",
         "type": "marche-public",
-        "url": "https://www.sports.gouv.fr/appels-a-projets",
+        "url": "https://marches.maximilien.fr/?page=Entreprise.EntrepriseAdvancedSearch&AllMots=sport+conseil&TypeMarche=S",
         "parser": "html",
-        "selector": "article, .node, .card",
-        "title_sel": "h2, h3, h1",
-        "desc_sel": "p, .field-body",
+        "selector": "tr.resultat, .avis, article, .marche-item",
+        "title_sel": "td, h2, h3, a",
+        "desc_sel": "td, p",
         "link_sel": "a",
+        "timeout": 15,
     },
 
-    # ── FEDERATIONS SPORTIVES ─────────────────────────────────────────────────
+    # ── FEDERATIONS SPORTIVES — URLs corrigees ────────────────────────────────
     {
         "id": "ffr",
         "label": "FFR — Federation Francaise de Rugby",
@@ -257,33 +279,33 @@ SOURCES = [
         "id": "ffbb",
         "label": "FFBB — Federation Francaise de Basketball",
         "type": "federation",
-        "url": "https://www.ffbb.com/ffbb/federation/appels-offres",
+        "url": "https://www.ffbb.com/consultations-mise-en-concurrence",
         "parser": "html",
-        "selector": "article, .news, .card",
+        "selector": "article, .news, .card, .consultation",
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
     },
     {
         "id": "ffhandball",
-        "label": "FFHandball — Federation Francaise de Handball",
+        "label": "FFHandball — Consultations & appels a candidature",
         "type": "federation",
-        "url": "https://www.ffhandball.fr/appels-offres/",
+        "url": "https://www.ffhandball.fr/vie-federale/documentation/consultations-appels-a-candidature/",
         "parser": "html",
-        "selector": "article, .post, .card",
+        "selector": "article, .post, .card, .document-item",
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
     },
     {
         "id": "ffvolley",
-        "label": "FFVolley — Federation Francaise de Volleyball",
+        "label": "FFVolley — Consultations",
         "type": "federation",
-        "url": "https://www.ffvb.org/la-federation/appels-doffres",
+        "url": "https://www.ffvb.org/360-37-1-CONSULTATIONS",
         "parser": "html",
-        "selector": "article, .item, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p",
+        "selector": "article, .item, .card, tr",
+        "title_sel": "h2, h3, td",
+        "desc_sel": "p, td",
         "link_sel": "a",
     },
     {
@@ -299,22 +321,22 @@ SOURCES = [
     },
     {
         "id": "fftennis",
-        "label": "FFT — Federation Francaise de Tennis",
+        "label": "FFT — Federation Francaise de Tennis — Consultations",
         "type": "federation",
-        "url": "https://www.fft.fr/la-fft/appels-doffres",
+        "url": "https://www.fft.fr/consultations",
         "parser": "html",
-        "selector": "article, .card, .item",
+        "selector": "article, .card, .item, .consultation",
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
     },
     {
         "id": "ffjudo",
-        "label": "FFJudo — Federation Francaise de Judo",
+        "label": "FFJudo — Consultations & appels offres",
         "type": "federation",
-        "url": "https://www.ffjudo.com/la-federation/appels-offres",
+        "url": "https://www.ffjudo.com/consultations-et-appels-doffre",
         "parser": "html",
-        "selector": "article, .card",
+        "selector": "article, .card, .item",
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
@@ -330,64 +352,59 @@ SOURCES = [
         "desc_sel": "p, .excerpt",
         "link_sel": "a",
     },
+    # FFA — actualites (pas de page dediee AO, on surveille les actus)
     {
-        "id": "ffathlétisme",
+        "id": "ffa",
         "label": "FFA — Federation Francaise d Athletisme",
         "type": "federation",
-        "url": "https://www.athle.fr/asp.net/main.html/html.aspx?htmlid=1",
+        "url": "https://www.athle.fr/actualites/",
         "parser": "html",
-        "selector": "article, .news-item",
+        "selector": "article, .news-item, .actu",
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
     },
 
     # ── LIGUES PROFESSIONNELLES ───────────────────────────────────────────────
+    # LFP — communiques (pas de page AO publique)
     {
         "id": "lfp",
         "label": "LFP — Ligue de Football Professionnel",
         "type": "prive",
-        "url": "https://www.lfp.fr/institutionnel/appels-offres",
+        "url": "https://www.lfp.fr/?category=communiques",
         "parser": "html",
-        "selector": "article, .card, .item",
+        "selector": "article, .card, .item, .communique",
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
     },
+    # LNR — actualites (pas de page AO publique)
     {
         "id": "lnr",
         "label": "LNR — Ligue Nationale de Rugby",
         "type": "prive",
-        "url": "https://www.lnr.fr/la-ligue/appels-offres",
+        "url": "https://www.lnr.fr/actualites/toutes",
         "parser": "html",
-        "selector": "article, .card",
+        "selector": "article, .card, .actu",
         "title_sel": "h2, h3",
         "desc_sel": "p",
         "link_sel": "a",
     },
 
-    # ── GRANDES COLLECTIVITES ─────────────────────────────────────────────────
+    # ── GRANDES COLLECTIVITES — Maximilien (IDF) ──────────────────────────────
+    # Maximilien = portail officiel marches publics Ile-de-France
+    # Recherche par mots-cles sport + conseil sur la salle des marches
     {
-        "id": "idf_sport",
-        "label": "Region Ile-de-France — Sport",
+        "id": "maximilien_sport2",
+        "label": "Maximilien IDF — Sport & communication",
         "type": "marche-public",
-        "url": "https://www.iledefrance.fr/appels-projets-appels-offres",
+        "url": "https://marches.maximilien.fr/?page=Entreprise.EntrepriseAdvancedSearch&AllMots=sport+communication&TypeMarche=S",
         "parser": "html",
-        "selector": ".views-row, article, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p",
+        "selector": "tr, .result, .avis, article",
+        "title_sel": "td, h2, h3, a",
+        "desc_sel": "td, p",
         "link_sel": "a",
-    },
-    {
-        "id": "paris_marches",
-        "label": "Ville de Paris — Marches publics",
-        "type": "marche-public",
-        "url": "https://www.paris.fr/pages/appels-d-offres-de-la-ville-de-paris-4992",
-        "parser": "html",
-        "selector": "article, .card, .list-item",
-        "title_sel": "h2, h3",
-        "desc_sel": "p",
-        "link_sel": "a",
+        "timeout": 15,
     },
 ]
 
@@ -419,7 +436,7 @@ def parse_html(source):
     items = []
     try:
         headers = {"User-Agent": "Mozilla/5.0 (compatible; SidelineVeille/2.0)"}
-        r = requests.get(source["url"], headers=headers, timeout=20)
+        r = requests.get(source["url"], headers=headers, timeout=source.get("timeout", 20))
         r.raise_for_status()
         soup = BeautifulSoup(r.text, "html.parser")
         cards = soup.select(source.get("selector", "article"))
@@ -740,7 +757,7 @@ def envoyer_email(html, nouvelles):
     try:
         with smtplib.SMTP(cfg["smtp_host"], cfg["smtp_port"]) as srv:
             srv.starttls()
-            srv.login(cfg["smtp_login"], cfg["mot_de_passe"])
+            srv.login(cfg["expediteur"], cfg["mot_de_passe"])
             srv.sendmail(cfg["expediteur"], cfg["destinataire"], msg.as_string())
         log.info(f"Email envoye -> {cfg['destinataire']}")
     except Exception as e:
