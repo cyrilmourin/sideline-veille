@@ -56,18 +56,19 @@ log = logging.getLogger(__name__)
 
 # ── Identifiants a renseigner ─────────────────────────────────────────────────
 EMAIL_CONFIG = {
-    "expediteur":   "votre.email@gmail.com",      # <- votre Gmail
-    "mot_de_passe": "xxxx xxxx xxxx xxxx",         # <- App Password 16 car.
-    "destinataire": "cyril@sideline-conseil.fr",   # <- destinataire
-    "smtp_host":    "smtp.gmail.com",
+    "expediteur":   "cyrilmourin@gmail.com",
+    "smtp_login":   os.environ.get("GMAIL_USER", ""),
+    "mot_de_passe": os.environ.get("GMAIL_PASSWORD", ""),
+    "destinataire": os.environ.get("GMAIL_DESTINATAIRE", ""),
+    "smtp_host":    "smtp-relay.brevo.com",
     "smtp_port":    587,
 }
 
 # Google Custom Search API — gratuit 100 requetes/jour
 # Creer sur   : https://programmablesearchengine.google.com/
 # Cle API     : https://console.cloud.google.com/ -> "Custom Search JSON API"
-GOOGLE_API_KEY = "VOTRE_CLE_API_GOOGLE"   # <- a remplacer
-GOOGLE_CX      = "VOTRE_ID_CSE"           # <- a remplacer
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
+GOOGLE_CX      = os.environ.get("GOOGLE_CX", "")
 
 
 # ─── MOTS-CLES ────────────────────────────────────────────────────────────────
@@ -476,7 +477,7 @@ def recherche_google(query, label, type_source, nb_results=10):
     Doc : https://developers.google.com/custom-search/v1/using_rest
     """
     items = []
-    if GOOGLE_API_KEY == "VOTRE_CLE_API_GOOGLE":
+    if not GOOGLE_API_KEY:
         log.warning("[GOOGLE] Cle API non configuree — module desactive")
         return items
     params = {
@@ -757,7 +758,7 @@ def envoyer_email(html, nouvelles):
     try:
         with smtplib.SMTP(cfg["smtp_host"], cfg["smtp_port"]) as srv:
             srv.starttls()
-            srv.login(cfg["expediteur"], cfg["mot_de_passe"])
+            srv.login(cfg["smtp_login"], cfg["mot_de_passe"])
             srv.sendmail(cfg["expediteur"], cfg["destinataire"], msg.as_string())
         log.info(f"Email envoye -> {cfg['destinataire']}")
     except Exception as e:
