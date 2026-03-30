@@ -237,7 +237,8 @@ SOURCES = [
         "title_sel": "h2, h3, .views-field-title",
         "desc_sel": "p, .views-field-body",
         "link_sel": "a",
-        "timeout": 10,
+        "timeout": 5,
+        "verify_ssl": False,
     },
     # Maximilien — portail marches publics Ile-de-France
     {
@@ -437,7 +438,7 @@ def parse_html(source):
     items = []
     try:
         headers = {"User-Agent": "Mozilla/5.0 (compatible; SidelineVeille/2.0)"}
-        r = requests.get(source["url"], headers=headers, timeout=source.get("timeout", 20))
+        r = requests.get(source["url"], headers=headers, timeout=source.get("timeout", 20), verify=source.get("verify_ssl", True))
         r.raise_for_status()
         soup = BeautifulSoup(r.text, "html.parser")
         cards = soup.select(source.get("selector", "article"))
