@@ -67,8 +67,7 @@ EMAIL_CONFIG = {
 # Google Custom Search API — gratuit 100 requetes/jour
 # Creer sur   : https://programmablesearchengine.google.com/
 # Cle API     : https://console.cloud.google.com/ -> "Custom Search JSON API"
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
-GOOGLE_CX      = os.environ.get("GOOGLE_CX", "")
+SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "")
 
 
 # ─── MOTS-CLES ────────────────────────────────────────────────────────────────
@@ -465,7 +464,7 @@ def recherche_google(query, label, type_source, nb_results=10):
     Doc : https://developers.google.com/custom-search/v1/using_rest
     """
     items = []
-    if not GOOGLE_API_KEY:
+    if not SERPAPI_KEY:
         log.warning("[GOOGLE] Cle API non configuree — module desactive")
         return items
     params = {
