@@ -50,9 +50,10 @@ def uploader(service, local_path, file_id=None, folder_id=None, nom_fichier=None
             return None
     else:
         # Création d'un nouveau fichier
-        meta = {"name": nom_fichier or Path(local_path).name}
-        if folder_id:
-            meta["parents"] = [folder_id]
+        meta = {
+    "name": nom_fichier or Path(local_path).name,
+    "parents": [folder_id] if folder_id else []
+}
         try:
             f = service.files().create(body=meta, media_body=media, fields="id").execute()
             new_id = f.get("id")
@@ -71,5 +72,6 @@ def uploader(service, local_path, file_id=None, folder_id=None, nom_fichier=None
 if __name__ == "__main__":
     service = get_service()
     if service:
-        uploader(service, "data/opportunites.json", FILE_ID, FOLDER_ID, "opportunites.json")
-        uploader(service, "data/seen_ids.json", SEEN_FILE_ID, FOLDER_ID, "seen_ids.json")
+folder = FOLDER_ID or os.environ.get("GDRIVE_FOLDER_ID", "")
+uploader(service, "data/opportunites.json", FILE_ID, folder, "opportunites.json")
+uploader(service, "data/seen_ids.json", SEEN_FILE_ID, folder, "seen_ids.json")

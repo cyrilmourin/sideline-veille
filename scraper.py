@@ -188,7 +188,7 @@ SOURCES = [
         "parser": "rss",
     },
 
-    # ── FRANCE MARCHES — Agregateur principal avec mots-cles Sideline ────────
+    # ── FRANCE MARCHES — Agregateur principal avec mots-cles Sideline ───────Et fou
     # Source la plus fiable et la plus exhaustive — requete fournie par Cyril
     {
         "id": "francemarches_sideline",
