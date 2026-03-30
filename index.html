@@ -350,7 +350,8 @@ function updateTimestamp() {
 async function chargerDonnees() {
   document.getElementById('oppsList').innerHTML = '<div class="loading-state"><div class="spinner"></div><div>Chargement…</div></div>';
   try {
-    const r = await fetch('data/opportunites.json?t=' + Date.now());
+    const r = await 
+fetch('https://raw.githubusercontent.com/cyrilmourin/sideline-veille/main/data/opportunites.json?t=data/opportunites.json?t=' + Date.now());
     if (!r.ok) throw new Error('JSON absent');
     TOUTES_OPPS = await r.json();
     modeDemo = false;
