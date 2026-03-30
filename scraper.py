@@ -59,7 +59,7 @@ EMAIL_CONFIG = {
     "expediteur":   os.environ.get("GMAIL_USER", ""),
     "mot_de_passe": os.environ.get("GMAIL_PASSWORD", ""),
     "destinataire": os.environ.get("GMAIL_DESTINATAIRE", ""),
-    "smtp_host":    "smtp.gmail.com",
+    "smtp_host":    "smtp-relay.brevo.com",
     "smtp_port":    587,
 }
 
