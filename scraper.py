@@ -56,18 +56,15 @@ log = logging.getLogger(__name__)
 
 # ── Identifiants a renseigner ─────────────────────────────────────────────────
 EMAIL_CONFIG = {
-    "expediteur":   "votre.email@gmail.com",      # <- votre Gmail
-    "mot_de_passe": "xxxx xxxx xxxx xxxx",         # <- App Password 16 car.
-    "destinataire": "cyril@sideline-conseil.fr",   # <- destinataire
+    "expediteur":   os.environ.get("GMAIL_USER", ""),
+    "mot_de_passe": os.environ.get("GMAIL_PASSWORD", ""),
+    "destinataire": os.environ.get("GMAIL_DESTINATAIRE", ""),
     "smtp_host":    "smtp.gmail.com",
     "smtp_port":    587,
 }
 
-# Google Custom Search API — gratuit 100 requetes/jour
-# Creer sur   : https://programmablesearchengine.google.com/
-# Cle API     : https://console.cloud.google.com/ -> "Custom Search JSON API"
-GOOGLE_API_KEY = "VOTRE_CLE_API_GOOGLE"   # <- a remplacer
-GOOGLE_CX      = "VOTRE_ID_CSE"           # <- a remplacer
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
+GOOGLE_CX      = os.environ.get("GOOGLE_CX", "")
 
 
 # ─── MOTS-CLES ────────────────────────────────────────────────────────────────
