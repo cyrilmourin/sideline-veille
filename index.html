@@ -559,10 +559,8 @@ function toggleAlert(n) {
 
 // ─── CLE API ──────────────────────────────────────────────────────────────
 function getApiKey() {
-  // Priorité 1 : config.js généré par GitHub Actions
-  if(window.SIDELINE_CONFIG && window.SIDELINE_CONFIG.anthropicKey)
-    return window.SIDELINE_CONFIG.anthropicKey;
-  // Priorité 2 : localStorage (saisie manuelle)
+  // La clé est gérée par le worker Cloudflare — on vérifie juste config.js pour le statut
+  if(window.SIDELINE_CONFIG && window.SIDELINE_CONFIG.anthropicKey) return 'configured';
   return localStorage.getItem('sideline_anthropic_key') || '';
 }
 function saveApiKey() {
@@ -591,15 +589,13 @@ function buildContext(opps) {
 }
 
 async function callIA(prompt) {
-  const key = getApiKey();
-  if(!key) { configureApiKey(); return; }
   const resp = document.getElementById('iaResponse');
   resp.innerHTML = `<span style="color:var(--or);font-family:'DM Mono',monospace;font-size:11px;">Analyse en cours…</span>`;
   const context = buildContext(VISIBLE_OPPS);
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://sideline-ia.cyrilmourin.workers.dev', {
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:800,
