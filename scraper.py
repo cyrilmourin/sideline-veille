@@ -320,20 +320,11 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 15,
     },
-    # Agence Nationale du Sport
-    {
-        "id": "agence_sport",
-        "label": "Agence Nationale du Sport — Marches publics",
-        "type": "marche-public",
-        "url": "https://www.agencedusport.fr/marches-publics",
-        "parser": "html",
-        "selector": ".views-row, article, .field-content, .card",
-        "title_sel": "h2, h3, .views-field-title",
-        "desc_sel": "p, .views-field-body",
-        "link_sel": "a",
-        "timeout": 8,
-        "verify_ssl": False,
-    },
+    # Agence Nationale du Sport — timeout depuis GitHub Actions, couverte par SerpAPI
+    # {
+    #     "id": "agence_sport",
+    #     "url": "https://www.agencedusport.fr/marches-publics",
+    # },
     # Maximilien IDF — sport + conseil
     {
         "id": "maximilien_sport",
@@ -569,19 +560,7 @@ SOURCES = [
         "url": "https://www.lecafedusportbiz.fr/feed/",
         "parser": "rss",
     },
-    # Strategies — media pro communication/marketing (signaux agences, appels d'offres)
-    {
-        "id": "strategies_actu",
-        "label": "Strategies — Communication & marketing",
-        "type": "prive",
-        "url": "https://www.strategies.fr/actualites/",
-        "parser": "html",
-        "selector": "article, .article-item, .card, .news-item",
-        "title_sel": "h2, h3, .article-title",
-        "desc_sel": "p, .article-desc, .excerpt",
-        "link_sel": "a",
-        "timeout": 10,
-    },
+    # Strategies.fr — 403 bloque depuis GitHub Actions, couverte par SerpAPI
     # Kingcom — veille communication institutionnelle et publique (fonctionne)
     {
         "id": "kingcom_actu",
@@ -624,19 +603,8 @@ SOURCES = [
     # ══════════════════════════════════════════════════════════════════════════
 
     # CIO — 403 bloque, desactive
-    # FIFA — URL corrigee
-    {
-        "id": "fifa_news",
-        "label": "FIFA — Actualites",
-        "type": "prive",
-        "url": "https://www.fifa.com/fr/football-development/news",
-        "parser": "html",
-        "selector": "article, .news-item, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 15,
-    },
+    # FIFA — URL inaccessible depuis GitHub Actions, desactivee
+    # ANS — timeout depuis GitHub Actions, couverte par SerpAPI, desactivee
     # UEFA — timeout, desactivee
     # NBA — fonctionne
     {
@@ -891,6 +859,16 @@ def deduire_types(item):
 def generer_id(item):
     return hashlib.md5((item.get("title","") + item.get("source_id","")).encode()).hexdigest()[:12]
 
+def _parse_date(date_str):
+    """Parse une date quelle que soit son format RSS ou ISO."""
+    if not date_str:
+        return datetime(2000, 1, 1)
+    s = str(date_str)[:10]
+    try:
+        return datetime.strptime(s, "%Y-%m-%d")
+    except ValueError:
+        return datetime(2000, 1, 1)
+
 def est_urgent(date_limite):
     if not date_limite:
         return False
@@ -1131,7 +1109,7 @@ def lancer_veille(test_mode=False, only=None):
     toutes = nouvelles_opps + opps_existantes
     cutoff = datetime.now() - timedelta(days=90)
     toutes = [o for o in toutes if not o.get("source_auto") or
-              datetime.strptime(o.get("datePublication","2000-01-01")[:10], "%Y-%m-%d") > cutoff]
+              _parse_date(o.get("datePublication","2000-01-01")) > cutoff]
     toutes = sorted(toutes, key=lambda x: x["score"], reverse=True)[:200]
 
     sauvegarder_donnees(toutes)
