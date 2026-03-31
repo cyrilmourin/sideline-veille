@@ -626,6 +626,116 @@ SOURCES = [
         "url": "https://www.sportbuzzbusiness.fr/feed/",
         "parser": "rss",
     },
+    # Sport Strategies — media pro sport business France
+    {
+        "id": "sport_strategies",
+        "label": "Sport Strategies — Actualites sport business",
+        "type": "prive",
+        "url": "https://www.sportstrategies.com/actualite/",
+        "parser": "html",
+        "selector": "article, .post, .card, .news-item",
+        "title_sel": "h2, h3, .entry-title",
+        "desc_sel": "p, .excerpt, .entry-summary",
+        "link_sel": "a",
+        "timeout": 10,
+    },
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # COUCHE 4 — ACTEURS INTERNATIONAUX (flux actualites — signaux faibles)
+    # Pas d'AO publics directs — surveillance actus pour detecter besoins
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # CIO — Comite International Olympique
+    {
+        "id": "cio_news",
+        "label": "CIO — Actualites olympiques",
+        "type": "prive",
+        "url": "https://olympics.com/ioc/news",
+        "parser": "html",
+        "selector": "article, .news-card, .card, .news-item",
+        "title_sel": "h2, h3, .card-title",
+        "desc_sel": "p, .card-desc, .excerpt",
+        "link_sel": "a",
+        "timeout": 15,
+    },
+    # FIFA — Actualites
+    {
+        "id": "fifa_news",
+        "label": "FIFA — Actualites",
+        "type": "prive",
+        "url": "https://www.fifa.com/about-fifa/news",
+        "parser": "html",
+        "selector": "article, .news-item, .card",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 15,
+    },
+    # UEFA — Actualites
+    {
+        "id": "uefa_news",
+        "label": "UEFA — Actualites",
+        "type": "prive",
+        "url": "https://www.uefa.com/news/",
+        "parser": "html",
+        "selector": "article, .news-item, .card",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 15,
+    },
+    # NBA — actualites (signaux marche europeen / France)
+    {
+        "id": "nba_news",
+        "label": "NBA — Actualites",
+        "type": "prive",
+        "url": "https://www.nba.com/news",
+        "parser": "html",
+        "selector": "article, .ArticleTile, .card",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 15,
+    },
+    # Roland Garros — actualites
+    {
+        "id": "roland_garros",
+        "label": "Roland Garros — Actualites",
+        "type": "prive",
+        "url": "https://www.rolandgarros.com/fr-fr/article",
+        "parser": "html",
+        "selector": "article, .news-card, .card",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 15,
+    },
+    # Tour de France — actualites (ASO)
+    {
+        "id": "tour_de_france",
+        "label": "Tour de France — Actualites ASO",
+        "type": "prive",
+        "url": "https://www.letour.fr/fr/actualites",
+        "parser": "html",
+        "selector": "article, .news-item, .card",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 15,
+    },
+    # F1 — actualites (partenariats / Grand Prix France)
+    {
+        "id": "f1_news",
+        "label": "F1 — Actualites",
+        "type": "prive",
+        "url": "https://www.formula1.com/en/latest/all.html",
+        "parser": "html",
+        "selector": "article, .article-card, .card",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 15,
+    },
 
     # ── LIGUES PROFESSIONNELLES ───────────────────────────────────────────────
     {
