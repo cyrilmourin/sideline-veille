@@ -80,9 +80,7 @@ jobs:
         run: |
           git config user.name "Sideline Veille Bot"
           git config user.email "cyrilmourin@gmail.com"
-          # Générer config.js avec la clé API Anthropic
-          echo "window.SIDELINE_CONFIG = { anthropicKey: '${{ secrets.ANTHROPIC_API_KEY }}' };" > data/config.js
-          git add data/opportunites.json data/seen_ids.json data/config.js || true
+          git add data/opportunites.json data/seen_ids.json || true
           git diff --staged --quiet || git commit -m "data: mise a jour opportunites [skip ci]"
           git push
 
