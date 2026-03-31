@@ -6,6 +6,7 @@
 <title>Sideline Veille — Marchés & Opportunités</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://raw.githubusercontent.com/cyrilmourin/sideline-veille/main/data/config.js" onerror="console.warn('config.js non disponible')"></script>
 <style>
   :root {
     --noir: #0d0d0d;
@@ -285,17 +286,24 @@
         </div>
       </div>
       <div class="ia-panel">
-        <div class="ia-title">Analyse IA</div>
-        <div class="ia-desc">Posez une question sur les opportunités visibles.</div>
+        <div class="ia-title">Analyse IA <span id="iaKeyStatus" style="font-size:10px;font-family:'DM Mono',monospace;color:#4caf7d;margin-left:8px;"></span></div>
+        <div class="ia-desc">Posez une question ou utilisez les raccourcis ci-dessous.</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button class="btn btn-dark" style="flex:1;font-size:11px;padding:8px 6px;" onclick="askRaccourci('nouveautes')">📋 Analyse nouveautés</button>
+          <button class="btn btn-dark" style="flex:1;font-size:11px;padding:8px 6px;" onclick="askRaccourci('recommandations')">🎯 Recommandations</button>
+        </div>
         <textarea class="ia-input" id="iaInput" placeholder="Ex: Quelles sont les priorités cette semaine ?" rows="3"></textarea>
-        <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="askIA()">Analyser →</button>
-        <div class="ia-response" id="iaResponse">En attente…</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="askIA()">Analyser →</button>
+          <button class="btn btn-dark" style="padding:10px 12px;" onclick="configureApiKey()" title="Configurer la clé API">⚙️</button>
+        </div>
+        <div class="ia-response" id="iaResponse">Configurez votre clé API Anthropic pour activer l'analyse IA.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL OPPORTUNITE -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-header">
@@ -306,6 +314,25 @@
       <button class="modal-close" onclick="closeModalDirect()">✕</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- MODAL CLE API -->
+<div class="modal-overlay" id="apiKeyOverlay" onclick="closeApiModal(event)" style="display:none">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div class="opp-title" style="font-family:'DM Serif Display',serif;font-size:20px;">Clé API Anthropic</div>
+      <button class="modal-close" onclick="document.getElementById('apiKeyOverlay').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.6;">Entrez votre clé API Anthropic pour activer l'analyse IA. Elle sera stockée uniquement dans votre navigateur.</p>
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%;padding:10px 14px;border:1.5px solid var(--gris-clair);border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;margin-bottom:16px;outline:none;">
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="saveApiKey()">Enregistrer</button>
+        <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('apiKeyOverlay').style.display='none'">Annuler</button>
+      </div>
+      <p style="font-size:11px;color:#aaa;margin-top:12px;font-family:'DM Mono',monospace;">Créez une clé sur console.anthropic.com → API Keys</p>
+    </div>
   </div>
 </div>
 
@@ -530,32 +557,83 @@ function toggleAlert(n) {
   document.getElementById('tog'+n).classList.toggle('off', !togStates[n]);
 }
 
+// ─── CLE API ──────────────────────────────────────────────────────────────
+function getApiKey() {
+  // Priorité 1 : config.js généré par GitHub Actions
+  if(window.SIDELINE_CONFIG && window.SIDELINE_CONFIG.anthropicKey)
+    return window.SIDELINE_CONFIG.anthropicKey;
+  // Priorité 2 : localStorage (saisie manuelle)
+  return localStorage.getItem('sideline_anthropic_key') || '';
+}
+function saveApiKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if(!k.startsWith('sk-ant-')) { alert('Clé invalide — elle doit commencer par sk-ant-'); return; }
+  localStorage.setItem('sideline_anthropic_key', k);
+  document.getElementById('apiKeyOverlay').style.display = 'none';
+  updateKeyStatus();
+}
+function configureApiKey() {
+  document.getElementById('apiKeyInput').value = getApiKey();
+  document.getElementById('apiKeyOverlay').style.display = 'flex';
+}
+function closeApiModal(e) { if(e.target===document.getElementById('apiKeyOverlay')) document.getElementById('apiKeyOverlay').style.display='none'; }
+function updateKeyStatus() {
+  const el = document.getElementById('iaKeyStatus');
+  if(getApiKey()) { el.textContent = '● Active'; el.style.color = '#4caf7d'; }
+  else { el.textContent = '○ Non configurée'; el.style.color = '#b84040'; }
+}
+
 // ─── IA ───────────────────────────────────────────────────────────────────
-async function askIA() {
-  const q = document.getElementById('iaInput').value.trim();
-  if(!q) return;
-  const resp = document.getElementById('iaResponse');
-  resp.innerHTML = `<span style="color:var(--or);font-family:'DM Mono',monospace;font-size:11px;">Analyse<span class="dots"><span>.</span><span>.</span><span>.</span></span></span>`;
-  const context = VISIBLE_OPPS.slice(0,10).map(o =>
-    `- "${o.title}" | Score: ${o.score} | Budget: ${o.budget||'?'} | Deadline: ${o.dateLimite||'non définie'} | Types: ${(o.types||[]).join('/')}`
+function buildContext(opps) {
+  return opps.slice(0,15).map(o =>
+    `- "${o.title}" | Source: ${o.sourceLabel} | Score: ${o.score} | Budget: ${o.budget||'?'} | Deadline: ${o.dateLimite||'non définie'} | Types: ${(o.types||[]).join('/')}`
   ).join('\n');
+}
+
+async function callIA(prompt) {
+  const key = getApiKey();
+  if(!key) { configureApiKey(); return; }
+  const resp = document.getElementById('iaResponse');
+  resp.innerHTML = `<span style="color:var(--or);font-family:'DM Mono',monospace;font-size:11px;">Analyse en cours…</span>`;
+  const context = buildContext(VISIBLE_OPPS);
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:`Tu es l'assistant stratégique de Sideline Conseil, agence de conseil en affaires publiques et intelligence stratégique spécialisée dans le sport, fondée par Cyril, ancien conseiller au Ministère des Sports et à la Présidence de la République (2014–2025), notamment autour des JO Paris 2024. Tu analyses des opportunités de marchés et exprimes des recommandations stratégiques concises, professionnelles et actionnables. Réponds en français, max 200 mots, sans formules de politesse.`,
-        messages:[{role:'user', content:`Opportunités actuellement visibles (${VISIBLE_OPPS.length} au total) :\n${context}\n\nQuestion : ${q}`}]
+        max_tokens:800,
+        system:`Tu es l'assistant stratégique de Sideline Conseil, cabinet de conseil en affaires publiques et intelligence stratégique spécialisé dans le sport, fondé par Cyril Mourin, ancien conseiller au Ministère des Sports et à la Présidence de la République (2014–2025), très impliqué dans Paris 2024. Tu analyses des opportunités de marchés sportifs et formules des recommandations stratégiques concises, professionnelles et actionnables. Réponds en français, max 250 mots, en markdown simple (pas de titres lourds). Sois direct et concret.`,
+        messages:[{role:'user', content:`Opportunités visibles (${VISIBLE_OPPS.length} au total, top 15 ci-dessous) :\n${context}\n\n${prompt}`}]
       })
     });
     const data = await res.json();
-    resp.textContent = data.content?.map(c=>c.text||'').join('')||'Pas de réponse.';
+    if(data.error) { resp.textContent = `Erreur : ${data.error.message}`; return; }
+    const txt = data.content?.map(c=>c.text||'').join('')||'Pas de réponse.';
+    resp.innerHTML = txt.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');
   } catch(e) {
-    resp.textContent = 'Erreur API. Vérifiez la configuration.';
+    resp.textContent = 'Erreur de connexion à l\'API.';
   }
 }
+
+function askIA() {
+  const q = document.getElementById('iaInput').value.trim();
+  if(!q) return;
+  callIA(`Question : ${q}`);
+}
+
+function askRaccourci(type) {
+  const nouvelles = VISIBLE_OPPS.filter(o=>o.nouvelle);
+  if(type === 'nouveautes') {
+    if(!nouvelles.length) { document.getElementById('iaResponse').textContent = 'Aucune nouvelle opportunité détectée aujourd\'hui.'; return; }
+    callIA(`Analyse les ${nouvelles.length} nouvelles opportunités détectées aujourd'hui. Pour chacune des plus significatives (max 3), donne : le contexte de l'émetteur, ce que ça signale sur le marché, et pourquoi Sideline devrait ou non s'y intéresser. Sois synthétique et stratégique.`);
+  } else if(type === 'recommandations') {
+    callIA(`Pour les 3 meilleures opportunités visibles (les mieux scorées), propose une approche commerciale concrète pour Sideline Conseil : angle d'entrée spécifique, timing optimal, message clé à faire passer, et un point de vigilance. Capitalise sur le profil de Cyril Mourin (ex-Élysée, Ministère Sports, Paris 2024).`);
+  }
+}
+
+// Init clé status
+updateKeyStatus();
 </script>
 </body>
 </html>

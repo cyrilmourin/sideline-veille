@@ -1,10 +1,9 @@
 name: Sideline Veille — Scraping quotidien
 
 on:
-  # Lancement automatique tous les jours à 7h00 UTC (= 8h00 Paris heure d'été)
   schedule:
+    # RSS/HTML tous les jours à 8h00 Paris (7h UTC été)
     - cron: '0 7 * * *'
-  # Permet aussi de lancer manuellement depuis l'interface GitHub
   workflow_dispatch:
     inputs:
       mode:
@@ -15,66 +14,78 @@ on:
         options:
           - normal
           - test
+      only:
+        description: 'Moteur uniquement (optionnel)'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - rss
+          - google
+          - linkedin
 
 jobs:
   veille:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
-      # 1. Récupérer le code du dépôt
       - name: Checkout du dépôt
         uses: actions/checkout@v4
 
-      # 2. Installer Python
       - name: Installer Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
 
-      # 3. Installer les dépendances
       - name: Installer les dépendances Python
         run: pip install -r requirements.txt
 
-      # 4. Créer les dossiers nécessaires
       - name: Préparer l'arborescence
+        run: mkdir -p data logs
+
+      - name: Restaurer données depuis le dépôt
         run: |
-          mkdir -p data logs
+          git config user.name "Sideline Veille Bot"
+          git config user.email "cyrilmourin@gmail.com"
+          echo "Données existantes conservées depuis le dépôt"
+        continue-on-error: true
 
-      # 5. Restaurer les données existantes depuis Google Drive
-      - name: Restaurer opportunites.json depuis Google Drive
-        env:
-          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
-          GDRIVE_FILE_ID: ${{ secrets.GDRIVE_FILE_ID }}
-        run: python scripts/gdrive_download.py
-        continue-on-error: true  # pas bloquant si le fichier n'existe pas encore
-
-      # 6. Lancer la veille
       - name: Lancer le scraper
         env:
-          GMAIL_USER:        ${{ secrets.GMAIL_USER }}
-          GMAIL_PASSWORD:    ${{ secrets.GMAIL_PASSWORD }}
+          GMAIL_USER:         ${{ secrets.GMAIL_USER }}
+          GMAIL_PASSWORD:     ${{ secrets.GMAIL_PASSWORD }}
           GMAIL_DESTINATAIRE: ${{ secrets.GMAIL_DESTINATAIRE }}
-          SERPAPI_KEY:       ${{ secrets.SERPAPI_KEY }}
-          RUN_MODE:          ${{ github.event.inputs.mode || 'normal' }}
+          SERPAPI_KEY:        ${{ secrets.SERPAPI_KEY }}
+          RUN_MODE:           ${{ github.event.inputs.mode || 'normal' }}
+          ONLY_MODE:          ${{ github.event.inputs.only || '' }}
         run: |
-          if [ "$RUN_MODE" = "test" ]; then
+          # SerpAPI uniquement le lundi (1) et jeudi (4)
+          DAY=$(date +%u)
+          if [ "$ONLY_MODE" != "" ]; then
+            python scraper.py --only $ONLY_MODE
+          elif [ "$RUN_MODE" = "test" ]; then
             python scraper.py --test
-          else
+          elif [ "$DAY" = "1" ] || [ "$DAY" = "4" ]; then
+            echo "Jour SerpAPI (lundi ou jeudi) — veille complete"
             python scraper.py
+          else
+            echo "Jour RSS uniquement"
+            python scraper.py --only rss
           fi
 
-      # 7. Commiter le JSON mis à jour dans le dépôt
       - name: Sauvegarder opportunites.json dans le dépôt
         run: |
           git config user.name "Sideline Veille Bot"
           git config user.email "cyrilmourin@gmail.com"
-          git add data/opportunites.json data/seen_ids.json || true
+          # Générer config.js avec la clé API Anthropic
+          echo "window.SIDELINE_CONFIG = { anthropicKey: '${{ secrets.ANTHROPIC_API_KEY }}' };" > data/config.js
+          git add data/opportunites.json data/seen_ids.json data/config.js || true
           git diff --staged --quiet || git commit -m "data: mise a jour opportunites [skip ci]"
           git push
 
-      # 8. Archiver les logs en artefact GitHub (conservés 7 jours)
       - name: Archiver les logs
         uses: actions/upload-artifact@v4
         if: always()
