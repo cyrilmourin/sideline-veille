@@ -236,6 +236,11 @@
     <button class="filter-chip" onclick="setFilter('source','marche-public')">Marchés publics</button>
     <button class="filter-chip" onclick="setFilter('source','federation')">Fédérations</button>
     <button class="filter-chip" onclick="setFilter('source','prive')">Privé</button>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Trier par</span>
+    <button class="filter-chip sort-chip active" onclick="setSort('score')">Note ↓</button>
+    <button class="filter-chip sort-chip" onclick="setSort('date')">Date ↓</button>
+    <button class="filter-chip sort-chip" onclick="setSort('titre')">Titre A→Z</button>
   </div>
 
   <div class="main-grid">
@@ -327,6 +332,7 @@ const SOURCES_LIST = [
 let TOUTES_OPPS = [];
 let VISIBLE_OPPS = [];
 let activeFilter = { type:'tous', source:'tous' };
+let activeSort = 'score';
 let keywords = JSON.parse(localStorage.getItem('sideline_kw') || '["affaires publiques","stratégie sport","sponsoring","influence","fédération","communication institutionnelle"]');
 let togStates = { 1:true, 2:true, 3:true };
 let modeDemo = true;
@@ -350,8 +356,7 @@ function updateTimestamp() {
 async function chargerDonnees() {
   document.getElementById('oppsList').innerHTML = '<div class="loading-state"><div class="spinner"></div><div>Chargement…</div></div>';
   try {
-    const r = await 
-fetch('https://raw.githubusercontent.com/cyrilmourin/sideline-veille/main/data/opportunites.json?t=data/opportunites.json?t=' + Date.now());
+    const r = await fetch('data/opportunites.json?t=' + Date.now());
     if (!r.ok) throw new Error('JSON absent');
     TOUTES_OPPS = await r.json();
     modeDemo = false;
@@ -451,6 +456,13 @@ function removeKw(i) { keywords.splice(i,1); saveKw(); renderKw(); }
 function saveKw() { localStorage.setItem('sideline_kw', JSON.stringify(keywords)); }
 
 // ─── FILTRES ──────────────────────────────────────────────────────────────
+function setSort(val) {
+  activeSort = val;
+  document.querySelectorAll('.sort-chip').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('onclick').includes(`'${val}'`));
+  });
+  filterOpps();
+}
 function setFilter(key, val) {
   activeFilter[key] = val;
   document.querySelectorAll('.filter-chip').forEach(el => {
@@ -467,6 +479,13 @@ function filterOpps() {
     if(activeFilter.source !== 'tous' && o.source !== activeFilter.source) return false;
     if(q && !o.title.toLowerCase().includes(q) && !(o.description||'').toLowerCase().includes(q) && !(o.emetteur||'').toLowerCase().includes(q)) return false;
     return true;
+  });
+  // Tri
+  VISIBLE_OPPS.sort((a, b) => {
+    if(activeSort === 'score') return (b.score||0) - (a.score||0);
+    if(activeSort === 'date') return new Date(b.datePublication||'2000-01-01') - new Date(a.datePublication||'2000-01-01');
+    if(activeSort === 'titre') return (a.title||'').localeCompare(b.title||'', 'fr');
+    return 0;
   });
   renderOpps(VISIBLE_OPPS);
   renderStats(VISIBLE_OPPS);
