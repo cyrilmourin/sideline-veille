@@ -149,7 +149,7 @@ GOOGLE_QUERIES = [
     # Marches publics sport + conseil (requetes combinées)
     ("sport federation conseil strategie prestation appel offres", "marche-public", "SerpAPI — Sport+conseil AO"),
     ("sport communication relations presse appel offres marche public", "marche-public", "SerpAPI — Sport+com AO"),
-    ("federation sportive appel offres prestataire 2026", "federation", "SerpAPI — Federations AO"),
+    ("site:lalettre.fr OR site:strategies.fr OR site:uefa.com OR site:olympics.com sport conseil communication strategie", "prive", "SerpAPI — Medias bloques sport"),
     # Institutions cles + Alpes 2030
     ("appel offres site:agencedusport.fr OR site:sports.gouv.fr OR site:marches2030.org", "marche-public", "SerpAPI — ANS+Ministere+2030"),
     # Signaux prives — entreprises cherchant agence sport
@@ -480,7 +480,7 @@ SOURCES = [
         "id": "ffhandisport",
         "label": "FF Handisport — Consultations",
         "type": "federation",
-        "url": "https://www.handisport.org/la-federation/appels-offres/",
+        "url": "https://www.handisport.org/category/vie-federale/appels-doffres/",
         "parser": "html",
         "selector": "article, .card, .item, .post",
         "title_sel": "h2, h3",
@@ -509,26 +509,16 @@ SOURCES = [
         "desc_sel": "p",
         "link_sel": "a",
     },
-    {
-        "id": "ffgym",
-        "label": "FF Gym — Consultations",
-        "type": "federation",
-        "url": "https://www.ffgym.fr/La-Federation/Appels-d-offres",
-        "parser": "html",
-        "selector": "article, .card, .item",
-        "title_sel": "h2, h3",
-        "desc_sel": "p",
-        "link_sel": "a",
-    },
+    # FFGym desactivee (500 Server Error)
     {
         "id": "ffme",
         "label": "FFME — Montagne & Escalade — Consultations",
         "type": "federation",
-        "url": "https://www.ffme.fr/la-ffme/appels-doffres/",
+        "url": "https://www.ffme.fr/appels-doffre-consultations/",
         "parser": "html",
-        "selector": "article, .card, .item",
+        "selector": "article, .card, .item, .post",
         "title_sel": "h2, h3",
-        "desc_sel": "p",
+        "desc_sel": "p, .excerpt",
         "link_sel": "a",
     },
     {
@@ -592,7 +582,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    # Kingcom — veille communication institutionnelle et publique
+    # Kingcom — veille communication institutionnelle et publique (fonctionne)
     {
         "id": "kingcom_actu",
         "label": "Kingcom — Communication institutionnelle",
@@ -605,20 +595,9 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    # La Lettre — media pro sport business et communication
-    {
-        "id": "lalettre_sport",
-        "label": "La Lettre — Sport business",
-        "type": "prive",
-        "url": "https://www.lalettre.fr/fr/sport/",
-        "parser": "html",
-        "selector": "article, .article, .card, .news-item",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 10,
-    },
-    # Sport Buzz Business — marketing sportif (complement SportBusiness Club)
+    # Strategies.fr — 403 bloque, desactive
+    # La Lettre — 403 bloque, desactive
+    # Sport Buzz Business — marketing sportif (fonctionne)
     {
         "id": "sportbuzzbusiness",
         "label": "Sport Buzz Business — Marketing sportif",
@@ -626,7 +605,7 @@ SOURCES = [
         "url": "https://www.sportbuzzbusiness.fr/feed/",
         "parser": "rss",
     },
-    # Sport Strategies — media pro sport business France
+    # Sport Strategies — fonctionne
     {
         "id": "sport_strategies",
         "label": "Sport Strategies — Actualites sport business",
@@ -642,28 +621,15 @@ SOURCES = [
 
     # ══════════════════════════════════════════════════════════════════════════
     # COUCHE 4 — ACTEURS INTERNATIONAUX (flux actualites — signaux faibles)
-    # Pas d'AO publics directs — surveillance actus pour detecter besoins
     # ══════════════════════════════════════════════════════════════════════════
 
-    # CIO — Comite International Olympique
-    {
-        "id": "cio_news",
-        "label": "CIO — Actualites olympiques",
-        "type": "prive",
-        "url": "https://olympics.com/ioc/news",
-        "parser": "html",
-        "selector": "article, .news-card, .card, .news-item",
-        "title_sel": "h2, h3, .card-title",
-        "desc_sel": "p, .card-desc, .excerpt",
-        "link_sel": "a",
-        "timeout": 15,
-    },
-    # FIFA — Actualites
+    # CIO — 403 bloque, desactive
+    # FIFA — URL corrigee
     {
         "id": "fifa_news",
         "label": "FIFA — Actualites",
         "type": "prive",
-        "url": "https://www.fifa.com/about-fifa/news",
+        "url": "https://www.fifa.com/fr/football-development/news",
         "parser": "html",
         "selector": "article, .news-item, .card",
         "title_sel": "h2, h3",
@@ -671,20 +637,8 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 15,
     },
-    # UEFA — Actualites
-    {
-        "id": "uefa_news",
-        "label": "UEFA — Actualites",
-        "type": "prive",
-        "url": "https://www.uefa.com/news/",
-        "parser": "html",
-        "selector": "article, .news-item, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 15,
-    },
-    # NBA — actualites (signaux marche europeen / France)
+    # UEFA — timeout, desactivee
+    # NBA — fonctionne
     {
         "id": "nba_news",
         "label": "NBA — Actualites",
@@ -697,7 +651,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 15,
     },
-    # Roland Garros — actualites
+    # Roland Garros — fonctionne
     {
         "id": "roland_garros",
         "label": "Roland Garros — Actualites",
@@ -710,12 +664,12 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 15,
     },
-    # Tour de France — actualites (ASO)
+    # Tour de France ASO — URL corrigee
     {
         "id": "tour_de_france",
         "label": "Tour de France — Actualites ASO",
         "type": "prive",
-        "url": "https://www.letour.fr/fr/actualites",
+        "url": "https://www.letour.fr/fr/news",
         "parser": "html",
         "selector": "article, .news-item, .card",
         "title_sel": "h2, h3",
@@ -723,7 +677,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 15,
     },
-    # F1 — actualites (partenariats / Grand Prix France)
+    # F1 — fonctionne
     {
         "id": "f1_news",
         "label": "F1 — Actualites",
