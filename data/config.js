@@ -1,1 +1,0 @@
-window.SIDELINE_CONFIG = { anthropicKey: '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' };
