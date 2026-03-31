@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 """
-Sideline Conseil — Moteur de veille marches sportifs v3
+Sideline Conseil — Moteur de veille marches sportifs v4
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
-  2. SerpAPI   — recherche Google par mots-cles (15 requetes/run)
-  3. LinkedIn  — signaux faibles via SerpAPI (site:linkedin.com)
+  2. SerpAPI   — 8 requetes Google/run, 2x/semaine (quota : 88/mois < 100 gratuit)
+  3. LinkedIn  — 3 signaux faibles via SerpAPI (site:linkedin.com)
 
 Sources Couche 1 (marches publics) :
   BOAMP CPV 79400000, 79340000, 79416000, 79000000, 73200000, 92600000
   TED/JOUE Europe
-  France Marches (requetes Sideline)
+  France Marches (requetes Sideline enrichies)
   Maximilien IDF
   CNOSF plateforme marches
+  COJOP Alpes 2030 + SOLIDEO (marches2030.org)
 
 Sources Couche 2 (federations / acteurs sport) :
   FFR, FFF, FFBB, FFHandball, FFVolley, FFN, FFT, FFJudo, FFR XIII, FFA
+  FF Handisport, FF Voile, FF Badminton, FF Gym, FF Montagne, FF Equitation
 
 Sources Couche 3 (signaux de marche / medias sectoriels) :
   SportBusiness Club, SPORSORA, News Tank Sport, Le Cafe du Sport Biz
@@ -139,31 +141,30 @@ SCORE_WEIGHTS = {
 SCORE_MINIMUM = 25
 
 
-# ─── REQUETES SERPAPI (remplace Google Custom Search) ─────────────────────────
+# ─── REQUETES SERPAPI ────────────────────────────────────────────────────────
 # Budget SerpAPI gratuit : 100 recherches/mois
-# On limite a 10 requetes/run pour rester dans le quota
+# 8 requetes/run x 2 runs/semaine x 4 semaines = 64/mois (confortable)
 # Format : (requete, type_source, label)
 GOOGLE_QUERIES = [
-    # Requetes combinées recommandées par ChatGPT
-    ("sport fédération conseil stratégie prestation appel offres", "marche-public", "SerpAPI — Sport+conseil AO"),
-    ("sport communication relations presse appel offres marché public", "marche-public", "SerpAPI — Sport+com AO"),
-    ("sport étude audit plan stratégique mission appel offres", "marche-public", "SerpAPI — Sport+etudes AO"),
-    ("fédération sportive appel offres prestataire 2026", "federation", "SerpAPI — Federations AO"),
+    # Marches publics sport + conseil (requetes combinées)
+    ("sport federation conseil strategie prestation appel offres", "marche-public", "SerpAPI — Sport+conseil AO"),
+    ("sport communication relations presse appel offres marche public", "marche-public", "SerpAPI — Sport+com AO"),
+    ("federation sportive appel offres prestataire 2026", "federation", "SerpAPI — Federations AO"),
+    # Institutions cles + Alpes 2030
+    ("appel offres site:agencedusport.fr OR site:sports.gouv.fr OR site:marches2030.org", "marche-public", "SerpAPI — ANS+Ministere+2030"),
     # Signaux prives — entreprises cherchant agence sport
-    ("recherche prestataire agence sport stratégie communication conseil", "prive", "SerpAPI — Signaux prives"),
-    ("sponsoring sportif mécénat stratégie appel offres entreprise", "prive", "SerpAPI — Sponsoring"),
-    # Opportunites cachees (sans le mot sport)
-    ("communication stratégie attractivité territoire appel offres collectivité", "marche-public", "SerpAPI — Opportunites cachees"),
-    # Institutions cles
-    ("appel offres site:agencedusport.fr OR site:sports.gouv.fr", "marche-public", "SerpAPI — ANS+Ministere"),
-    ("appel offres site:ffr.fr OR site:fff.fr OR site:ffbb.com OR site:ffhandball.fr", "federation", "SerpAPI — Federations sites"),
-    # Signaux LinkedIn
-    ("site:linkedin.com appel offres sport conseil communication fédération", "prive", "SerpAPI — LinkedIn signaux"),
+    ("recherche prestataire agence sport strategie communication conseil", "prive", "SerpAPI — Signaux prives"),
+    ("sponsoring sportif mecenat sport strategie conseil prestataire entreprise", "prive", "SerpAPI — Sponsoring"),
+    # Opportunites cachees (collectivites / territoire sans le mot sport)
+    ("communication strategie attractivite territoire appel offres collectivite", "marche-public", "SerpAPI — Opportunites cachees"),
+    # Clubs pro (signaux changement agence / besoin prestataire)
+    ("PSG OM LOSC Stade Rennais RC Lens Stade Francais Red Star Paris FC Caen Le Havre Racing 92 agence conseil communication", "prive", "SerpAPI — Clubs pro"),
 ]
 
 # ─── REQUETES LINKEDIN (via SerpAPI) ─────────────────────────────────────────
+# 3 requetes/run — incluses dans le quota ci-dessus
 LINKEDIN_QUERIES = [
-    "site:linkedin.com recherche prestataire stratégie sport fédération",
+    "site:linkedin.com recherche prestataire strategie sport federation",
     "site:linkedin.com expression besoin agence sport influence affaires publiques",
     "site:linkedin.com mission conseil sport communication sponsoring",
 ]
@@ -305,6 +306,19 @@ SOURCES = [
         "desc_sel": "td, p",
         "link_sel": "a",
         "timeout": 10,
+    },
+    # COJOP Alpes 2030 + SOLIDEO — plateforme commune marches JO hiver 2030
+    {
+        "id": "marches2030",
+        "label": "Marches 2030 — COJOP + SOLIDEO Alpes",
+        "type": "marche-public",
+        "url": "https://www.marches2030.org/appels-offres",
+        "parser": "html",
+        "selector": "article, .card, .appel-offre, .consultation, tr",
+        "title_sel": "h2, h3, td, a",
+        "desc_sel": "p, td",
+        "link_sel": "a",
+        "timeout": 15,
     },
     # Agence Nationale du Sport
     {
@@ -461,6 +475,73 @@ SOURCES = [
         "desc_sel": "p",
         "link_sel": "a",
     },
+    # ── FEDERATIONS SUPPLEMENTAIRES ──────────────────────────────────────────
+    {
+        "id": "ffhandisport",
+        "label": "FF Handisport — Consultations",
+        "type": "federation",
+        "url": "https://www.handisport.org/la-federation/appels-offres/",
+        "parser": "html",
+        "selector": "article, .card, .item, .post",
+        "title_sel": "h2, h3",
+        "desc_sel": "p",
+        "link_sel": "a",
+    },
+    {
+        "id": "ffvoile",
+        "label": "FF Voile — Consultations",
+        "type": "federation",
+        "url": "https://www.ffvoile.fr/ffv/web/federation/appels_offres.aspx",
+        "parser": "html",
+        "selector": "article, .card, .item, tr",
+        "title_sel": "h2, h3, td",
+        "desc_sel": "p, td",
+        "link_sel": "a",
+    },
+    {
+        "id": "ffbad",
+        "label": "FF Badminton — Consultations",
+        "type": "federation",
+        "url": "https://www.ffbad.org/la-federation/appels-doffres/",
+        "parser": "html",
+        "selector": "article, .card, .item",
+        "title_sel": "h2, h3",
+        "desc_sel": "p",
+        "link_sel": "a",
+    },
+    {
+        "id": "ffgym",
+        "label": "FF Gym — Consultations",
+        "type": "federation",
+        "url": "https://www.ffgym.fr/La-Federation/Appels-d-offres",
+        "parser": "html",
+        "selector": "article, .card, .item",
+        "title_sel": "h2, h3",
+        "desc_sel": "p",
+        "link_sel": "a",
+    },
+    {
+        "id": "ffme",
+        "label": "FFME — Montagne & Escalade — Consultations",
+        "type": "federation",
+        "url": "https://www.ffme.fr/la-ffme/appels-doffres/",
+        "parser": "html",
+        "selector": "article, .card, .item",
+        "title_sel": "h2, h3",
+        "desc_sel": "p",
+        "link_sel": "a",
+    },
+    {
+        "id": "ffe",
+        "label": "FFE — Federation Francaise d Equitation — Consultations",
+        "type": "federation",
+        "url": "https://www.ffe.com/la-ffe/appels-offres",
+        "parser": "html",
+        "selector": "article, .card, .item",
+        "title_sel": "h2, h3",
+        "desc_sel": "p",
+        "link_sel": "a",
+    },
 
     # ══════════════════════════════════════════════════════════════════════════
     # COUCHE 3 — MEDIAS SECTORIELS (signaux de marche)
@@ -496,6 +577,53 @@ SOURCES = [
         "label": "Le Cafe du Sport Biz — Signaux",
         "type": "prive",
         "url": "https://www.lecafedusportbiz.fr/feed/",
+        "parser": "rss",
+    },
+    # Strategies — media pro communication/marketing (signaux agences, appels d'offres)
+    {
+        "id": "strategies_actu",
+        "label": "Strategies — Communication & marketing",
+        "type": "prive",
+        "url": "https://www.strategies.fr/actualites/",
+        "parser": "html",
+        "selector": "article, .article-item, .card, .news-item",
+        "title_sel": "h2, h3, .article-title",
+        "desc_sel": "p, .article-desc, .excerpt",
+        "link_sel": "a",
+        "timeout": 10,
+    },
+    # Kingcom — veille communication institutionnelle et publique
+    {
+        "id": "kingcom_actu",
+        "label": "Kingcom — Communication institutionnelle",
+        "type": "prive",
+        "url": "https://www.kingcom.fr/actualites/",
+        "parser": "html",
+        "selector": "article, .post, .card, .news",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 10,
+    },
+    # La Lettre — media pro sport business et communication
+    {
+        "id": "lalettre_sport",
+        "label": "La Lettre — Sport business",
+        "type": "prive",
+        "url": "https://www.lalettre.fr/fr/sport/",
+        "parser": "html",
+        "selector": "article, .article, .card, .news-item",
+        "title_sel": "h2, h3",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 10,
+    },
+    # Sport Buzz Business — marketing sportif (complement SportBusiness Club)
+    {
+        "id": "sportbuzzbusiness",
+        "label": "Sport Buzz Business — Marketing sportif",
+        "type": "prive",
+        "url": "https://www.sportbuzzbusiness.fr/feed/",
         "parser": "rss",
     },
 
@@ -698,16 +826,6 @@ def deduire_types(item):
 
 def generer_id(item):
     return hashlib.md5((item.get("title","") + item.get("source_id","")).encode()).hexdigest()[:12]
-
-def _parse_date(date_str):
-    """Parse une date quelle que soit son format."""
-    if not date_str:
-        return datetime(2000, 1, 1)
-    s = str(date_str)[:10]
-    try:
-        return datetime.strptime(s, "%Y-%m-%d")
-    except ValueError:
-        return datetime(2000, 1, 1)
 
 def est_urgent(date_limite):
     if not date_limite:
@@ -913,7 +1031,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v3 -- Demarrage")
+    log.info("Sideline Veille v4 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -949,7 +1067,7 @@ def lancer_veille(test_mode=False, only=None):
     toutes = nouvelles_opps + opps_existantes
     cutoff = datetime.now() - timedelta(days=90)
     toutes = [o for o in toutes if not o.get("source_auto") or
-              _parse_date(o.get("datePublication","2000-01-01")) > cutoff]
+              datetime.strptime(o.get("datePublication","2000-01-01")[:10], "%Y-%m-%d") > cutoff]
     toutes = sorted(toutes, key=lambda x: x["score"], reverse=True)[:200]
 
     sauvegarder_donnees(toutes)
@@ -972,7 +1090,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v3")
+    ap = argparse.ArgumentParser(description="Sideline Veille v4")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
