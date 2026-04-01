@@ -50,8 +50,8 @@ jobs:
         run: |
           git config user.name "Sideline Veille Bot"
           git config user.email "cyrilmourin@gmail.com"
-          echo "Données existantes conservées depuis le dépôt"
-        continue-on-error: true
+          git pull origin main || true
+          echo "Données restaurées depuis le dépôt"
 
       - name: Lancer le scraper
         env:
