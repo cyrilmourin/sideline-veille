@@ -1078,8 +1078,12 @@ def lancer_veille(test_mode=False, only=None):
 
     vus             = charger_vus()
     opps_existantes = charger_donnees()
+    # Garder nouvelle:true pendant 48h, puis passer à False
+    cutoff_nouvelle = datetime.now() - timedelta(hours=48)
     for o in opps_existantes:
-        o["nouvelle"] = False
+        date_pub = _parse_date(o.get("datePublication","2000-01-01"))
+        if date_pub < cutoff_nouvelle:
+            o["nouvelle"] = False
 
     nouvelles_opps = []
 

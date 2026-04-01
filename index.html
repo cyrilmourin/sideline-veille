@@ -387,6 +387,9 @@ async function chargerDonnees() {
     const r = await fetch('data/opportunites.json?t=' + Date.now());
     if (!r.ok) throw new Error('JSON absent');
     TOUTES_OPPS = await r.json();
+    // Appliquer les vues stockées localement
+    const vues = JSON.parse(localStorage.getItem('sideline_vues') || '[]');
+    TOUTES_OPPS.forEach(o => { if(vues.includes(o.id)) o.nouvelle = false; });
     modeDemo = false;
     document.getElementById('configBanner').style.display = 'none';
   } catch {
@@ -523,6 +526,18 @@ function filterOpps() {
 function openModal(id) {
   const o = TOUTES_OPPS.find(x => x.id == id);
   if(!o) return;
+
+  // Marquer comme vue dans localStorage
+  const vues = JSON.parse(localStorage.getItem('sideline_vues') || '[]');
+  if(!vues.includes(id)) {
+    vues.push(id);
+    localStorage.setItem('sideline_vues', JSON.stringify(vues));
+    o.nouvelle = false;
+    // Mettre à jour le badge sur la carte sans re-render complet
+    const card = document.querySelector(`[onclick="openModal('${id}')"]`);
+    if(card) card.classList.remove('nouvelle');
+    renderStats(VISIBLE_OPPS);
+  }
   const typeTags = (o.types||[]).map(t => {
     const m = {'affaires-publiques':['tag-type-ap','Affaires Publiques'],'strategie':['tag-type-strat','Stratégie'],'communication':['tag-type-com','Communication'],'influence':['tag-type-inf','Influence']};
     return m[t] ? `<span class="tag ${m[t][0]}">${m[t][1]}</span>` : '';
