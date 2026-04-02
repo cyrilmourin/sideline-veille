@@ -3,7 +3,7 @@ name: Sideline Veille — Scraping quotidien
 on:
   schedule:
     # RSS/HTML tous les jours à 8h00 Paris (7h UTC été)
-    - cron: '0 7 * * *'
+    - cron: '50 7 * * *' 
   workflow_dispatch:
     inputs:
       mode:
