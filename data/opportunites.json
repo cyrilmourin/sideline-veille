@@ -24,6 +24,31 @@
     "source_auto": true
   },
   {
+    "id": "1efd3fe806e0",
+    "title": "glob'AL events",
+    "source": "prive",
+    "sourceLabel": "SerpAPI — Signaux prives",
+    "moteur": "google",
+    "types": [
+      "strategie",
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Signaux prives",
+    "typeEmetteur": "Detection automatique",
+    "description": "AGENCE CONSEIL & ACTIVATIONS EN COMMUNICATION EVENEMENTIELLE & DIGITALE DANS LE SPORT. ACTIVATIONS & MISE EN PLACE OPERATIONNELLE. CONSEIL & STRATEGIE ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://fr.linkedin.com/company/glob-al-events",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 66,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "345319b5a2a1",
     "title": "Post de Yannick Christian AZOKRY-DEGNON",
     "source": "prive",
@@ -74,6 +99,30 @@
     "source_auto": true
   },
   {
+    "id": "26d2084ad99f",
+    "title": "Appel d'offre : Prestations de relations presse et conseil en ...",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Sport+com AO",
+    "moteur": "google",
+    "types": [
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sport+com AO",
+    "typeEmetteur": "Detection automatique",
+    "description": "Appel d'offre n°37/2026007/07042026/9292 : Prestations de relations presse et conseil en communication au service de la Ville.",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.francemarches.com/appel-offre/372026007070420269292-2026-prestations-relations-presse",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 63,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "04479dc1c07c",
     "title": "Appel d'offre : Prestations de relations presse et conseil en ...",
     "source": "marche-public",
@@ -94,6 +143,30 @@
     "nouvelle": false,
     "urgent": false,
     "score": 63,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "1e53330e226f",
+    "title": "TSM",
+    "source": "prive",
+    "sourceLabel": "LinkedIn (signal)",
+    "moteur": "linkedin",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "LinkedIn (signal)",
+    "typeEmetteur": "Detection automatique",
+    "description": "Privately Held. Founded: 2001. Specialties: marketing sportif, sponsoring, conseil, événementiel sportif, brainstorming, management, events, trail, rally, ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://be.linkedin.com/company/tsm?trk=public_profile_experience-item_result-card_image-click",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 60,
     "angles": [],
     "source_auto": true
   },
@@ -242,6 +315,30 @@
     "source_auto": true
   },
   {
+    "id": "24698a85f472",
+    "title": "Appel d'offre : Prestations de conseils en stratégie médias ...",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Sport+com AO",
+    "moteur": "google",
+    "types": [
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sport+com AO",
+    "typeEmetteur": "Detection automatique",
+    "description": "Appel d'offre n°37/c2026com01/16032026/7913 : Prestations de conseils en stratégie médias et de mise en oeuvre des relations presse (nationale et ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.francemarches.com/appel-offre/37c2026com01160320267913-2026-prestations-conseils-strategie",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 55,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "c1b7534d8ca2",
     "title": "Appel d'offre : Prestations de conseils en stratégie médias ...",
     "source": "marche-public",
@@ -262,6 +359,30 @@
     "nouvelle": false,
     "urgent": false,
     "score": 55,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "cb07c1224c0e",
+    "title": "Business development sponsoring & partenariats sportifs",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Sport+com AO",
+    "moteur": "google",
+    "types": [
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sport+com AO",
+    "typeEmetteur": "Detection automatique",
+    "description": "Réalisation de benchmarks des offres sponsoring du marché (concurrents, tendances, innovations). Analyse des marchés, secteurs annonceurs et besoins des marques ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.profilculture.com/annonce/business-development-sponsoring-amp-partenariats-sportifs-488014.html",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 52,
     "angles": [],
     "source_auto": true
   },
@@ -478,6 +599,30 @@
     "nouvelle": false,
     "urgent": false,
     "score": 52,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "607c1dafcb6e",
+    "title": "Société SYBIOSE (842460313) : Chiffre d'affaires, statuts, ...",
+    "source": "prive",
+    "sourceLabel": "SerpAPI — Sponsoring",
+    "moteur": "google",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sponsoring",
+    "typeEmetteur": "Detection automatique",
+    "description": "Conseil et accompagnement de sportifs de haut niveau; Toutes missions d'ingénierie dans l'industrie et le tertiaire; Organisation d'évènements, mécénat et ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.pappers.fr/entreprise/sybiose-842460313",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 48,
     "angles": [],
     "source_auto": true
   },
@@ -746,6 +891,78 @@
     "source_auto": true
   },
   {
+    "id": "9195bcdccc82",
+    "title": "Projet PRACAC : Avis d'appel d'offres national ouvert",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Sport+conseil AO",
+    "moteur": "google",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sport+conseil AO",
+    "typeEmetteur": "Detection automatique",
+    "description": "Sport : la Fédération centrafricaine de Basket Ball ann... Fête du Nouvel ... APPEL D'OFFRE: Recrutement d'un consultant(... Centrafrique : la troupe ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://oubanguimedias.com/2026/01/21/projet-pracac-avis-dappel-doffres-national-ouvert/",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 40,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "699da7d938c1",
+    "title": "Appel d'offre : PRESTATIONS D'INTERVENTIONS DE ...",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Sport+com AO",
+    "moteur": "google",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sport+com AO",
+    "typeEmetteur": "Detection automatique",
+    "description": "Intitulé de l'appel d'offre public PRESTATIONS D'INTERVENTIONS DE SPORTS, DE LOISIRS ET DE SENSIBILISATION - 2 LOTS · Nom et adresse officiels de l'organisme ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.francemarches.com/appel-offre/13joue002147772026-2026-prestations-interventions-sports",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 40,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "c937acac1574",
+    "title": "Agence de stratégie & identité de marque basée à la Croix ...",
+    "source": "prive",
+    "sourceLabel": "SerpAPI — Signaux prives",
+    "moteur": "google",
+    "types": [
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Signaux prives",
+    "typeEmetteur": "Detection automatique",
+    "description": "Nous accompagnons des marques de secteurs variés (sport, food, tech, immobilier, santé & bien-être, etc.), avec un niveau d'exigence élevé sur le fond comme sur ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.instagram.com/p/DVyeOlpjYBX/",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 40,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "7a785ebd5f83",
     "title": "Consultant sportif : Formation, salaire et carrière dans le sport",
     "source": "prive",
@@ -1006,6 +1223,30 @@
     "nouvelle": true,
     "urgent": false,
     "score": 38,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "dfdd7d07da51",
+    "title": "Avis d'appel à concurrence",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Sport+com AO",
+    "moteur": "google",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sport+com AO",
+    "typeEmetteur": "Detection automatique",
+    "description": "La FFN recherche un prestataire pour assurer la restauration du grand public et des médias pendants les Championnats d'Europe de Natation 2026. Les propositions ...",
+    "datePublication": "2026-04-02",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.ffnatation.fr/avis-dappel-concurrence",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 35,
     "angles": [],
     "source_auto": true
   },
