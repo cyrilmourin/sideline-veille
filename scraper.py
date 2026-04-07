@@ -814,7 +814,106 @@ def lancer_linkedin():
     return tous
 
 
-# ─── SCORING & FILTRAGE ───────────────────────────────────────────────────────
+
+# ─── MODULE 4 — API BOAMP OpenDataSoft (sans clé, gratuit) ───────────────────
+# Doc : https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/
+
+BOAMP_API_URL = "https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/records"
+
+# CPV pertinents pour Sideline
+BOAMP_CPV_PI    = ["79400000","79411000","79410000","79311000","73200000","71241000"]
+BOAMP_CPV_SPORT = ["92600000","92610000"]
+
+# Mots-clés pour filtrage post-ingestion
+BOAMP_KW_PI = [
+    "conseil","accompagnement","amo","assistance à maîtrise d'ouvrage",
+    "audit","diagnostic","stratégie","schéma directeur","programmation",
+    "plan d'action","expertise","influence","affaires publiques",
+    "communication","relations presse","sponsoring","mecenat",
+]
+BOAMP_KW_SPORT = [
+    "sport","sportif","sportive","federation","olympique","paralympique",
+    "gymnase","piscine","stade","pratique sportive","politique sportive",
+]
+BOAMP_KW_EXCLUDE = [
+    "travaux","construction","maintenance","exploitation",
+    "animation","fourniture","réhabilitation","nettoyage",
+]
+
+def _boamp_score(objet, description):
+    """Score simplifié pour l'API BOAMP — complémentaire au scorer principal."""
+    texte = (objet + " " + description).lower()
+    score = 0
+    if any(k in texte for k in BOAMP_KW_PI):    score += 3
+    if any(k in texte for k in BOAMP_KW_SPORT): score += 2
+    if any(k in texte for k in BOAMP_KW_EXCLUDE): score -= 3
+    return score
+
+def lancer_boamp_api():
+    """
+    Interroge l'API BOAMP OpenDataSoft (sans clé) en filtrant sur :
+    - nature = Services
+    - mots-clés sport + prestations intellectuelles
+    - publications des 90 derniers jours
+    """
+    items = []
+    date_min = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
+
+    # Requête ODSQL : appels d'offres de services + mots-clés métier Sideline
+    where = (
+        "nature=\"APPEL_OFFRE\" AND type_marche=\"SERVICES\" AND ("
+        "objet LIKE \"conseil\" OR objet LIKE \"strategie\" OR "
+        "objet LIKE \"communication\" OR objet LIKE \"accompagnement\" OR "
+        "objet LIKE \"influence\" OR objet LIKE \"affaires publiques\" OR "
+        "objet LIKE \"federation\" OR objet LIKE \"olympique\" OR "
+        "objet LIKE \"sponsoring\" OR objet LIKE \"mecenat\" OR "
+        "objet LIKE \"sport\" OR objet LIKE \"sportif\""
+        f") AND dateparution >= \"{date_min}\""
+    )
+
+    params = {
+        "where":    where,
+        "order_by": "dateparution DESC",
+        "limit":    100,
+        "offset":   0,
+    }
+
+    try:
+        r = requests.get(BOAMP_API_URL, params=params, timeout=20)
+        r.raise_for_status()
+        records = r.json().get("results", [])
+        log.info(f"[BOAMP_API] {len(records)} annonces brutes")
+
+        for rec in records:
+            objet       = rec.get("objet", "") or ""
+            description = rec.get("descripteur", "") or ""
+            acheteur    = rec.get("nomacheteur", "") or ""
+            date_pub    = (rec.get("dateparution", "") or "")[:10]
+            lien        = rec.get("urlacheteur", "") or f"https://www.boamp.fr/avis/detail/{rec.get('id','')}"
+            cpvs        = [c.get("code","") for c in (rec.get("cpv") or []) if c.get("code")]
+
+            # Filtre : exclure si pas de lien avec nos métiers
+            if _boamp_score(objet, description) < 2:
+                continue
+
+            items.append({
+                "title":            objet[:200],
+                "description":      f"{acheteur} — {description}"[:500],
+                "lien":             lien,
+                "date_publication": date_pub or datetime.now().strftime("%Y-%m-%d"),
+                "source_id":        f"boamp_api_{hashlib.md5(objet.encode()).hexdigest()[:6]}",
+                "source_label":     "BOAMP API — Services sport/conseil",
+                "type_source":      "marche-public",
+                "moteur":           "rss",
+            })
+
+    except Exception as e:
+        log.warning(f"[BOAMP_API] Erreur : {e}")
+
+    log.info(f"[BOAMP_API] {len(items)} annonces retenues")
+    return items
+
+
 
 def nettoyer(texte):
     return re.sub(r"<[^>]+>", " ", texte).lower()
@@ -1095,7 +1194,9 @@ def lancer_veille(test_mode=False, only=None):
                 items_rss.extend(parse_rss(source))
             elif source["parser"] == "html":
                 items_rss.extend(parse_html(source))
-        log.info(f"[RSS/HTML] {len(items_rss)} items bruts")
+        # Moteur 1b : API BOAMP OpenDataSoft (sans clé, filtre services)
+        items_rss.extend(lancer_boamp_api())
+        log.info(f"[RSS/HTML+BOAMP_API] {len(items_rss)} items bruts")
         nouvelles_opps.extend(traiter_items(items_rss, vus))
 
     # Moteur 2 : SerpAPI (Google)
