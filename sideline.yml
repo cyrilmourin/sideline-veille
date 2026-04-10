@@ -2,8 +2,8 @@ name: Sideline Veille
 
 on:
   schedule:
-    # Tous les jours à 13h00 Paris (11h UTC été)
-    - cron: '0 11 * * *'
+    # Tous les jours à 19h00 Paris (17h UTC été)
+    - cron: '0 17 * * *'
   workflow_dispatch:
     inputs:
       mode:
