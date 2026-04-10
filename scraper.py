@@ -148,7 +148,6 @@ SCORE_MINIMUM = 25
 GOOGLE_QUERIES = [
     # Marches publics sport + conseil (requetes combinées)
     ("sport federation conseil strategie prestation appel offres", "marche-public", "SerpAPI — Sport+conseil AO"),
-    ("sport communication relations presse appel offres marche public", "marche-public", "SerpAPI — Sport+com AO"),
     ("site:lalettre.fr OR site:strategies.fr OR site:uefa.com OR site:olympics.com sport conseil communication strategie", "prive", "SerpAPI — Medias bloques sport"),
     # Institutions cles + Alpes 2030
     ("appel offres site:agencedusport.fr OR site:sports.gouv.fr OR site:marches2030.org", "marche-public", "SerpAPI — ANS+Ministere+2030"),
@@ -157,8 +156,10 @@ GOOGLE_QUERIES = [
     ("sponsoring sportif mecenat sport strategie conseil prestataire entreprise", "prive", "SerpAPI — Sponsoring"),
     # Opportunites cachees (collectivites / territoire sans le mot sport)
     ("communication strategie attractivite territoire appel offres collectivite", "marche-public", "SerpAPI — Opportunites cachees"),
-    # Clubs pro (signaux changement agence / besoin prestataire)
-    ("PSG OM LOSC Stade Rennais RC Lens Stade Francais Red Star Paris FC Caen Le Havre Racing 92 agence conseil communication", "prive", "SerpAPI — Clubs pro"),
+    # AFD + PLACE — marchés développement international et institutions
+    ("site:afd.fr OR site:marches-publics.gouv.fr sport conseil gouvernance strategie communication", "marche-public", "SerpAPI — AFD+PLACE"),
+    # APProche — projets d'achats publics à venir
+    ("site:projets-achats.marches-publics.gouv.fr sport conseil communication strategie", "marche-public", "SerpAPI — APProche"),
 ]
 
 # ─── REQUETES LINKEDIN (via SerpAPI) ─────────────────────────────────────────
@@ -542,6 +543,14 @@ SOURCES = [
         "label": "SPORSORA — Marketing sportif",
         "type": "prive",
         "url": "https://www.sporsora.com/feed/",
+        "parser": "rss",
+    },
+    # SPORSORA — categorie actualites (complement pour ne pas rater d'articles)
+    {
+        "id": "sporsora_actu",
+        "label": "SPORSORA — Actualites",
+        "type": "prive",
+        "url": "https://sporsora.com/categorie/actualites/feed/",
         "parser": "rss",
     },
     # News Tank Sport — media pro sport business
