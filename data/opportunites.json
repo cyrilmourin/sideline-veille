@@ -1540,6 +1540,30 @@
     "source_auto": true
   },
   {
+    "id": "e070a69faec8",
+    "title": "PRESTATIONS DE TRANSPORT ET D’ACCOMPAGNEMENT D’USAGERS EN ACCUEIL DE JOUR ET PASA POUR LES ETABLISSEMENTS DU GHT DU MAINE ET LOIRE",
+    "source": "marche-public",
+    "sourceLabel": "BOAMP API — Services sport/conseil",
+    "moteur": "rss",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "BOAMP API — Services sport/conseil",
+    "typeEmetteur": "Detection automatique",
+    "description": "CHU ANGERS — ",
+    "datePublication": "2026-04-10",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.boamp.fr/avis/detail/26_36077",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 35,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "9b0a8a53f6c5",
     "title": "Appel d'offre : Prestations de Service hivernal sur les ...",
     "source": "marche-public",
