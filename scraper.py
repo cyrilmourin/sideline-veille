@@ -120,6 +120,13 @@ KEYWORDS_EXCLUSION = [
     "maintenance", "entretien", "nettoyage", "gardiennage",
 ]
 
+# CPV prestations intellectuelles — bonus scoring
+CPV_BONUS = {
+    "79400000": 15, "79411000": 15, "79410000": 12,
+    "79311000": 12, "73200000": 10, "71241000": 10,
+    "92600000": 8,  "92610000": 8,
+}
+
 # Poids de scoring
 SCORE_WEIGHTS = {
     "affaires publiques": 22, "public affairs": 20,
@@ -133,12 +140,19 @@ SCORE_WEIGHTS = {
     "cnosf": 15, "agence nationale du sport": 15,
     "olympique": 10, "paralympique": 10,
     "appel d offres": 10, "appel a projets": 8,
-    "partenariat strategique": 12, "amo": 10,
-    "audit": 8, "schema directeur": 10, "plan strategique": 10,
+    "partenariat strategique": 12, "amo": 12,
+    "audit": 8, "schema directeur": 12, "plan strategique": 10,
     "attractivite": 8, "rayonnement": 8,
+    # Nouveaux termes ChatGPT
+    "assistance a maitrise d ouvrage": 14,
+    "plan d action sport": 12, "schema directeur sport": 15,
+    "programmation sportive": 12, "diagnostic sportif": 12,
+    "plan de developpement": 10, "expertise sport": 12,
+    "gouvernance sportive": 14, "structuration": 10,
+    "developpement international": 10, "coopération internationale": 8,
 }
 
-SCORE_MINIMUM = 25
+SCORE_MINIMUM = 20
 
 
 # ─── REQUETES SERPAPI ────────────────────────────────────────────────────────
@@ -944,6 +958,13 @@ def scorer(item):
     for kw, poids in SCORE_WEIGHTS.items():
         if kw in corpus:
             score += poids
+
+    # Bonus CPV prestations intellectuelles
+    cpvs = item.get("cpvs", [])
+    for cpv, bonus in CPV_BONUS.items():
+        if cpv in cpvs:
+            score += bonus
+            break  # un seul bonus CPV max
 
     # Bonus moteur actif
     if item.get("moteur") in ("google", "linkedin"):
