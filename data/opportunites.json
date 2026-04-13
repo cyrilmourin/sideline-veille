@@ -1,5 +1,30 @@
 [
   {
+    "id": "0133b0d417ea",
+    "title": "Antoine Mayer - Sponsoring sportif & relations publiques",
+    "source": "prive",
+    "sourceLabel": "LinkedIn (signal)",
+    "moteur": "linkedin",
+    "types": [
+      "communication",
+      "influence"
+    ],
+    "secteur": "Sport",
+    "emetteur": "LinkedIn (signal)",
+    "typeEmetteur": "Detection automatique",
+    "description": "Chargé de communication événementielle | Sponsoring sportif & relations publiques | GMF · Profil polyvalent animé par une soif constante d'acquérir de ...",
+    "datePublication": "2026-04-13",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://fr.linkedin.com/in/antoine-mayer-932778226",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 70,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "a333430ed43f",
     "title": "#playgroundstogrow | Guillaume Duval | 10 commentaires",
     "source": "prive",
@@ -460,6 +485,30 @@
     "source_auto": true
   },
   {
+    "id": "cb3717808532",
+    "title": "Investir dans le sport donnera-t-il lieu à un crédit d'impôt",
+    "source": "prive",
+    "sourceLabel": "SerpAPI — Sponsoring",
+    "moteur": "google",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sponsoring",
+    "typeEmetteur": "Detection automatique",
+    "description": "Selon l'étude qu'elle a réalisée, le sponsoring sportif représenterait environ 2,5 milliards d'euros en France. Pour tenter de limiter la perte de sponsors ...",
+    "datePublication": "2026-04-13",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.village-justice.com/articles/investir-dans-sport-donnera-lieu-credit-impot,40859.html",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 52,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "cb07c1224c0e",
     "title": "Business development sponsoring & partenariats sportifs",
     "source": "marche-public",
@@ -696,6 +745,54 @@
     "nouvelle": false,
     "urgent": false,
     "score": 52,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "6cb61cec8103",
+    "title": "Retour sur le Conseil d'administration des 7 et 8 mars 2026",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Sport+conseil AO",
+    "moteur": "google",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sport+conseil AO",
+    "typeEmetteur": "Detection automatique",
+    "description": "Projets Sportifs Fédéraux (PSF) · Haut niveau · Fiches médicales · Sécurité · Secours en montagne · Appels d'offre / Consultations / Prestation de service ...",
+    "datePublication": "2026-04-13",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.ffme.fr/retour-sur-le-conseil-dadministration-des-7-et-8-mars-2026/",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 48,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "d9df4b15a25b",
+    "title": "Focus sur 10 partenaires engagés qui soutiennent le club ...",
+    "source": "prive",
+    "sourceLabel": "SerpAPI — Sponsoring",
+    "moteur": "google",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Sponsoring",
+    "typeEmetteur": "Detection automatique",
+    "description": "FL Stratégie : Conseil et accompagnement stratégique pour développer la performance des entreprises. ... sport amateur MARKETING SPORTIF ET PARTENARIAT ...",
+    "datePublication": "2026-04-13",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.instagram.com/p/DWO5-uGDB7i/",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 48,
     "angles": [],
     "source_auto": true
   },
@@ -1156,6 +1253,54 @@
     "source_auto": true
   },
   {
+    "id": "770c52beed70",
+    "title": "Qui est Alexandre Malsch, CEO de Fulllife",
+    "source": "prive",
+    "sourceLabel": "SerpAPI — Medias bloques sport",
+    "moteur": "google",
+    "types": [
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Medias bloques sport",
+    "typeEmetteur": "Detection automatique",
+    "description": "Depuis six ans, l'ex-fondateur de Melty positionne sa marque française de gamewear sur la scène européenne de l'e-sport. Quadragénaire et toujours dans le coup.",
+    "datePublication": "2026-04-13",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.strategies.fr/actualites/marques/LQ5790938C/qui-est-alexandre-malsch-ceo-de-fulllife.html",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 40,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "fab3a69c3867",
+    "title": "📢 Nouvelle collaboration ! @globalevents_ et ...",
+    "source": "prive",
+    "sourceLabel": "SerpAPI — Signaux prives",
+    "moteur": "google",
+    "types": [
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Signaux prives",
+    "typeEmetteur": "Detection automatique",
+    "description": "@globalevents_ et @infinityninemedia, deux agences du monde du sport, unissent leurs forces pour proposer une offre clé en main aux marques, organisateurs et ...",
+    "datePublication": "2026-04-13",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.instagram.com/reel/DUp9B61jLh9/",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 40,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "c632982b32e0",
     "title": "N° 2465",
     "source": "prive",
@@ -1536,6 +1681,30 @@
     "nouvelle": false,
     "urgent": false,
     "score": 38,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "2377a19b65f5",
+    "title": "Cyrielle Moussiegt - Responsable événementiel",
+    "source": "prive",
+    "sourceLabel": "LinkedIn (signal)",
+    "moteur": "linkedin",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "LinkedIn (signal)",
+    "typeEmetteur": "Detection automatique",
+    "description": "- Suivi de projet : production de livrables, relation client/prestataire, bilan des opérations pour les clients FFF et PMU. - Assistance sur la livraison ...",
+    "datePublication": "2026-04-13",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://fr.linkedin.com/in/cyrielle-moussiegt",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 35,
     "angles": [],
     "source_auto": true
   },
