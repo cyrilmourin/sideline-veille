@@ -822,6 +822,54 @@
     "source_auto": true
   },
   {
+    "id": "e6327c5d5ed9",
+    "title": "Prestations de titres de restauration pour les salariés du Comité d'organisation des Jeux Olympiques et Paralympiques d'hiver Alpes Françaises 2030",
+    "source": "marche-public",
+    "sourceLabel": "Marches 2030 — COJOP + SOLIDEO Alpes",
+    "moteur": "html",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "Marches 2030 — COJOP + SOLIDEO Alpes",
+    "typeEmetteur": "Detection automatique",
+    "description": "",
+    "datePublication": "2026-04-17",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.achatpublic.com/sdm/ent2/gen/ficheCsl.action?PCSLID=CSL_2026_LOw-Nkuzk9",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 50,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "705df5a5e1bf",
+    "title": "Prestations de veille, revue de presse et analyse médias pour le Comité d'Organisation des Jeux Olympiques et Paralympiques Alpes Françaises 2030",
+    "source": "marche-public",
+    "sourceLabel": "Marches 2030 — COJOP + SOLIDEO Alpes",
+    "moteur": "html",
+    "types": [
+      "communication"
+    ],
+    "secteur": "Sport",
+    "emetteur": "Marches 2030 — COJOP + SOLIDEO Alpes",
+    "typeEmetteur": "Detection automatique",
+    "description": "",
+    "datePublication": "2026-04-17",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.achatpublic.com/sdm/ent2/gen/ficheCsl.action?PCSLID=CSL_2026_bvpcPsBl--",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 50,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "6cb61cec8103",
     "title": "Retour sur le Conseil d'administration des 7 et 8 mars 2026",
     "source": "marche-public",
