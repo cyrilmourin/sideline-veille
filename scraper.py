@@ -141,6 +141,13 @@ KEYWORDS_EXCLUSION = [
     "organisation d activites",
     "maitrise d oeuvre",
     "moe",                                       # alias maîtrise d'œuvre
+    # ── Section A bis : ajouts Cyril 2026-04-19 ────────────────────────────
+    "titres de restauration",
+    "titre de restauration",
+    "restauration collective",
+    "hebergement",
+    "bafa",                                      # brevet d'aptitude animation
+    "bafd",                                      # idem, directeur
     # ── Section B : exclusions héritage travaux/fournitures ────────────────
     "travaux", "construction", "rehabilitation", "batiment",
     "gros oeuvre", "fourniture", "equipement sportif", "sol sportif",
@@ -158,6 +165,10 @@ KEYWORDS_EXCLUSION_FM_STRICT = [
     "ateliers collectifs", "ateliers de cours collectifs",
     "entretien", "maintenance", "organisation d activites",
     "maitrise d oeuvre", "moe",
+    # ─ ajouts Cyril 2026-04-19 ─
+    "titres de restauration", "titre de restauration",
+    "restauration collective", "hebergement",
+    "bafa", "bafd",
 ]
 
 # Inclusions FranceMarchés strictes — au moins 1 obligatoire
@@ -259,31 +270,37 @@ ACHETEURS_PRIORITAIRES = {
 
 # ─── REQUETES SERPAPI ────────────────────────────────────────────────────────
 # Budget SerpAPI gratuit : 100 recherches/mois
-# 8 requetes/run x 2 runs/semaine x 4 semaines = 64/mois (confortable)
+# v5 (2026-04-19) : 3 GOOGLE + 1 LINKEDIN = 4 req/run
+# 4 req × 5 j/sem (lundi-vendredi) × 4.35 sem = ~87/mois → marge ~13/mois
+# Chaque requête a été fusionnée (OR syntaxe Google) pour couvrir davantage
+# de sites avec moins d'appels. nb_results est monté à 10 (max gratuit).
 # Format : (requete, type_source, label)
 GOOGLE_QUERIES = [
-    # Marches publics sport + conseil (requetes combinées)
-    ("sport federation conseil strategie prestation appel offres", "marche-public", "SerpAPI — Sport+conseil AO"),
-    ("site:lalettre.fr OR site:strategies.fr OR site:uefa.com OR site:olympics.com sport conseil communication strategie", "prive", "SerpAPI — Medias bloques sport"),
-    # Institutions cles + Alpes 2030
-    ("appel offres site:agencedusport.fr OR site:sports.gouv.fr OR site:marches2030.org", "marche-public", "SerpAPI — ANS+Ministere+2030"),
-    # Signaux prives — entreprises cherchant agence sport
-    ("recherche prestataire agence sport strategie communication conseil", "prive", "SerpAPI — Signaux prives"),
-    ("sponsoring sportif mecenat sport strategie conseil prestataire entreprise", "prive", "SerpAPI — Sponsoring"),
-    # Opportunites cachees (collectivites / territoire sans le mot sport)
-    ("communication strategie attractivite territoire appel offres collectivite", "marche-public", "SerpAPI — Opportunites cachees"),
-    # AFD + PLACE — marchés développement international et institutions
-    ("site:afd.fr OR site:marches-publics.gouv.fr sport conseil gouvernance strategie communication", "marche-public", "SerpAPI — AFD+PLACE"),
-    # APProche — projets d'achats publics à venir
-    ("site:projets-achats.marches-publics.gouv.fr sport conseil communication strategie", "marche-public", "SerpAPI — APProche"),
+    # 1. Marches publics consolides : tous sites institutionnels + CPV conseil/sport
+    ("(site:agencedusport.fr OR site:sports.gouv.fr OR site:marches2030.org "
+     "OR site:marches-publics.gouv.fr OR site:projets-achats.marches-publics.gouv.fr "
+     "OR site:afd.fr OR site:e-marchespublics.com) "
+     "sport conseil strategie communication gouvernance",
+     "marche-public",
+     "SerpAPI — Marches publics sport+conseil (fusion)"),
+    # 2. Marches publics generaux sport (texte libre, sans restriction site:)
+    ("sport federation conseil strategie communication sponsoring "
+     "appel offres marche public prestation intellectuelle",
+     "marche-public",
+     "SerpAPI — Marches publics sport (texte)"),
+    # 3. Signaux prives consolides : agences, sponsoring, medias sport
+    ("(recherche prestataire agence OR sponsoring sportif OR mecenat sport "
+     "OR site:lalettre.fr OR site:strategies.fr OR site:uefa.com OR site:olympics.com) "
+     "sport conseil strategie communication federation entreprise",
+     "prive",
+     "SerpAPI — Signaux prives (agences+medias+sponsoring)"),
 ]
 
 # ─── REQUETES LINKEDIN (via SerpAPI) ─────────────────────────────────────────
-# 3 requetes/run — incluses dans le quota ci-dessus
+# 1 requete consolidee/run — incluse dans le budget 4 req/run
 LINKEDIN_QUERIES = [
-    "site:linkedin.com recherche prestataire strategie sport federation",
-    "site:linkedin.com expression besoin agence sport influence affaires publiques",
-    "site:linkedin.com mission conseil sport communication sponsoring",
+    "site:linkedin.com (recherche prestataire OR expression besoin OR mission conseil) "
+    "sport federation agence strategie communication sponsoring affaires publiques",
 ]
 
 
