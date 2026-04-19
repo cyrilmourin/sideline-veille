@@ -3,8 +3,9 @@ name: Sideline Veille
 # Veille quotidienne sport/marchés publics — quotas gratuits
 # ─ GitHub Actions : repo public → minutes illimitées
 # ─ SerpAPI         : 100 recherches/mois gratuit
-#                     11 req/run × 2j/sem × 4.3 sem = ~94/mois (marge fine)
-#                     Lundi + Jeudi → cf. bloc conditionnel `DAY=1 || DAY=4`
+#                     v5 (2026-04-19) : 4 req/run × 5 j/sem (lundi-vendredi)
+#                     4 × ~22 jours ouvrés = ~88/mois → marge ~12 req
+#                     → cf. bloc conditionnel `DAY=1..5` (pas le week-end)
 # ─ BOAMP API ODS   : sans clé, rate-limit implicite ~correct
 # ─ Brevo SMTP      : 300 mails/jour gratuit
 #
@@ -70,17 +71,17 @@ jobs:
           RUN_MODE:           ${{ github.event.inputs.mode || 'normal' }}
           ONLY_MODE:          ${{ github.event.inputs.only || '' }}
         run: |
-          # SerpAPI uniquement le lundi (1) et jeudi (4)
+          # SerpAPI du lundi au vendredi (1-5), RSS-only le week-end
           DAY=$(date +%u)
           if [ "$ONLY_MODE" != "" ]; then
             python scraper.py --only $ONLY_MODE
           elif [ "$RUN_MODE" = "test" ]; then
             python scraper.py --test
-          elif [ "$DAY" = "1" ] || [ "$DAY" = "4" ]; then
-            echo "Jour SerpAPI (lundi ou jeudi) — veille complete"
+          elif [ "$DAY" -ge 1 ] && [ "$DAY" -le 5 ]; then
+            echo "Jour ouvre ($DAY) — veille complete (RSS + SerpAPI + LinkedIn)"
             python scraper.py
           else
-            echo "Jour RSS uniquement"
+            echo "Week-end ($DAY) — RSS uniquement (preserve quota SerpAPI)"
             python scraper.py --only rss
           fi
 
