@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sideline Conseil — Moteur de veille marches sportifs v4
+Sideline Conseil — Moteur de veille marches sportifs v5
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -33,6 +33,7 @@ import json
 import os
 import re
 import time
+import unicodedata
 import smtplib
 import hashlib
 import logging
@@ -80,8 +81,11 @@ SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "")
 
 # Groupe A — dimension sport (au moins 1 obligatoire)
 KEYWORDS_SPORT = [
-    "sport", "sportif", "sportive", "federation sportive", "ligue sportive",
-    "club sportif", "olympique", "paralympique", "athlete", "competition",
+    # Inclusions FranceMarchés (Cyril) : sport, sportif, sportives, olympique
+    "sport", "sportif", "sportive", "sportives", "sportifs",
+    "olympique", "olympiques", "paralympique", "paralympiques",
+    "federation sportive", "ligue sportive",
+    "club sportif", "athlete", "competition",
     "stade", "evenement sportif", "pratique sportive", "sponsoring sportif",
     "mecenat sportif", "football", "rugby", "basketball", "volleyball",
     "tennis", "natation", "cyclisme", "handball", "judo", "athletisme",
@@ -112,12 +116,54 @@ KEYWORDS_METIER = [
     "audit", "schema directeur", "plan strategique",
 ]
 
-# Mots a exclure (pour reduire le bruit travaux/fournitures)
+# Mots a exclure
+# Section A — exclusions FranceMarchés (Cyril, source de vérité)
+# Section B — exclusions historiques travaux/fournitures (héritage v3)
+# Tous les mots sont normalisés sans accents (cf nettoyer())
 KEYWORDS_EXCLUSION = [
+    # ── Section A : liste FranceMarchés Cyril ──────────────────────────────
+    "prestations de transport",
+    "transports scolaires", "transport scolaire",
+    "periodiques",
+    "location",
+    "assurance",
+    "conformite",
+    "surveillance",
+    "nettoyage",
+    "exploitation",                              # couvre exploitation/gestion
+    "gestion et a l exploitation",
+    "exploitation et a la gestion",
+    "relative a la gestion et a l exploitation",
+    "ateliers collectifs",
+    "ateliers de cours collectifs",
+    "entretien",
+    "maintenance",
+    "organisation d activites",
+    "maitrise d oeuvre",
+    "moe",                                       # alias maîtrise d'œuvre
+    # ── Section B : exclusions héritage travaux/fournitures ────────────────
     "travaux", "construction", "rehabilitation", "batiment",
     "gros oeuvre", "fourniture", "equipement sportif", "sol sportif",
     "gazon", "vestiaires", "piscine travaux", "stade travaux",
-    "maintenance", "entretien", "nettoyage", "gardiennage",
+    "gardiennage",
+]
+
+# Liste stricte d'exclusion FranceMarchés — utilisée par match_francemarches_strict()
+# 1 seul match suffit à exclure (logique stricte, contrairement au scoring qui tolère <2 hits)
+KEYWORDS_EXCLUSION_FM_STRICT = [
+    "prestations de transport", "transports scolaires", "transport scolaire",
+    "periodiques", "location", "assurance", "conformite", "surveillance",
+    "nettoyage", "exploitation", "gestion et a l exploitation",
+    "exploitation et a la gestion", "relative a la gestion et a l exploitation",
+    "ateliers collectifs", "ateliers de cours collectifs",
+    "entretien", "maintenance", "organisation d activites",
+    "maitrise d oeuvre", "moe",
+]
+
+# Inclusions FranceMarchés strictes — au moins 1 obligatoire
+KEYWORDS_INCLUSION_FM_STRICT = [
+    "sport", "sportif", "sportifs", "sportive", "sportives",
+    "olympique", "olympiques",
 ]
 
 # CPV prestations intellectuelles — bonus scoring
@@ -153,6 +199,62 @@ SCORE_WEIGHTS = {
 }
 
 SCORE_MINIMUM = 20
+
+
+# ─── SURPONDERATION DES SITES DE REFERENCE MARCHE ────────────────────────────
+# Les sources marché public officielles (BOAMP, JOUE, profils acheteurs ANS,
+# Solideo, Paris 2024, ministères) sont surpondérées car ce sont les vrais
+# canaux d'appels d'offres formels. Les médias et signaux LinkedIn n'ont pas
+# la même valeur (signaux faibles, à corroborer).
+SOURCE_WEIGHT_BONUS = {
+    # ── Marchés publics français — BOAMP (autorité de référence) ──────────
+    "boamp_conseil_gestion":  25,   # CPV 79400 — coeur de cible Sideline
+    "boamp_communication":    22,   # CPV 79340
+    "boamp_rp":               20,   # CPV 79416
+    "boamp_etudes":           18,   # CPV 73200
+    "boamp_sport":            25,   # CPV 92600 — services sportifs
+    "boamp_recreatif":        15,   # CPV 92000
+    "boamp_conseil":          15,   # CPV 79 (large)
+    "boamp_api_":             20,   # préfixe pour items issus de l'API ODS
+    # ── Européen ──────────────────────────────────────────────────────────
+    "ted_sport":              25,
+    # ── Profils acheteurs prioritaires ────────────────────────────────────
+    "marches2030":            30,   # COJOP Alpes 2030 + SOLIDEO
+    "cnosf_marches":          25,
+    "maximilien_sport":       18,
+    "maximilien_com":         18,
+    # ── Agrégateur France Marches (requêtes Sideline) ─────────────────────
+    "francemarches_sideline":     22,
+    "francemarches_com_sport":    20,
+    "francemarches_strat_sport":  22,
+    "francemarches_sponsoring":   18,
+    "francemarches_ap":           22,
+    "francemarches_hors_sport":   12,
+}
+
+# Mapping ministères / agences à surpondérer selon le source_label ou l'URL
+# (utilisé par bonus_acheteur_etat() pour les items dont le source_id n'est pas
+#  dans SOURCE_WEIGHT_BONUS mais dont le contenu mentionne un acheteur clé)
+ACHETEURS_PRIORITAIRES = {
+    "agence nationale du sport": 18,
+    "agencedusport":             18,
+    "ans":                       12,
+    "solideo":                   25,
+    "paris 2024":                20,
+    "cojo paris 2024":           20,
+    "alpes 2030":                25,
+    "cojop":                     25,
+    "ministere des sports":      18,
+    "sports.gouv":               18,
+    "ministere de l education":  10,
+    "education.gouv":            10,
+    "drajes":                    12,
+    "creps":                     10,
+    "insep":                     12,
+    "cnosf":                     15,
+    "cpsf":                      12,
+}
+
 
 
 # ─── REQUETES SERPAPI ────────────────────────────────────────────────────────
@@ -939,34 +1041,121 @@ def lancer_boamp_api():
 
 
 def nettoyer(texte):
-    return re.sub(r"<[^>]+>", " ", texte).lower()
+    """
+    Normalise le texte pour le matching mot-clé :
+    - retire le HTML
+    - lowercase
+    - supprime les accents (NFD + ascii)
+    - normalise les apostrophes (' " ` → ' simple)
+    Permet à un mot-clé "conformite" de matcher "conformité" dans le texte source,
+    et à "maitrise d oeuvre" de matcher "maîtrise d'œuvre".
+    """
+    if not texte:
+        return ""
+    s = re.sub(r"<[^>]+>", " ", texte)
+    s = s.lower()
+    # Normaliser apostrophes/œ
+    s = s.replace("'", " ").replace("’", " ").replace("`", " ").replace("ʼ", " ").replace("ʹ", " ").replace("′", " ")
+    s = s.replace("œ", "oe").replace("æ", "ae")
+    # Supprimer accents (NFD : décompose puis garde uniquement ASCII)
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    # Compacter les espaces multiples
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
+# ─── FILTRE STRICT FRANCE MARCHES ─────────────────────────────────────────────
+def match_francemarches_strict(item):
+    """
+    Reproduit la logique d'alerte FranceMarchés telle qu'utilisée par Sideline.
+    Inclusions : au moins 1 mot dans KEYWORDS_INCLUSION_FM_STRICT
+    Exclusions : aucun mot dans KEYWORDS_EXCLUSION_FM_STRICT (1 hit suffit à drop)
+    Retourne True si l'item passe le filtre FM strict, False sinon.
+
+    À appliquer aux sources marché public formelles (BOAMP, TED, France Marches,
+    profils acheteurs) — pour les médias / LinkedIn on garde le scoring tolérant.
+    """
+    corpus = nettoyer(item.get("title", "") + " " + item.get("description", ""))
+    if not any(kw in corpus for kw in KEYWORDS_INCLUSION_FM_STRICT):
+        return False
+    if any(kw in corpus for kw in KEYWORDS_EXCLUSION_FM_STRICT):
+        return False
+    return True
+
+
+def bonus_acheteur_etat(item):
+    """Bonus de score si l'item mentionne un acheteur public prioritaire."""
+    corpus = nettoyer(
+        item.get("title", "") + " " + item.get("description", "") + " " +
+        item.get("source_label", "") + " " + item.get("lien", "")
+    )
+    bonus = 0
+    for keyword, pts in ACHETEURS_PRIORITAIRES.items():
+        if keyword in corpus:
+            bonus = max(bonus, pts)  # un seul bonus, le plus fort
+    return bonus
 
 def scorer(item):
     corpus = nettoyer(item.get("title","") + " " + item.get("description",""))
+    src_id     = item.get("source_id", "")
+    type_src   = item.get("type_source", "")
 
-    # Exclusions — bruit travaux/fournitures
+    # ─── 1. Filtre FranceMarchés STRICT pour les marchés publics ─────────
+    # Sur les sources officielles de marchés publics (BOAMP, TED, France Marchés,
+    # profils acheteurs), on applique la logique d'alerte FranceMarchés telle que
+    # définie par Cyril : 1 mot d'exclusion suffit à drop, 1 mot d'inclusion
+    # sport/olympique obligatoire.
+    is_marche_public_source = (
+        type_src == "marche-public" or
+        src_id.startswith(("boamp_", "ted_", "francemarches_", "marches2030",
+                           "cnosf_", "maximilien_"))
+    )
+    if is_marche_public_source and not match_francemarches_strict(item):
+        return 0
+
+    # ─── 2. Exclusions générales (logique tolérante : ≥2 hits = drop) ────
+    # Pour les sources non-marché-public (médias, LinkedIn), on garde l'ancienne
+    # logique : il faut ≥2 mots exclus pour drop, sinon on tolère.
     nb_exclusions = sum(1 for kw in KEYWORDS_EXCLUSION if kw in corpus)
     if nb_exclusions >= 2:
         return 0
 
+    # ─── 3. Inclusions obligatoires (groupe A sport + groupe B métier) ───
     if not any(kw in corpus for kw in KEYWORDS_SPORT):
         return 0
     if not any(kw in corpus for kw in KEYWORDS_METIER):
         return 0
 
+    # ─── 4. Score de base + poids par mot-clé ────────────────────────────
     score = 30
     for kw, poids in SCORE_WEIGHTS.items():
         if kw in corpus:
             score += poids
 
-    # Bonus CPV prestations intellectuelles
+    # ─── 5. Bonus CPV prestations intellectuelles ────────────────────────
     cpvs = item.get("cpvs", [])
     for cpv, bonus in CPV_BONUS.items():
         if cpv in cpvs:
             score += bonus
             break  # un seul bonus CPV max
 
-    # Bonus moteur actif
+    # ─── 6. Surpondération SOURCE de référence (BOAMP/TED/Solideo...) ────
+    # Bonus appliqué selon le source_id ; les sources marché public formelles
+    # remontent en haut de file pour ne pas être noyées par les signaux faibles.
+    src_bonus = SOURCE_WEIGHT_BONUS.get(src_id, 0)
+    if src_bonus == 0:
+        # Préfixes (ex: boamp_api_xxx)
+        for prefix, bonus in SOURCE_WEIGHT_BONUS.items():
+            if prefix.endswith("_") and src_id.startswith(prefix):
+                src_bonus = bonus
+                break
+    score += src_bonus
+
+    # ─── 7. Bonus acheteur public prioritaire (ANS/Solideo/Paris 2024…) ──
+    score += bonus_acheteur_etat(item)
+
+    # ─── 8. Bonus moteur actif (signal détecté hors flux passifs) ────────
     if item.get("moteur") in ("google", "linkedin"):
         score = min(score + 5, 100)
 
@@ -1202,7 +1391,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v4 -- Demarrage")
+    log.info("Sideline Veille v5 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -1267,7 +1456,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v4")
+    ap = argparse.ArgumentParser(description="Sideline Veille v5")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
