@@ -33,6 +33,21 @@
   .logo-mark { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--or); }
   .logo-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #5a5a5a; letter-spacing: 3px; text-transform: uppercase; }
   .header-status { display: flex; align-items: center; gap: 16px; }
+  .meta-block { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'DM Mono', monospace; font-size: 10px; color: #a0a0a0; letter-spacing: 0.5px; }
+  .meta-line { margin: 0; padding: 0; white-space: nowrap; }
+  .meta-line strong { color: var(--or-pale); font-weight: 500; }
+
+  /* ─── v6 : Onglets catégories ─── */
+  .tabs-nav { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1.5px solid var(--gris-clair); }
+  .tab { padding: 14px 24px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--gris); cursor: pointer; border: none; background: transparent; border-bottom: 2.5px solid transparent; margin-bottom: -1.5px; transition: all 0.2s; letter-spacing: 0.3px; text-transform: uppercase; }
+  .tab:hover { color: var(--noir); }
+  .tab.active { color: var(--noir); border-bottom-color: var(--or); }
+  .tab-count { margin-left: 8px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gris); font-weight: 400; background: var(--fond); padding: 2px 8px; border-radius: 10px; letter-spacing: 0; }
+  .tab.active .tab-count { background: var(--or-pale); color: var(--noir); }
+
+  /* ─── v6 : Favicon dans les cartes ─── */
+  .opp-favicon { width: 20px; height: 20px; border-radius: 4px; object-fit: contain; flex-shrink: 0; background: var(--fond); padding: 2px; }
+  .opp-meta-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .pulse-dot { width: 8px; height: 8px; background: #4caf7d; border-radius: 50%; animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(76,175,125,0.4); } 70% { box-shadow: 0 0 0 6px rgba(76,175,125,0); } 100% { box-shadow: 0 0 0 0 rgba(76,175,125,0); } }
   .status-text { font-family: 'DM Mono', monospace; font-size: 11px; color: #5a5a5a; }
@@ -186,7 +201,11 @@
   <div class="header-status">
     <div class="pulse-dot"></div>
     <span class="status-text">Surveillance active</span>
-    <span class="last-update" id="lastUpdate">—</span>
+    <!-- v6 : bloc meta version + date MAJ -->
+    <div class="meta-block" aria-label="Méta données">
+      <span class="meta-line"><strong>Données M.A.J</strong> <span id="metaUpdated">—</span></span>
+      <span class="meta-line"><strong>Version</strong> <span id="metaVersion">v6</span></span>
+    </div>
   </div>
 </header>
 
@@ -202,6 +221,19 @@
   <!-- Bandeau info connexion JSON -->
   <div class="config-banner" id="configBanner">
     ⚙️ <strong>Mode démo</strong> — Les données affichées sont des exemples. Pour connecter le scraper : placez <code>data/opportunites.json</code> sur votre hébergement OVH au même niveau que ce fichier HTML.
+  </div>
+
+  <!-- v6 : Onglets 3 catégories -->
+  <div class="tabs-nav" role="tablist">
+    <button class="tab active" id="tab1" role="tab" onclick="setTab(1)">
+      Marchés<span class="tab-count" id="count1">—</span>
+    </button>
+    <button class="tab" id="tab2" role="tab" onclick="setTab(2)">
+      Signaux contrats<span class="tab-count" id="count2">—</span>
+    </button>
+    <button class="tab" id="tab3" role="tab" onclick="setTab(3)">
+      Veille sport business<span class="tab-count" id="count3">—</span>
+    </button>
   </div>
 
   <div class="stats-row">
@@ -361,6 +393,14 @@ let TOUTES_OPPS = [];
 let VISIBLE_OPPS = [];
 let activeFilter = { type:'tous', source:'tous' };
 let activeSort = 'score';
+let activeTab = 1; // v6 — onglet par défaut = Marchés (cat.1)
+
+function setTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab' + tab).classList.add('active');
+  filterOpps();
+}
 let keywords = JSON.parse(localStorage.getItem('sideline_kw') || '["affaires publiques","stratégie sport","sponsoring","influence","fédération","communication institutionnelle"]');
 let togStates = { 1:true, 2:true, 3:true };
 let modeDemo = true;
@@ -387,6 +427,15 @@ async function chargerDonnees() {
     const r = await fetch('data/opportunites.json?t=' + Date.now());
     if (!r.ok) throw new Error('JSON absent');
     TOUTES_OPPS = await r.json();
+    // v6 — fetch meta.json pour afficher version + date MAJ
+    try {
+      const rm = await fetch('data/meta.json?t=' + Date.now());
+      if (rm.ok) {
+        const meta = await rm.json();
+        if (meta.updated_at_human) document.getElementById('metaUpdated').textContent = meta.updated_at_human;
+        if (meta.system_version)   document.getElementById('metaVersion').textContent = meta.system_version;
+      }
+    } catch(e) { /* meta facultatif */ }
     // Appliquer les vues stockées localement
     const vues = JSON.parse(localStorage.getItem('sideline_vues') || '[]');
     TOUTES_OPPS.forEach(o => { if(vues.includes(o.id)) o.nouvelle = false; });
@@ -419,7 +468,10 @@ function renderOpps(opps) {
     const stars = '★'.repeat(Math.round((o.score||0)/20)) + '☆'.repeat(5-Math.round((o.score||0)/20));
     return `<div class="opp-card ${o.nouvelle?'nouvelle':''}" onclick="openModal('${o.id}')">
       <div class="opp-meta">
-        <span class="tag tag-source">${o.sourceLabel||'—'}</span>
+        <div class="opp-meta-left">
+          ${o.faviconUrl ? `<img class="opp-favicon" src="${o.faviconUrl}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
+          <span class="tag tag-source">${o.sourceLabel||'—'}</span>
+        </div>
         ${typeTags}
         <span class="tag tag-secteur">${o.secteur||'Sport'}</span>
         ${o.urgent ? '<span class="tag tag-urgent">⚡ Urgent</span>' : ''}
@@ -447,15 +499,19 @@ function fmtDate(d) {
 
 // ─── STATS ────────────────────────────────────────────────────────────────
 function renderStats(opps) {
-  document.getElementById('statTotal').textContent = opps.length;
-  document.getElementById('statNouvelles').textContent = opps.filter(o=>o.nouvelle).length;
-  document.getElementById('statUrgentes').textContent = opps.filter(o=>{
+  // v6 — les 4 cards stats reflètent TOUJOURS la cat.1 (marchés réels),
+  // peu importe l'onglet actif. Demande Cyril : "opportunités actives
+  // renvoient par définition aux marchés réels, pas à un signal".
+  const cat1 = TOUTES_OPPS.filter(o => (o.category||1) === 1);
+  document.getElementById('statTotal').textContent = cat1.length;
+  document.getElementById('statNouvelles').textContent = cat1.filter(o=>o.nouvelle).length;
+  document.getElementById('statUrgentes').textContent = cat1.filter(o=>{
     if(!o.dateLimite) return false;
     return Math.ceil((new Date(o.dateLimite)-new Date())/86400000) <= 15;
   }).length;
-  const avg = opps.length ? Math.round(opps.reduce((s,o)=>s+(o.score||0),0)/opps.length) : 0;
+  const avg = cat1.length ? Math.round(cat1.reduce((s,o)=>s+(o.score||0),0)/cat1.length) : 0;
   document.getElementById('statScore').textContent = avg;
-  document.getElementById('statDelta').textContent = `+${opps.filter(o=>o.nouvelle).length} cette semaine`;
+  document.getElementById('statDelta').textContent = `+${cat1.filter(o=>o.nouvelle).length} cette semaine`;
 }
 
 // ─── SOURCES ──────────────────────────────────────────────────────────────
@@ -505,7 +561,17 @@ function setFilter(key, val) {
 }
 function filterOpps() {
   const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  // v6 — mise à jour des compteurs d'onglets (toujours basée sur TOUTES_OPPS)
+  const count1 = TOUTES_OPPS.filter(o => (o.category||1) === 1).length;
+  const count2 = TOUTES_OPPS.filter(o => o.category === 2).length;
+  const count3 = TOUTES_OPPS.filter(o => o.category === 3).length;
+  document.getElementById('count1').textContent = count1;
+  document.getElementById('count2').textContent = count2;
+  document.getElementById('count3').textContent = count3;
+
   VISIBLE_OPPS = TOUTES_OPPS.filter(o => {
+    // v6 — filtre par onglet (category)
+    if((o.category||1) !== activeTab) return false;
     if(activeFilter.type !== 'tous' && !(o.types||[]).includes(activeFilter.type)) return false;
     if(activeFilter.source !== 'tous' && o.source !== activeFilter.source) return false;
     if(q && !o.title.toLowerCase().includes(q) && !(o.description||'').toLowerCase().includes(q) && !(o.emetteur||'').toLowerCase().includes(q)) return false;
