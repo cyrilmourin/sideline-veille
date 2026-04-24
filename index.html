@@ -414,8 +414,13 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateTimestamp() {
+  // v6 : #lastUpdate a été remplacé par le bloc meta (#metaUpdated + #metaVersion)
+  // qui est alimenté par data/meta.json dans chargerDonnees(). On garde cette
+  // fonction comme no-op tolérant pour ne casser aucun appel existant.
+  const el = document.getElementById('lastUpdate');
+  if (!el) return;
   const now = new Date();
-  document.getElementById('lastUpdate').textContent =
+  el.textContent =
     now.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
     now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 }
