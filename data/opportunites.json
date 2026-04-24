@@ -21,7 +21,9 @@
     "urgent": false,
     "score": 76,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.alexia.fr"
   },
   {
     "id": "2f13b3742491",
@@ -45,7 +47,9 @@
     "urgent": false,
     "score": 76,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.sports.gouv.fr"
   },
   {
     "id": "1e22215b76d2",
@@ -69,57 +73,9 @@
     "urgent": false,
     "score": 76,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "07578e48ddb5",
-    "title": "Consultant sportif : Formation, salaire et carrière dans le sport",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "moteur": "google",
-    "types": [
-      "strategie",
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Pour devenir consultant sportif, un niveau Bac +3 à Bac +5 est recommandé, avec une spécialisation en communication, digital, management sportif ou stratégie ...",
-    "datePublication": "2026-04-20",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.sportsmanagementschool.fr/metiers/consultant-sportif",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 70,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "0133b0d417ea",
-    "title": "Antoine Mayer - Sponsoring sportif & relations publiques",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication",
-      "influence"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Chargé de communication événementielle | Sponsoring sportif & relations publiques | GMF · Profil polyvalent animé par une soif constante d'acquérir de ...",
-    "datePublication": "2026-04-13",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/antoine-mayer-932778226",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 70,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.alexia.fr"
   },
   {
     "id": "7975594b5cad",
@@ -144,103 +100,9 @@
     "urgent": false,
     "score": 68,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "5ee8a36a81e4",
-    "title": "Benjamin Braquet - 🐗 CEO Co-fondateur ÉTÉ INDIEN",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "typeEmetteur": "Detection automatique",
-    "description": "CARAT SPORT : agence de conseil en communication et marketing sportif. Filiale du groupe Aegis Media (25 000 collaborateurs dans 53 pays) Accompagnement d ...",
-    "datePublication": "2026-04-20",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/benjaminbraquet",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 68,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "2a2ff9a72f88",
-    "title": "welcome | Frédéric Bedin",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Sa mission ? Booster la performance commerciale de nos assets ... Senior Sponsorship Manager chez Hopscotch Sport | Sponsoring, Communication, Conseil.",
-    "datePublication": "2026-04-16",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.linkedin.com/posts/fr%C3%A9d%C3%A9ric-bedin-92b30140_welcome-activity-7435434288722071552-KZp1",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 68,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "a333430ed43f",
-    "title": "#playgroundstogrow | Guillaume Duval | 10 commentaires",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Senior Sponsorship Manager chez Hopscotch Sport | Sponsoring, Communication, Conseil ... Sa mission ? Booster la performance commerciale de nos assets ...",
-    "datePublication": "2026-04-16",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/guillaumeduval49_playgroundstogrow-activity-7435587502473633792-DYg1",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 68,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "a333430ed43f",
-    "title": "#playgroundstogrow | Guillaume Duval | 10 commentaires",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Senior Sponsorship Manager chez Hopscotch Sport | Sponsoring, Communication, Conseil ... Sa mission ? Booster la performance commerciale de nos assets ...",
-    "datePublication": "2026-03-31",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/guillaumeduval49_playgroundstogrow-activity-7435587502473633792-DYg1",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 68,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.sports.gouv.fr"
   },
   {
     "id": "1efd3fe806e0",
@@ -265,57 +127,9 @@
     "urgent": false,
     "score": 66,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "ce991071b98a",
-    "title": "Post de Yannick Christian AZOKRY-DEGNON",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "affaires-publiques",
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le 21 décembre 2025, j'ai été élu Vice-Président en charge de la Communication, Visibilité & Plaidoyer de Youth Sport & Education En regardant en arrière, ...",
-    "datePublication": "2026-04-16",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/yannick-christian-azokry-degnon_yse-sport-education-activity-7429487295478673408-U1As",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 64,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "345319b5a2a1",
-    "title": "Post de Yannick Christian AZOKRY-DEGNON",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — LinkedIn signaux",
-    "moteur": "google",
-    "types": [
-      "affaires-publiques",
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — LinkedIn signaux",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le 21 décembre 2025, j'ai été élu Vice-Président en charge de la Communication, Visibilité & Plaidoyer de Youth Sport & Education En regardant en arrière, ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/yannick-christian-azokry-degnon_yse-sport-education-activity-7429487295478673408-U1As",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 64,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "f2e74d451360",
@@ -340,7 +154,9 @@
     "urgent": false,
     "score": 64,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.welcometothejungle.com"
   },
   {
     "id": "6bf0154afc72",
@@ -364,7 +180,9 @@
     "urgent": false,
     "score": 63,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.boamp.fr"
   },
   {
     "id": "26d2084ad99f",
@@ -388,7 +206,9 @@
     "urgent": false,
     "score": 63,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "04479dc1c07c",
@@ -412,31 +232,9 @@
     "urgent": false,
     "score": 63,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "c5418d66b378",
-    "title": "Agent de joueur : Formation, salaire et carrière | SMS",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Agences de communication sportive. Elles proposent des services d'image, de sponsoring et parfois de gestion de carrière pour les sportifs. Sport éco ...",
-    "datePublication": "2026-04-20",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.sportsmanagementschool.fr/metiers/agent-joueur",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 60,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "3636d7c29a77",
@@ -460,31 +258,9 @@
     "urgent": false,
     "score": 60,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "209d7f5f05a1",
-    "title": "Antoine BÉGHIN • OLY - Director of Sponsorship & Sports ...",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "- Conseil et réflexion stratégiques sur le positionnement sportif d'annonceurs. - Mesure de l'efficacité des actions de sponsoring : exposition média, puissance ...",
-    "datePublication": "2026-04-06",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/antoine-b%C3%A9ghin-oly-692a5175",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 60,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "1e53330e226f",
@@ -508,31 +284,9 @@
     "urgent": false,
     "score": 60,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "779d2da5f9e0",
-    "title": "10 Conseils pour Bien Financer une Association Sportive",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Sponsoring",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sponsoring",
-    "typeEmetteur": "Detection automatique",
-    "description": "Bien financer une association sportive repose sur une stratégie globale combinant subventions, sponsoring, partenariats et solutions innovantes. En développant ...",
-    "datePublication": "2026-04-02",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.sportsmanagementschool.fr/blog-sms/financer-une-association-sportive-guide-pratique-pour-securiser-et-developper-vos-ressources",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 60,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=be.linkedin.com"
   },
   {
     "id": "487434b5b7f7",
@@ -556,7 +310,9 @@
     "urgent": false,
     "score": 60,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "1e53330e226f",
@@ -580,7 +336,9 @@
     "urgent": false,
     "score": 60,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=be.linkedin.com"
   },
   {
     "id": "487434b5b7f7",
@@ -604,31 +362,9 @@
     "urgent": false,
     "score": 60,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "83123830543b",
-    "title": "Post de Yann Lemelle",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Directeur de la communication │ Sport │ Stratégie │ Communication de crise │ Communication interne & externe │ Relations presse │ Digital │ Événementiel │ ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/yann-lemelle-b9452731_ravi-de-voir-ce-partenariat-se-concr%C3%A9tiser-activity-7437821326028894208-7g-C",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 60,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "3636d7c29a77",
@@ -652,7 +388,9 @@
     "urgent": false,
     "score": 60,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "5862df1f9d6c",
@@ -676,32 +414,9 @@
     "urgent": false,
     "score": 58,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "4ceebc47c6ae",
-    "title": "Merci encore à notre partenaire Business France pour son ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "moteur": "google",
-    "types": [
-      "strategie",
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Signaux prives (agences+medias+sponsoring)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Vous êtes dirigeant, responsable RH, communication ou stratégie, votre entreprise mène des projets liés au sport, à la qualité de vie au travail, à la RSE ...",
-    "datePublication": "2026-04-23",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.instagram.com/reel/DWRC5jXADVx/",
-    "nouvelle": true,
-    "urgent": false,
-    "score": 58,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.agencedusport.fr"
   },
   {
     "id": "5017568fa8f0",
@@ -725,56 +440,9 @@
     "urgent": false,
     "score": 58,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "25246262b8af",
-    "title": "Ambrine Ziani - Journaliste",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Medias bloques sport",
-    "moteur": "google",
-    "types": [
-      "influence"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Medias bloques sport",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le marketing sportif et le marketing d'influence se sont imposés naturellement. Ma passion pour le football et pour le judo y a sans doute beaucoup contribué.",
-    "datePublication": "2026-04-06",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.strategies.fr/journaliste/ambrine-ziani",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 56,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "d84dd33ab4cf",
-    "title": "Quelles marques de mode sont les plus influentes sur ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Medias bloques sport",
-    "moteur": "google",
-    "types": [
-      "communication",
-      "influence"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Medias bloques sport",
-    "typeEmetteur": "Detection automatique",
-    "description": "Décrypter en vidéo les secteurs du marketing sportif et marketing d'influence sur un ton ludique et créatif. Selon un classement établi par Kolsquare, Gymshark, ...",
-    "datePublication": "2026-04-06",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.strategies.fr/actualites/marques/LQ5772840C/quelles-marques-de-mode-sont-les-plus-influentes-sur-instagram-et-tiktok-en-france.html",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 56,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.sports.gouv.fr"
   },
   {
     "id": "24698a85f472",
@@ -798,7 +466,9 @@
     "urgent": false,
     "score": 55,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "c1b7534d8ca2",
@@ -822,31 +492,9 @@
     "urgent": false,
     "score": 55,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "cb3717808532",
-    "title": "Investir dans le sport donnera-t-il lieu à un crédit d'impôt",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Sponsoring",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sponsoring",
-    "typeEmetteur": "Detection automatique",
-    "description": "Selon l'étude qu'elle a réalisée, le sponsoring sportif représenterait environ 2,5 milliards d'euros en France. Pour tenter de limiter la perte de sponsors ...",
-    "datePublication": "2026-04-13",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.village-justice.com/articles/investir-dans-sport-donnera-lieu-credit-impot,40859.html",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "cb07c1224c0e",
@@ -870,7 +518,9 @@
     "urgent": false,
     "score": 52,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.profilculture.com"
   },
   {
     "id": "ec43983548b5",
@@ -894,31 +544,9 @@
     "urgent": false,
     "score": 52,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "e7d9b06b66af",
-    "title": "Sponsoring sportif : les partenariats stratégiques de janvier ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Medias bloques sport",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Medias bloques sport",
-    "typeEmetteur": "Detection automatique",
-    "description": "Stratégies lance en ce début d'année 2026 un récapitulatif mensuel des actualités qu'il ne fallait pas manquer dans le domaine du sponsoring sportif.",
-    "datePublication": "2026-04-02",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.strategies.fr/actualites/marques/LQ5762784C/sponsoring-sportif-les-partenariats-strategiques-de-janvier-2026.html",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.village-justice.com"
   },
   {
     "id": "5683808b1988",
@@ -942,7 +570,9 @@
     "urgent": false,
     "score": 52,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "ffa6465ff67c",
@@ -966,79 +596,9 @@
     "urgent": false,
     "score": 52,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "b9b5e55e749f",
-    "title": "Sponsoring, du terrain sportif au terrain social avec Africa ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Sponsoring",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sponsoring",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le sponsoring de marque est un incroyable levier stratégique, capable d'incarner une marque, tout en impactant positivement la société. Il crée une expérience ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.wearecom.fr/2026/03/sponsoring-du-terrain-sportif-au-terrain-social-avec-africa-global-logistics/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "4e432af16f3d",
-    "title": "Contrat sponsoring sportif : les étapes pour rédiger un ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Sponsoring",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sponsoring",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le contrat de sponsoring sportif, c'est le deal gagnant-gagnant du sport et de l'entreprise. Objectif, donner les moyens d'évoluer, en échange de visibilité. L' ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.lorraine-ba.com/contrat-sponsoring-sportif/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "77885b309b39",
-    "title": "Marché du sponsoring sportif | TCAC de 7,1 %",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Sponsoring",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sponsoring",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le marché mondial du sponsoring sportif est évalué à 97,03 milliards de dollars en 2025 et devrait atteindre 103,9 milliards de dollars en 2026, ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.businessresearchinsights.com/fr/market-reports/sports-sponsorship-market-117488",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "5683808b1988",
@@ -1062,31 +622,9 @@
     "urgent": false,
     "score": 52,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "3cd8969322eb",
-    "title": "Post de Gaëtan Vautier - la compétition moto. Le…",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Dimanche dernier, j'avais rendez-vous avec un expert en sponsoring pour mon projet sportif : la compétition moto. Le premier sujet : “Qui ça peut intéresser ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/gaetan-vautier_avec-le-travail-jai-d%C3%A9velopp%C3%A9-un-syndrome-activity-7440668707292368896-fcQ5",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "e6327c5d5ed9",
@@ -1110,7 +648,9 @@
     "urgent": false,
     "score": 50,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.achatpublic.com"
   },
   {
     "id": "705df5a5e1bf",
@@ -1134,7 +674,9 @@
     "urgent": false,
     "score": 50,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.achatpublic.com"
   },
   {
     "id": "6cb61cec8103",
@@ -1158,55 +700,9 @@
     "urgent": false,
     "score": 48,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "d9df4b15a25b",
-    "title": "Focus sur 10 partenaires engagés qui soutiennent le club ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Sponsoring",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sponsoring",
-    "typeEmetteur": "Detection automatique",
-    "description": "FL Stratégie : Conseil et accompagnement stratégique pour développer la performance des entreprises. ... sport amateur MARKETING SPORTIF ET PARTENARIAT ...",
-    "datePublication": "2026-04-13",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.instagram.com/p/DWO5-uGDB7i/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 48,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "87000e62ea55",
-    "title": "Rolland Courbis, ancien entraîneur et consultant sportif, est ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Medias bloques sport",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Medias bloques sport",
-    "typeEmetteur": "Detection automatique",
-    "description": "Stratégies innove chaque jour pour partager avec les professionnels de la communication, du marketing, de la publicité et des médias, les infos ...",
-    "datePublication": "2026-04-09",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.strategies.fr/actualites/medias/LQ5601361C/rolland-courbis-ancien-entraineur-et-consultant-sportif-est-decede.html",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 48,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.ffme.fr"
   },
   {
     "id": "e0767becade9",
@@ -1230,7 +726,9 @@
     "urgent": false,
     "score": 48,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.instagram.com"
   },
   {
     "id": "615e94e19abe",
@@ -1254,55 +752,9 @@
     "urgent": false,
     "score": 48,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "b9e3147737aa",
-    "title": "Benjamin Braquet - 🐗 CEO Co-fondateur ÉTÉ INDIEN",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Accompagnement d'entreprises et d'institutions dans la mise en œuvre de leur stratégie marketing et de communication dans le domaine du sport 2007 à 2009 ...",
-    "datePublication": "2026-04-06",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/benjaminbraquet",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 48,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "53cffb090113",
-    "title": "Nathan RAPOSO - Freelance en communication, rédaction ...",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Rédacteur et communicant freelance, je mets aujourd'hui mon expertise au service de projets sportifs, médiatiques et événementiels.",
-    "datePublication": "2026-04-06",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/nathan-raposo-17675417b",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 48,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "8878f82cde96",
@@ -1326,7 +778,9 @@
     "urgent": false,
     "score": 48,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "607c1dafcb6e",
@@ -1350,7 +804,9 @@
     "urgent": false,
     "score": 48,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.pappers.fr"
   },
   {
     "id": "2841ee0b4ef2",
@@ -1374,7 +830,9 @@
     "urgent": false,
     "score": 48,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.the-shaperz.com"
   },
   {
     "id": "189b8bb80365",
@@ -1398,7 +856,9 @@
     "urgent": false,
     "score": 47,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "76717392ff17",
@@ -1422,7 +882,9 @@
     "urgent": false,
     "score": 47,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.carenews.com"
   },
   {
     "id": "21e50b7bb039",
@@ -1446,7 +908,9 @@
     "urgent": false,
     "score": 47,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "cce76921887f",
@@ -1470,7 +934,9 @@
     "urgent": false,
     "score": 47,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=press-book.fr"
   },
   {
     "id": "21e50b7bb039",
@@ -1494,7 +960,9 @@
     "urgent": false,
     "score": 47,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "0cc853707da9",
@@ -1518,7 +986,9 @@
     "urgent": false,
     "score": 46,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.kingcom.fr"
   },
   {
     "id": "0cc853707da9",
@@ -1542,7 +1012,9 @@
     "urgent": false,
     "score": 46,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.kingcom.fr"
   },
   {
     "id": "593f7f85e64e",
@@ -1566,7 +1038,9 @@
     "urgent": false,
     "score": 43,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "d5e19742413a",
@@ -1590,7 +1064,9 @@
     "urgent": false,
     "score": 43,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=ourscom.fr"
   },
   {
     "id": "464a5bc185fb",
@@ -1614,7 +1090,9 @@
     "urgent": false,
     "score": 43,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "d6c5a7254d20",
@@ -1638,31 +1116,9 @@
     "urgent": false,
     "score": 43,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "770c52beed70",
-    "title": "Qui est Alexandre Malsch, CEO de Fulllife",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Medias bloques sport",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Medias bloques sport",
-    "typeEmetteur": "Detection automatique",
-    "description": "Depuis six ans, l'ex-fondateur de Melty positionne sa marque française de gamewear sur la scène européenne de l'e-sport. Quadragénaire et toujours dans le coup.",
-    "datePublication": "2026-04-13",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.strategies.fr/actualites/marques/LQ5790938C/qui-est-alexandre-malsch-ceo-de-fulllife.html",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.fashionjobs.com"
   },
   {
     "id": "fab3a69c3867",
@@ -1686,55 +1142,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "c632982b32e0",
-    "title": "N° 2465",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Clubs pro",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Clubs pro",
-    "typeEmetteur": "Detection automatique",
-    "description": "La loi du 2 mars 2022, visant à démocratiser le sport en France, affichait une ambition très large : développer la pratique sportive, moderniser la gouvernance ...",
-    "datePublication": "2026-04-06",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.assemblee-nationale.fr/dyn/17/rapports/cion-cedu/l17b2465_rapport-information.pdf",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "efa19b2f3486",
-    "title": "Herve Huet 🤝 Catalyseur de coopérations territoriales.",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Herve Huet Catalyseur de coopérations territoriales. Je connecte les acteurs et expertises du territoire autour de projets d'innovation @NormandySportech # ...",
-    "datePublication": "2026-04-06",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/hhuet-h3psolutions_la-normandy-sportech-sinvite-chez-regnr-activity-7437091732044951554-Y4ND",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.instagram.com"
   },
   {
     "id": "9195bcdccc82",
@@ -1758,7 +1168,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=oubanguimedias.com"
   },
   {
     "id": "699da7d938c1",
@@ -1782,55 +1194,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "c937acac1574",
-    "title": "Agence de stratégie & identité de marque basée à la Croix ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Signaux prives",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Signaux prives",
-    "typeEmetteur": "Detection automatique",
-    "description": "Nous accompagnons des marques de secteurs variés (sport, food, tech, immobilier, santé & bien-être, etc.), avec un niveau d'exigence élevé sur le fond comme sur ...",
-    "datePublication": "2026-04-02",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.instagram.com/p/DVyeOlpjYBX/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "7a785ebd5f83",
-    "title": "Consultant sportif : Formation, salaire et carrière dans le sport",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — Signaux prives",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Signaux prives",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le consultant sportif est un expert reconnu pour sa connaissance approfondie du secteur. Il intervient dans les clubs, médias, fédérations ou entreprises ...",
-    "datePublication": "2026-04-02",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.sportsmanagementschool.fr/metiers/consultant-sportif",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "931d10057ded",
@@ -1854,7 +1220,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "f5a0fbf64c15",
@@ -1878,55 +1246,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "d095cd9b35e6",
-    "title": "Adrien Bailleul | 15 commentaires",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — LinkedIn signaux",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — LinkedIn signaux",
-    "typeEmetteur": "Detection automatique",
-    "description": "Sport five, c'est une agence qui va utiliser les super pouvoirs du sport pour connecter les marques avec leurs audiences. Le sport, c'est la passion num ro un ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/adrien-bailleul-26260227_sportbusiness-marketingsportif-fanexperience-activity-7416887378537213953-10jd",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "4537384ee82b",
-    "title": "Herve Huet 🤝 Catalyseur de coopérations territoriales.",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "2 sem. Développer ensemble l'avenir de la logistique sportive. Chez ReGNR, nous sommes le partenaire logistique des marques de sport engagées.",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/hhuet-h3psolutions_la-normandy-sportech-sinvite-chez-regnr-activity-7437091732044951554-Y4ND",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=oubanguimedias.com"
   },
   {
     "id": "5d03968cf0b9",
@@ -1950,7 +1272,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "afd3507a783a",
@@ -1974,31 +1298,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "c70561824f1f",
-    "title": "[CDD 14 mois] DIRECTEUR DE PROJET PASS'SPORT H/F",
-    "source": "prive",
-    "sourceLabel": "Google — Signaux prives",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "Google — Signaux prives",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le dispositif Pass'sport est destiné à soutenir la pratique sportive dans une structure sportive pour des millions de jeunes bénéficiaires de prestations ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.welcometothejungle.com/fr/companies/communaute-beta-gouv/jobs/cdd-14-mois-directeur-de-projet-pass-sport-h-f_paris",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.education.gouv.fr"
   },
   {
     "id": "acb40fb1f9fe",
@@ -2022,31 +1324,9 @@
     "urgent": false,
     "score": 40,
     "angles": [],
-    "source_auto": true
-  },
-  {
-    "id": "5991e806852d",
-    "title": "Herve Huet 🤝 Catalyseur de coopérations territoriales.",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "2 sem. Développer ensemble l'avenir de la logistique sportive. Chez ReGNR, nous sommes le partenaire logistique des marques de sport engagées.",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/posts/hhuet-h3psolutions_la-normandy-sportech-sinvite-chez-regnr-activity-7437091732044951554-Y4ND",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.sportstrategies.com"
   },
   {
     "id": "c40e1127caca",
@@ -2070,7 +1350,9 @@
     "urgent": false,
     "score": 38,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.ffr13.fr"
   },
   {
     "id": "a5883b8ee595",
@@ -2094,7 +1376,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "a8b02ed427df",
@@ -2118,7 +1402,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.valleesduhautanjou.fr"
   },
   {
     "id": "2377a19b65f5",
@@ -2142,7 +1428,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "e070a69faec8",
@@ -2166,7 +1454,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.boamp.fr"
   },
   {
     "id": "9b0a8a53f6c5",
@@ -2190,7 +1480,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "37afa2d1e2e8",
@@ -2214,7 +1506,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.ffme.fr"
   },
   {
     "id": "dfdd7d07da51",
@@ -2238,7 +1532,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.ffnatation.fr"
   },
   {
     "id": "0fec6c66fbf4",
@@ -2262,7 +1558,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "60b29ecd9e5f",
@@ -2286,7 +1584,9 @@
     "urgent": false,
     "score": 35,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
     "id": "c40e1127caca",
@@ -2310,6 +1610,8 @@
     "urgent": false,
     "score": 30,
     "angles": [],
-    "source_auto": true
+    "source_auto": true,
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.ffr13.fr"
   }
 ]
