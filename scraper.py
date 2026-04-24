@@ -413,6 +413,7 @@ SOURCE_CATEGORY = {
     "sporsora":                   3,
     "sporsora_actu":              3,
     "sport_strategies":           3,
+    "sport_strategies_rss":       3,
     "newstank_sport":             3,
     "newstank_sport_home":        3,
     "cosmos":                     3,
@@ -980,10 +981,10 @@ SOURCES = [
     },
 
     # ── v6 — Ajouts cat.3 veille sport business ─────────────────────────
-    # Sport Stratégies — média conseil/communication sport
+    # Sport Stratégies — flux RSS (complément au scrap HTML existant plus bas)
     {
-        "id": "sport_strategies",
-        "label": "Sport Stratégies",
+        "id": "sport_strategies_rss",
+        "label": "Sport Stratégies — RSS",
         "type": "prive",
         "url": "https://www.sport-strategies.com/feed/",
         "parser": "rss",
@@ -1567,7 +1568,7 @@ def sauvegarder_donnees(opps):
     meta = {
         "updated_at_iso":   now.strftime("%Y-%m-%dT%H:%M:%S"),
         "updated_at_human": now.strftime("%d/%m/%y à %Hh%M"),
-        "system_version":   os.environ.get("SYSTEM_VERSION", "v6"),
+        "system_version":   os.environ.get("SYSTEM_VERSION") or "v6",
         "count_total":      len(opps),
         "count_cat1":       sum(1 for o in opps if o.get("category") == 1),
         "count_cat2":       sum(1 for o in opps if o.get("category") == 2),
