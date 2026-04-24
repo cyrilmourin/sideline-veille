@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sideline Conseil — Moteur de veille marches sportifs v5
+Sideline Conseil — Moteur de veille marches sportifs v6
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -266,6 +266,160 @@ ACHETEURS_PRIORITAIRES = {
     "cpsf":                      12,
 }
 
+
+# ═════════════════════════════════════════════════════════════════════════════
+# v6 — REFONTE 3 CATÉGORIES
+# ═════════════════════════════════════════════════════════════════════════════
+# Cat.1 = MARCHÉS RÉELS (appels d'offres publics formels)
+# Cat.2 = SIGNAUX CONTRATS (partenariats annoncés, AO gagnés)
+# Cat.3 = VEILLE SPORT BUSINESS (flux RSS qualifiés, bruit de fond)
+
+# ─── Whitelist des émetteurs locaux FR (cat.1 marchés) ────────────────────
+WHITELIST_EMETTEURS_LOCAUX_FR = [
+    # 13 régions métropolitaines
+    "region ile de france", "region auvergne rhone alpes", "region provence alpes cote d azur",
+    "region grand est", "region hauts de france", "region nouvelle aquitaine",
+    "region occitanie", "region pays de la loire", "region normandie",
+    "region bretagne", "region centre val de loire", "region bourgogne franche comte",
+    "region corse",
+    # Métropoles / grandes villes
+    "ville de paris", "mairie de paris", "metropole du grand paris",
+    "metropole europeenne de lille", "ville de lille",
+    "metropole de lyon", "ville de lyon", "grand lyon",
+    "metropole aix marseille provence", "ville de marseille",
+    "rennes metropole", "ville de rennes",
+    "bordeaux metropole", "ville de bordeaux",
+    "toulouse metropole", "ville de toulouse",
+    "metropole nice cote d azur", "ville de nice",
+    "nantes metropole", "ville de nantes",
+    "eurometropole de strasbourg", "ville de strasbourg",
+    # Ministères / État
+    "ministere des sports", "sports gouv", "sports.gouv",
+    "ministere de l education", "premier ministre", "matignon", "elysee",
+    "drajes", "creps", "insep",
+    # Agences / organismes publics
+    "agence nationale du sport", "agencedusport", " ans ",
+    "cnosf", "comite national olympique", "cpsf", "comite paralympique",
+    "afd", "agence francaise de developpement",
+    # Organisateurs grands événements sport
+    "solideo", "societe de livraison des ouvrages olympiques",
+    "cojop", "alpes 2030", "marches2030", "marches 2030",
+    "paris 2024", "cojo paris 2024",
+    "uci 2027", "uci championnats 2027", "mondiaux uci",
+    "mondial basket 2031", "fiba 2031",
+    "euro 2028", "uefa euro 2028", "euro masculin 2028",
+    "coupe du monde rugby 2027", "rwc 2027",
+    "coupe du monde rugby feminine 2025",
+    # Fédérations (préfixes génériques)
+    "federation francaise", "ffr", "fff", "fft", "ffbb", "ffn", "ffa",
+    "ffhb", "ffvb", "ffc", "ffjda", "ffboxe", "ffe",
+    "ffvoile", "ffsa", "ffjudo", "ffesport",
+    # Ligues professionnelles
+    "ligue de football professionnel", "lfp", "ligue 1", "ligue 2",
+    "ligue nationale de rugby", "lnr", "top 14",
+    "ligue nationale de basket", "lnb",
+    "ligue nationale de handball", "lnh",
+    "ligue feminine de basket", "lfb",
+]
+
+# ─── Whitelist orgs institutionnelles (FR + internationales) ─────────────
+WHITELIST_ORGS_INSTITUTIONNELLES = WHITELIST_EMETTEURS_LOCAUX_FR + [
+    "cio", "comite international olympique", "ioc",
+    "uefa", "fifa", "fiba", "ihf", "itf", "iaaf", "world athletics",
+    "world rugby", "wru", "irb", "uci", "union cycliste internationale",
+    "world sailing", "fei", "iihf",
+    "commission europeenne", "parlement europeen", "conseil de l europe",
+    "coe", "enoc", "european olympic committees",
+]
+
+# ─── Whitelist domaines autorisés pour scraps Google/LinkedIn ────────────
+WHITELIST_DOMAINES_SCRAP = [
+    "boamp.fr", "marches-publics.gouv.fr", "projets-achats.marches-publics.gouv.fr",
+    "ted.europa.eu", "francemarches.com",
+    "marches2030.org", "achats.cnosf.org", "cnosf.org",
+    "maximilien.fr", "e-marchespublics.com",
+    "sports.gouv.fr", "agencedusport.fr", "education.gouv.fr",
+    "afd.fr", "diplomatie.gouv.fr",
+    "solideo.fr", "paris2024.org", "alpes2030.fr",
+    "ffr.fr", "fff.fr", "fft.fr", "ffbb.com", "ffn.fr",
+    "lfp.fr", "lnr.fr", "lnb.com", "lnh.fr",
+    "linkedin.com/company/", "linkedin.com/school/",
+]
+
+# ─── Mots-clés SIGNAUX CONTRATS (cat.2) ──────────────────────────────────
+KEYWORDS_SIGNAUX_CONTRATS = [
+    # Choix d'agence / prestataire
+    "agence choisie par", "agence retenue par",
+    "a confie sa communication a", "a confie ses relations publiques a",
+    "a confie sa strategie d influence",
+    "a confie ses relations institutionnelles",
+    "retient l agence", "retenue pour accompagner", "retenu pour accompagner",
+    "selectionne comme conseil", "selectionnee comme conseil",
+    "recrute comme agence", "designe comme prestataire", "designee comme prestataire",
+    "designe prestataire", "designee prestataire",
+    # Remporte / gagne un AO
+    "remporte l appel d offre", "a remporte l appel d offre",
+    "remporte le marche", "a remporte le marche",
+    "remporte la consultation", "a remporte la consultation",
+    "attribution du marche a", "marche attribue a", "attributaire du marche",
+    # Partenariats
+    "nouveau partenaire officiel", "nouveau partenaire",
+    "renouvelle son partenariat avec", "prolonge son partenariat avec",
+    "officialise son partenariat", "devient partenaire de",
+    "accompagnera desormais", "accompagnera la federation",
+    # Mécénat / sponsoring signé
+    "signe un contrat de sponsoring", "signe un accord de mecenat",
+]
+
+# ─── Exclusions NOMINATIONS RH (drop pour cat.3) ─────────────────────────
+KEYWORDS_EXCLUSION_NOMINATIONS = [
+    "nomination ", "nomme ", "nommee ",
+    "nouveau directeur commercial", "nouvelle directrice commerciale",
+    "nouveau directeur marketing", "nouvelle directrice marketing",
+    "nouveau directeur general", "nouvelle directrice generale",
+    "prise de fonction", "prend ses fonctions",
+    "promu ", "promue ", "promus ", "promues ",
+    "arrive a la tete de", "arrive a la direction",
+    "quitte ses fonctions", "quitte son poste", "demission ",
+]
+
+# ─── Mapping source_id -> catégorie (1/2/3) ──────────────────────────────
+SOURCE_CATEGORY = {
+    # Cat.1 — MARCHÉS RÉELS
+    "boamp_conseil_gestion":      1,
+    "boamp_communication":        1,
+    "boamp_rp":                   1,
+    "boamp_etudes":               1,
+    "boamp_sport":                1,
+    "boamp_recreatif":            1,
+    "boamp_conseil":              1,
+    "boamp_api_":                 1,
+    "ted_sport":                  1,
+    "marches2030":                1,
+    "cnosf_marches":              1,
+    "maximilien_sport":           1,
+    "maximilien_com":             1,
+    "francemarches_sideline":     1,
+    "francemarches_com_sport":    1,
+    "francemarches_strat_sport":  1,
+    "francemarches_sponsoring":   1,
+    "francemarches_ap":           1,
+    "francemarches_hors_sport":   1,
+    # Cat.3 — VEILLE SPORT BUSINESS
+    "sportbusiness_club":         3,
+    "sportbusiness_club_signaux": 3,
+    "cafe_sport_business":        3,
+    "cafe_sport_biz":             3,
+    "sporsora":                   3,
+    "sporsora_actu":              3,
+    "sport_strategies":           3,
+    "newstank_sport":             3,
+    "newstank_sport_home":        3,
+    "cosmos":                     3,
+    "gie_sport_expertise":        3,
+    "lequipe_sport_business":     3,
+    "kingcom_actu":               3,
+}
 
 
 # ─── REQUETES SERPAPI ────────────────────────────────────────────────────────
@@ -824,6 +978,40 @@ SOURCES = [
         "desc_sel": "p",
         "link_sel": "a",
     },
+
+    # ── v6 — Ajouts cat.3 veille sport business ─────────────────────────
+    # Sport Stratégies — média conseil/communication sport
+    {
+        "id": "sport_strategies",
+        "label": "Sport Stratégies",
+        "type": "prive",
+        "url": "https://www.sport-strategies.com/feed/",
+        "parser": "rss",
+    },
+    # COSMOS — conseil social du mouvement sportif
+    {
+        "id": "cosmos",
+        "label": "COSMOS — Mouvement sportif",
+        "type": "prive",
+        "url": "https://www.cosmos.asso.fr/feed/",
+        "parser": "rss",
+    },
+    # GIE Sport Expertise
+    {
+        "id": "gie_sport_expertise",
+        "label": "GIE Sport Expertise",
+        "type": "prive",
+        "url": "https://sportexpertise.com/feed/",
+        "parser": "rss",
+    },
+    # L'Équipe — actualités sport (flux général, filtré ensuite)
+    {
+        "id": "lequipe_sport_business",
+        "label": "L'Équipe — Sport Business",
+        "type": "prive",
+        "url": "https://www.lequipe.fr/rss/actu_rss.xml",
+        "parser": "rss",
+    },
 ]
 
 
@@ -1113,6 +1301,87 @@ def bonus_acheteur_etat(item):
             bonus = max(bonus, pts)  # un seul bonus, le plus fort
     return bonus
 
+# ─── CLASSIFIEUR 3 CATÉGORIES (v6) ───────────────────────────────────────
+def is_institutional_result(item):
+    """
+    Pour les items scraps Google/LinkedIn : vérifie que la source est
+    institutionnelle (domaine whitelisté OU mention d'org reconnue dans le
+    texte). Empêche le bruit des posts LinkedIn de particuliers sans
+    rattachement à une org sportive reconnue.
+    """
+    lien = (item.get("lien", "") or "").lower()
+    for domain in WHITELIST_DOMAINES_SCRAP:
+        if domain in lien:
+            return True
+    corpus = nettoyer(item.get("title", "") + " " + item.get("description", ""))
+    for org in WHITELIST_ORGS_INSTITUTIONNELLES:
+        if org in corpus:
+            return True
+    return False
+
+
+def detect_signal_contrat(item):
+    """Vrai si l'item matche un verbe conjugué de signal de contrat gagné (cat.2)."""
+    corpus = nettoyer(item.get("title", "") + " " + item.get("description", ""))
+    return any(kw in corpus for kw in KEYWORDS_SIGNAUX_CONTRATS)
+
+
+def matches_nomination(item):
+    """Vrai si l'item ressemble à une nomination RH (à drop pour cat.3)."""
+    corpus = nettoyer(item.get("title", "") + " " + item.get("description", ""))
+    return any(kw in corpus for kw in KEYWORDS_EXCLUSION_NOMINATIONS)
+
+
+def categorize(item):
+    """
+    Retourne 1 (marche reel), 2 (signal contrat), 3 (veille) ou None (drop).
+    """
+    src_id  = item.get("source_id", "") or ""
+    moteur  = item.get("moteur", "rss")
+    typ_src = item.get("type_source", "")
+
+    # 1. Mapping prioritaire
+    if src_id in SOURCE_CATEGORY:
+        cat_src = SOURCE_CATEGORY[src_id]
+        # Cas spécial : cat.3 avec signal contrat -> requalifier cat.2
+        if cat_src == 3 and detect_signal_contrat(item):
+            return 2
+        # Cas spécial : cat.3 + nomination -> drop
+        if cat_src == 3 and matches_nomination(item):
+            return None
+        return cat_src
+
+    # 2. Préfixes (ex: boamp_api_xxxxxx)
+    for prefix, cat in SOURCE_CATEGORY.items():
+        if prefix.endswith("_") and src_id.startswith(prefix):
+            return cat
+
+    # 3. Marchés publics non mappés -> cat.1
+    if typ_src == "marche-public":
+        return 1
+
+    # 4. Scraps Google/LinkedIn : filtre institutionnel + classification
+    if moteur in ("google", "linkedin"):
+        if not is_institutional_result(item):
+            return None
+        corpus = nettoyer(item.get("title", "") + " " + item.get("description", ""))
+        if detect_signal_contrat(item):
+            return 2
+        market_signals = ["appel d offre", "consultation", "marche public",
+                          "mise en concurrence", "appel a candidature",
+                          "avis de marche", "dialogue competitif"]
+        if any(kw in corpus for kw in market_signals):
+            return 1
+        if matches_nomination(item):
+            return None
+        return 3
+
+    # 5. Autres médias privés -> cat.3 par défaut
+    if matches_nomination(item):
+        return None
+    return 3
+
+
 def scorer(item):
     corpus = nettoyer(item.get("title","") + " " + item.get("description",""))
     src_id     = item.get("source_id", "")
@@ -1172,11 +1441,26 @@ def scorer(item):
     # ─── 7. Bonus acheteur public prioritaire (ANS/Solideo/Paris 2024…) ──
     score += bonus_acheteur_etat(item)
 
-    # ─── 8. Bonus moteur actif (signal détecté hors flux passifs) ────────
-    if item.get("moteur") in ("google", "linkedin"):
-        score = min(score + 5, 100)
+    # ─── 8. v6 — Pondération par catégorie (cat.1 >> cat.2 > cat.3) ──────
+    cat = item.get("_category") or categorize(item)
+    if cat == 1:
+        score = int(score * 1.5)   # marchés réels : sur-pondération massive
+    elif cat == 2:
+        score = int(score * 1.0)   # signaux contrats : neutre
+    elif cat == 3:
+        score = int(score * 0.55)  # veille : pénalité (bruit de fond)
+    else:
+        return 0
 
-    return min(score, 100)
+    # ─── 9. v6 — Pénalité si source scrap imprécise (pas domaine officiel) ─
+    moteur = item.get("moteur")
+    if moteur in ("google", "linkedin"):
+        score += 3
+        lien = (item.get("lien","") or "").lower()
+        if not any(d in lien for d in WHITELIST_DOMAINES_SCRAP):
+            score -= 5  # post LinkedIn perso avec mention org -> score bas
+
+    return max(0, min(score, 100))
 
 def deduire_types(item):
     corpus = nettoyer(item.get("title","") + " " + item.get("description",""))
@@ -1212,15 +1496,33 @@ def est_urgent(date_limite):
     except Exception:
         return False
 
+def _favicon_url(lien):
+    """Favicon via Google S2 (cache global, toujours disponible)."""
+    if not lien:
+        return ""
+    try:
+        from urllib.parse import urlparse
+        host = urlparse(lien).netloc
+        if host:
+            return f"https://www.google.com/s2/favicons?sz=64&domain={host}"
+    except Exception:
+        pass
+    return ""
+
+
 def formater_opportunite(item, score):
     moteur = item.get("moteur","rss")
     label  = item.get("source_label","")
+    lien   = item.get("lien","")
+    cat    = item.get("_category") or categorize(item) or 3
     return {
         "id":              generer_id(item),
         "title":           item.get("title",""),
         "source":          item.get("type_source","marche-public"),
         "sourceLabel":     label,
         "moteur":          moteur,
+        "category":        cat,                # v6 : 1=marche, 2=signal, 3=veille
+        "faviconUrl":      _favicon_url(lien), # v6 : affichage carte
         "types":           deduire_types(item),
         "secteur":         "Sport",
         "emetteur":        label,
@@ -1230,7 +1532,7 @@ def formater_opportunite(item, score):
         "dateLimite":      None,
         "budget":          "A determiner",
         "contact":         "",
-        "lien":            item.get("lien",""),
+        "lien":            lien,
         "nouvelle":        True,
         "urgent":          False,
         "score":           score,
@@ -1251,6 +1553,21 @@ def sauvegarder_donnees(opps):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(opps, f, ensure_ascii=False, indent=2)
     log.info(f"Donnees sauvegardees -> {DATA_FILE} ({len(opps)} opportunites)")
+    # v6 — meta.json pour l'affichage version + date MAJ
+    meta_file = DATA_FILE.parent / "meta.json"
+    now = datetime.now()
+    meta = {
+        "updated_at_iso":   now.strftime("%Y-%m-%dT%H:%M:%S"),
+        "updated_at_human": now.strftime("%d/%m/%y à %Hh%M"),
+        "system_version":   os.environ.get("SYSTEM_VERSION", "v6"),
+        "count_total":      len(opps),
+        "count_cat1":       sum(1 for o in opps if o.get("category") == 1),
+        "count_cat2":       sum(1 for o in opps if o.get("category") == 2),
+        "count_cat3":       sum(1 for o in opps if o.get("category") == 3),
+    }
+    with open(meta_file, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+    log.info(f"Meta sauvegardee -> {meta_file} (version={meta['system_version']}, cat1/2/3={meta['count_cat1']}/{meta['count_cat2']}/{meta['count_cat3']})")
 
 def charger_vus():
     if SEEN_FILE.exists():
@@ -1394,6 +1711,10 @@ def envoyer_email(html, nouvelles):
 def traiter_items(items, vus):
     nouvelles = []
     for item in items:
+        # v6 — catégoriser AVANT le scoring
+        item["_category"] = categorize(item)
+        if item["_category"] is None:
+            continue  # drop : hors périmètre
         uid = generer_id(item)
         if uid in vus:
             continue
@@ -1408,7 +1729,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v5 -- Demarrage")
+    log.info("Sideline Veille v6 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -1473,7 +1794,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v5")
+    ap = argparse.ArgumentParser(description="Sideline Veille v6")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
