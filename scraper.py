@@ -1407,10 +1407,18 @@ def scorer(item):
     if nb_exclusions >= 2:
         return 0
 
-    # ─── 3. Inclusions obligatoires (groupe A sport + groupe B métier) ───
+    # ─── 3. Inclusions obligatoires (adaptées par catégorie v6) ─────────
+    # Récupère la catégorie (posée en amont par traiter_items, sinon recalc)
+    cat_precomp = item.get("_category")
+    if cat_precomp is None:
+        cat_precomp = categorize(item)
+
+    # Sport requis pour toutes les catégories (filtre pertinence sujet)
     if not any(kw in corpus for kw in KEYWORDS_SPORT):
         return 0
-    if not any(kw in corpus for kw in KEYWORDS_METIER):
+    # Métier requis UNIQUEMENT pour cat.1 (marchés) : un signal cat.2 ou
+    # une veille cat.3 ne parle pas forcément en termes "affaires publiques"
+    if cat_precomp == 1 and not any(kw in corpus for kw in KEYWORDS_METIER):
         return 0
 
     # ─── 4. Score de base + poids par mot-clé ────────────────────────────
