@@ -1546,10 +1546,26 @@ def pre_filter(item):
             if kw in corpus:
                 return False
 
-    # 5. Offre d'emploi — toujours actif (jobs = bruit meme sur SBC)
-    for kw in KEYWORDS_EMPLOI:
-        if kw in corpus:
-            return False
+    # 5. Offre d'emploi
+    # Pour cat.3 mappee : sous-ensemble strict (garder les vrais marqueurs job
+    # mais retirer 'business development' / 'sales manager' / 'key account'
+    # qui sont des termes business legitimes sur les medias sport).
+    if is_mapped_cat3:
+        # Sous-ensemble : seulement les marqueurs sans ambiguite
+        strict_emploi = ["offre d emploi", "offres d emploi", "recrutement",
+                         " cdi ", " cdd ", " stage ", " alternance ", " freelance ",
+                         "h f )", "( h f", "h/f", "(h/f)",
+                         "intitule du poste", "poste a pourvoir",
+                         "candidat retenu", "profil recherche",
+                         "salaire mensuel", "salaire annuel", "remuneration"]
+        for kw in strict_emploi:
+            if kw in corpus:
+                return False
+    else:
+        # Cat.1/2 et sources non mappees : check complet (incluant business development)
+        for kw in KEYWORDS_EMPLOI:
+            if kw in corpus:
+                return False
 
     # 6. AO explicitement clôturé — sauf cat.3 (signal contrat interessant)
     if not is_mapped_cat3:
