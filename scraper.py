@@ -1527,24 +1527,39 @@ def pre_filter(item):
             if not any(s in corpus for s in ao_signals_title):
                 return False  # PDF/DOC sans contexte AO -> drop
 
-    # 4. Page statique (présentation, rapports, dossier presse...)
-    for kw in KEYWORDS_PAGE_STATIQUE:
-        if kw in corpus:
-            return False
+    # v6.8 - Si la source est explicitement mappee cat.3 dans SOURCE_CATEGORY
+    # (SBC, Sporsora, COSMOS, NBA, etc.), on bypass les checks 4 (page statique),
+    # 6 (AO clos) et 7 (date limite passee). Sur un media specialise sport
+    # business, "interview de X", "rapport annuel", "tribune de Y" ou
+    # "marche attribue a Z" SONT du contenu legitime.
+    src_id_lc = (item.get("source_id", "") or "")
+    is_mapped_cat3 = SOURCE_CATEGORY.get(src_id_lc) == 3
+    if not is_mapped_cat3:
+        for prefix, cat in SOURCE_CATEGORY.items():
+            if prefix.endswith("_") and src_id_lc.startswith(prefix) and cat == 3:
+                is_mapped_cat3 = True
+                break
 
-    # 5. Offre d'emploi
+    # 4. Page statique — sauf cat.3 mappee
+    if not is_mapped_cat3:
+        for kw in KEYWORDS_PAGE_STATIQUE:
+            if kw in corpus:
+                return False
+
+    # 5. Offre d'emploi — toujours actif (jobs = bruit meme sur SBC)
     for kw in KEYWORDS_EMPLOI:
         if kw in corpus:
             return False
 
-    # 6. AO explicitement clôturé
-    for kw in KEYWORDS_AO_CLOTURE:
-        if kw in corpus:
-            return False
+    # 6. AO explicitement clôturé — sauf cat.3 (signal contrat interessant)
+    if not is_mapped_cat3:
+        for kw in KEYWORDS_AO_CLOTURE:
+            if kw in corpus:
+                return False
 
-    # 7. Date limite passée (cat.1 marchés uniquement) — vérifie si dateLimite parsable
+    # 7. Date limite passée — sauf cat.3
     date_limite_str = item.get("date_limite") or item.get("dateLimite")
-    if date_limite_str:
+    if date_limite_str and not is_mapped_cat3:
         try:
             from datetime import datetime as _dt
             dl = _dt.strptime(str(date_limite_str)[:10], "%Y-%m-%d")
