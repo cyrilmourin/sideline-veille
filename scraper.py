@@ -241,6 +241,10 @@ SOURCE_WEIGHT_BONUS = {
     "francemarches_sponsoring":   18,
     "francemarches_ap":           22,
     "francemarches_hors_sport":   12,
+    # v6.4 - Bonus pour les sous-feeds SBC (institutions-publiques prioritaire)
+    "sportbusiness_club_institutions": 12,  # +12pts : Cyril l'a flague comme prioritaire
+    "sportbusiness_club_agences":       6,
+    "sportbusiness_club_breves":        4,
 }
 
 # Mapping ministères / agences à surpondérer selon le source_label ou l'URL
@@ -406,8 +410,11 @@ SOURCE_CATEGORY = {
     "francemarches_ap":           1,
     "francemarches_hors_sport":   1,
     # Cat.3 — VEILLE SPORT BUSINESS
-    "sportbusiness_club":         3,
-    "sportbusiness_club_signaux": 3,
+    "sportbusiness_club_institutions": 3,  # PRIORITAIRE (le plus utile pour Cyril)
+    "sportbusiness_club_agences":      3,
+    "sportbusiness_club_breves":       3,
+    "sportbusiness_club":              3,  # legacy si jamais ré-utilisé
+    "sportbusiness_club_signaux":      3,  # legacy
     "cafe_sport_business":        3,
     "cafe_sport_biz":             3,
     "sporsora":                   3,
@@ -820,12 +827,32 @@ SOURCES = [
     # COUCHE 3 — MEDIAS SECTORIELS (signaux de marche)
     # ══════════════════════════════════════════════════════════════════════════
 
-    # SportBusiness Club — media sectoriel sport business
+    # ── SportBusiness Club — sous-catégories ciblées (Cyril 2026-04-25) ──
+    # Le feed racine /feed/ retournait soit du bruit soit rien. Cyril a
+    # identifie 3 endpoints utiles :
+    #   /category/agences/  -> actu agences (utile veille concurrentielle)
+    #   /topic/institutions-publiques/  -> *l'endpoint le plus utile pour Cyril*
+    #   /category/breves/   -> toute l'actualite courte
+    # Convention WordPress : suffixe /feed/ pour transformer en RSS.
     {
-        "id": "sportbusiness_club",
-        "label": "SportBusiness Club — Signaux marche",
+        "id": "sportbusiness_club_institutions",
+        "label": "SportBusiness Club — Institutions publiques",
         "type": "prive",
-        "url": "https://www.sportbusiness.club/feed/",
+        "url": "https://www.sportbusiness.club/topic/institutions-publiques/feed/",
+        "parser": "rss",
+    },
+    {
+        "id": "sportbusiness_club_agences",
+        "label": "SportBusiness Club — Agences",
+        "type": "prive",
+        "url": "https://www.sportbusiness.club/category/agences/feed/",
+        "parser": "rss",
+    },
+    {
+        "id": "sportbusiness_club_breves",
+        "label": "SportBusiness Club — Brèves",
+        "type": "prive",
+        "url": "https://www.sportbusiness.club/category/breves/feed/",
         "parser": "rss",
     },
     # SPORSORA — federation marketing sportif
