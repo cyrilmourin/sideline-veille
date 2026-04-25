@@ -6,7 +6,7 @@ Note de transmission pour reprendre la maintenance du projet **Sideline Veille M
 
 ## État actuel
 
-Le projet est en **v6.3 (pré-filtre strict + LinkedIn /company/ racine drop)** depuis le 25/04/2026.
+Le projet est en **v6.10 (3 catégories + scoring affiné + parse_date RFC 2822)** depuis le 25/04/2026.
 
 **Pipeline de scraping** (`scraper.py`, ~1800 lignes) :
 - 3 moteurs de détection : RSS/HTML (51 sources), SerpAPI/Google (3 requêtes consolidées), LinkedIn via SerpAPI (1 requête consolidée), plus l'API BOAMP OpenDataSoft (sans clé).
@@ -37,7 +37,7 @@ Le projet est en **v6.3 (pré-filtre strict + LinkedIn /company/ racine drop)** 
 - Logs archivés 7 jours via upload-artifact.
 
 **Distribution actuelle des items** (snapshot 24/04/2026 après migration v6) :
-- 25 items en cat.1 / 0 en cat.2 / 10 en cat.3 (post-migration v6.3, soit 61 droppés au total depuis le snapshot v5).
+- 6 items en cat.1 / 0 en cat.2 / 194 en cat.3 (200 total, limite top-200 atteinte). Sources cat.3 actives : COSMOS (49), Tour de France (35), FFR XIII (24), NBA (18), SportBusiness Club institutions/agences/brèves (29), SPORSORA (10), Sport Buzz Business (10), Sport Stratégies, FFVolley/Roland Garros/FFE/FFN/FFHandball (32).
 
 ---
 
@@ -128,7 +128,10 @@ Le JS faisait `(o.category||1) === 1` → tous les items legacy s'affichaient en
 **8. Le cron à 11h UTC peut tourner avec 2-4h de retard sur GitHub Actions.**
 Les runners free tier GitHub sont best-effort. Les commits "data: mise a jour opportunites" arrivent souvent autour de 15-17h UTC en pratique. Pas un bug, juste un fait.
 
-**9. Pré-filtre v6.1 trop agressif sur le PDF.**
+**9. _parse_date() doit gérer RFC 2822 — bug v6.6→v6.9 caché par le cutoff.**
+Les feeds RSS retournent leur `pubDate` en format RFC 2822 (`Fri, 24 Apr 2026 12:39:24 +0000`). Avant v6.10, `_parse_date` essayait seulement `%Y-%m-%d` → ValueError → retombait sur `datetime(2000, 1, 1)`. Conséquence : `formater_opportunite` stockait `datePublication = pubDate[:10] = "Fri, 24 Ap"` qui re-parse plus tard échouait aussi → cutoff 90 jours drop l'item du JSON final. **L'item passait scoring + était ajouté à `seen_ids`, mais disparaissait de `data/opportunites.json`**. Pendant 4 versions (v6.6 à v6.9) on a ajusté à tort le scoring/pre_filter sans voir que le bug était au cutoff. Si tu vois des items dans `seen_ids` mais pas dans `opportunites.json`, suspecte d'abord le format de date.
+
+**10. Pré-filtre v6.1 trop agressif sur le PDF.**
 Tout PDF (.pdf, .doc, .docx, .ppt, .pptx) est droppé sauf si l'URL OU le titre contient un signal AO explicite (`marche`, `consultation`, `appel-offre`, `dce`, `cahier-des-charges`, etc.). Si Cyril remonte qu'un AO légitime est droppé parce que c'est juste un PDF avec un titre vague, élargir la liste `ao_signals_url` ou `ao_signals_title` dans `pre_filter()`.
 
 **10. Le bloc fence triple-quote dans `KEYWORDS_*` est sensible aux apostrophes Unicode.**
@@ -138,6 +141,7 @@ Le scraper normalise les variantes (U+2019, U+02BC, U+2032…) via `nettoyer()`.
 
 ## Historique
 
+- 2026-04-25 (nuit) : Épopée v6.6 → v6.10 pour faire enfin apparaître les feeds sport business (SBC, Sporsora, Sport Buzz Biz, Sport Stratégies). v6.6 baisse facteur cat.3 0.55→0.80 + seuil cat.3=12. v6.7 bypass KEYWORDS_SPORT pour cat.3 (titre "Renouvellement partenariat X" passe). v6.8 bypass KEYWORDS_PAGE_STATIQUE pour cat.3 (interview/rapport/tribune sont du contenu légitime sur SBC). v6.9 KEYWORDS_EMPLOI light pour cat.3 (drop "business development"/"sales manager" qui sont aussi des termes business). Toujours 0 SBC/Sporsora après v6.9. **Bug racine identifié v6.10** : `_parse_date` ne lisait pas RFC 2822 → datePublication des items RSS = 2000-01-01 → drop par cutoff 90j (mais après ajout à seen_ids, donc invisible dans les compteurs). Fix `email.utils.parsedate_to_datetime` + 3 fallbacks. Résultat final 200 items (limite top-200) dont 39 SBC/Sporsora/SBB/SS, top scores 80 sur articles institutionnels Alpes 2030/Conseil d'État. Aussi : retire Kingcom (agence pas généraliste), drop LinkedIn /company/ racine, dédup par URL canonique (generer_id). Workflow CI : ajout trigger `on: push` sur paths code uniquement (relance auto après modif scraper, sans boucle infinie sur data/*).
 - 2026-04-25 (soir) : v6.3 livrée — fix LinkedIn /company/<slug>/ racine (page statique entreprise = drop ; seulement /company/<slug>/posts/<id> accepté). Ajout 12 domaines blacklist annuaires entreprise (pappers.fr, societe.com, manageo, infogreffe, kompass, bodacc, etc.). Correctifs sources cat.3 cassées : COSMOS asso.fr → cosmos-sports.fr (HTML), retrait sport-strategies.com (domaine inexistant), ajout fallbacks HTML pour sportbusiness.club, sport.newstank.fr/home, sporsora.com/le-mag. CPV blacklist enrichi (recrutement, formation). Migration JSON : 46 → 35 items (11 nouveaux drops dont TSM, TakeOp, CICOM SPORT, glob'AL events, Pappers SYBIOSE). UI : carte refondue avec favicon XL 56px en flag à gauche, contenu à droite (titre+score puis tags puis desc puis footer), tag-source du haut retiré.
 - 2026-04-25 : v6.1 livrée — pré-filtre strict appliqué avant categorize. 9 catégories de drop (domaine blacklist, URL pattern blacklist, PDF/DOC hors AO, page statique, emploi, AO clôturé, dateLimite passée, CPV blacklist 92331210 animation enfants, LinkedIn restreint à /posts//pulse//feed//company/). Migration JSON existant : 62 → 46 items (16 nouveaux drops : alexia.fr, dossier presse PDF, jobs profilculture/welcometothejungle/fashionjobs, présentation ANS/IGESR, profils LinkedIn /in/, the-shaperz.com, etc.). Distribution finale : 25 cat.1 / 0 cat.2 / 21 cat.3.
 - 2026-04-24 : Refonte v6 livrée — 3 catégories (Marchés/Signaux/Veille), whitelists émetteurs/orgs/domaines, mots-clés signaux contrats, exclusions nominations, nouveau scoring pondéré, bloc meta version+date dans le header, 3 onglets UI, favicons par carte, `meta.json` généré au run. Hotfix `updateTimestamp` (crash spinner). Migration one-shot du JSON existant (96 → 62 items, 34 droppés posts LinkedIn perso).
