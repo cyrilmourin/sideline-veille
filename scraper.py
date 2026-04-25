@@ -1756,7 +1756,7 @@ def scorer(item):
     elif cat == 2:
         score = int(score * 1.0)   # signaux contrats : neutre
     elif cat == 3:
-        score = int(score * 0.55)  # veille : pénalité (bruit de fond)
+        score = int(score * 0.80)  # veille : leger malus (cat.1 reste prioritaire via *1.5)
     else:
         return 0
 
@@ -2043,7 +2043,9 @@ def traiter_items(items, vus):
         if uid in vus:
             continue
         score = scorer(item)
-        if score < SCORE_MINIMUM:
+        # v6.6 - Seuil different par categorie : cat.3 = 12, autres = 20
+        seuil = 12 if item.get("_category") == 3 else SCORE_MINIMUM
+        if score < seuil:
             continue
         opp = formater_opportunite(item, score)
         opp["urgent"] = est_urgent(opp.get("dateLimite"))
