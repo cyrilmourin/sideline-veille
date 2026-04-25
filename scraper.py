@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sideline Conseil — Moteur de veille marches sportifs v6
+Sideline Conseil — Moteur de veille marches sportifs v6.1
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -1220,11 +1220,16 @@ def lancer_boamp_api():
             description = rec.get("descripteur", "") or ""
             acheteur    = rec.get("nomacheteur", "") or ""
             date_pub    = (rec.get("dateparution", "") or "")[:10]
+            date_lim    = (rec.get("dlrremplaco", "") or rec.get("datelimitereception", "") or "")[:10]
             lien        = rec.get("urlacheteur", "") or f"https://www.boamp.fr/avis/detail/{rec.get('id','')}"
             cpvs        = [c.get("code","") for c in (rec.get("cpv") or []) if c.get("code")]
 
             # Filtre : exclure si pas de lien avec nos métiers
             if _boamp_score(objet, description) < 2:
+                continue
+            # v6.1 — exclure CPV blacklistés (animation enfants, restauration coll, etc.)
+            if any(str(c) in CPV_BLACKLIST for c in cpvs):
+                log.debug(f"[BOAMP_API] CPV blacklisté drop: {cpvs} - {objet[:40]}")
                 continue
 
             items.append({
@@ -1302,6 +1307,211 @@ def bonus_acheteur_etat(item):
             bonus = max(bonus, pts)  # un seul bonus, le plus fort
     return bonus
 
+# ─── PRÉ-FILTRE STRICT v6.1 ───────────────────────────────────────────────
+# Drop AVANT categorize() les URLs/domaines/contenus qui n'ont AUCUNE chance
+# d'être un marché ou un signal légitime (pages statiques, profils LinkedIn,
+# offres d'emploi, dossiers de presse, AO clôturés, etc.).
+
+# Domaines blacklistés en bloc
+DOMAIN_BLACKLIST = [
+    # Pubs / annuaires juridiques généralistes (questions/réponses CSE etc.)
+    "alexia.fr",
+    "village-justice.com",
+    "juritravail.com",
+    "service-public.fr/particuliers",  # FAQ admin, pas AO
+    # Agences commerciales sans rapport
+    "the-shaperz.com",
+    # Job boards
+    "profilculture.com",
+    "indeed.fr", "indeed.com",
+    "welcometothejungle.com",
+    "linkedin.com/jobs",
+    "monster.fr",
+    "apec.fr",
+    "pole-emploi.fr",
+    "francetravail.fr",
+    "hellowork.com",
+    # Plateformes de cours/formation génériques
+    "openclassrooms.com",
+    "studyrama.com",
+    "letudiant.fr",
+    # E-commerce
+    "amazon.fr", "amazon.com",
+    "fnac.com",
+    "decathlon.fr",
+]
+
+# Patterns d'URL à drop systématiquement (où qu'ils soient dans l'URL)
+URL_PATH_BLACKLIST = [
+    # LinkedIn : profils perso, pages école/jobs (on garde /posts/, /pulse/, /feed/, /company/)
+    "linkedin.com/in/",
+    "linkedin.com/jobs/",
+    "linkedin.com/learning/",
+    # Pages "présentation / qui sommes-nous / rapports / actualités" institutionnelles
+    "/presentation-de",
+    "/qui-sommes-nous",
+    "/qui-nous-sommes",
+    "/notre-histoire",
+    "/rapports-de-",
+    "/rapport-d-activite",
+    "/dossier-de-presse",
+    "/communique-de-presse",
+    "/discours-",
+    "/biographie",
+    "/glossaire",
+    "/mentions-legales",
+    "/cookies",
+    "/politique-de-confidentialite",
+    # Offres d'emploi
+    "/annonce/",
+    "/offre-emploi",
+    "/offres-emploi",
+    "/recrutement",
+    "/carrieres",
+    "/carriere",
+    "/job-",
+    "/jobs/",
+    # Pages produit / boutique
+    "/boutique",
+    "/panier",
+    "/produit/",
+    # Foires aux questions / forums
+    "/fiche/",
+    "/questions/",
+    "/forum/",
+    "/faq",
+    # Wikipedia (pas un AO)
+    "wikipedia.org/wiki/",
+]
+
+# Mots-clés "page statique / non-AO" dans le titre OU les premières lignes
+KEYWORDS_PAGE_STATIQUE = [
+    "presentation de l", "presentation generale",
+    "qui sommes nous", "notre histoire",
+    "dossier de presse", "communique de presse",
+    "rapports de l", "rapport d activite",
+    "rapport annuel", "bilan annuel",
+    "discours de", "tribune de", "interview de",
+    "biographie de",
+    "mentions legales", "politique de confidentialite",
+    "plan du site", "contactez nous",
+    "conditions generales",
+]
+
+# Mots-clés "offre d'emploi" (drop pour cat.1 et cat.2)
+KEYWORDS_EMPLOI = [
+    "offre d emploi", "offres d emploi",
+    "recrutement",
+    " cdi ", " cdd ", " stage ", " alternance ", " freelance ",
+    "h f )", "( h f", "h/f", "(h/f)",
+    "intitule du poste", "poste a pourvoir",
+    "candidat retenu", "profil recherche",
+    "salaire mensuel", "salaire annuel", "remuneration",
+    "business development", "sales manager", "key account",
+]
+
+# Patterns "AO clôturé" (texte indicatif à matcher dans la description)
+KEYWORDS_AO_CLOTURE = [
+    "appel d offres cloture", "appel d offre cloture",
+    "consultation cloturee", "consultation close",
+    "marche attribue le",
+    "date limite depassee",
+    "offre expire",
+    "lot attribue",
+]
+
+# CPV exclus en cat.1 (pas le cœur métier)
+CPV_BLACKLIST = {
+    "92331210": "Services d'animation pour enfants",
+    "92331100": "Foires et expositions",  # trop large
+    "55520000": "Services de restauration collective",
+    "55510000": "Services de cantine",
+    "60100000": "Services de transport routier",  # transports scolaires inclus
+    "75300000": "Services de securite sociale",
+    "85000000": "Services de sante et services sociaux",  # large, sauf si sport health
+}
+
+# Extensions de fichier suspectes (drop sauf si dans contexte AO explicite)
+SUSPECT_EXTENSIONS = (".pdf", ".doc", ".docx", ".ppt", ".pptx")
+
+def pre_filter(item):
+    """
+    v6.1 — Filtre strict appliqué AVANT categorize().
+    Retourne False si l'item doit être droppé immédiatement (bruit avéré).
+    """
+    lien = (item.get("lien", "") or "").lower()
+    title = (item.get("title", "") or "")
+    desc  = (item.get("description", "") or "")
+    corpus_brut = title + " " + desc
+    corpus = nettoyer(corpus_brut)
+
+    # 1. Domaine entier blacklisté
+    for dom in DOMAIN_BLACKLIST:
+        if dom in lien:
+            return False
+
+    # 2. Pattern URL blacklisté (profils, pages statiques, jobs, etc.)
+    for pat in URL_PATH_BLACKLIST:
+        if pat in lien:
+            return False
+
+    # 3. PDF/DOC/PPT : suspect sauf si l'URL ou le titre contient un mot AO
+    if lien.endswith(SUSPECT_EXTENSIONS):
+        ao_signals_url = ["marche", "consultation", "appel-offre", "appel-offres",
+                          "ao-", "/ao/", "avis-marche", "dce", "rc-cctp",
+                          "cahier-des-charges"]
+        if not any(s in lien for s in ao_signals_url):
+            ao_signals_title = ["appel d offre", "consultation publique",
+                                "marche public", "avis de marche",
+                                "mise en concurrence", "dialogue competitif"]
+            if not any(s in corpus for s in ao_signals_title):
+                return False  # PDF/DOC sans contexte AO -> drop
+
+    # 4. Page statique (présentation, rapports, dossier presse...)
+    for kw in KEYWORDS_PAGE_STATIQUE:
+        if kw in corpus:
+            return False
+
+    # 5. Offre d'emploi
+    for kw in KEYWORDS_EMPLOI:
+        if kw in corpus:
+            return False
+
+    # 6. AO explicitement clôturé
+    for kw in KEYWORDS_AO_CLOTURE:
+        if kw in corpus:
+            return False
+
+    # 7. Date limite passée (cat.1 marchés uniquement) — vérifie si dateLimite parsable
+    date_limite_str = item.get("date_limite") or item.get("dateLimite")
+    if date_limite_str:
+        try:
+            from datetime import datetime as _dt
+            dl = _dt.strptime(str(date_limite_str)[:10], "%Y-%m-%d")
+            if dl < _dt.now():
+                return False
+        except (ValueError, TypeError):
+            pass
+
+    # 8. CPV blacklisté (pour items avec champ cpvs comme BOAMP)
+    cpvs = item.get("cpvs", [])
+    if cpvs:
+        for cpv in cpvs:
+            if str(cpv) in CPV_BLACKLIST:
+                return False
+
+    # 9. LinkedIn : si moteur=linkedin/google ET URL pas reconnaissable comme post
+    if "linkedin.com/" in lien:
+        # Garder seulement les patterns "post / pulse / feed / company / school"
+        valid_li_patterns = ["/posts/", "/pulse/", "/feed/update/",
+                             "/company/", "/school/", "/showcase/",
+                             "/groups/"]
+        if not any(p in lien for p in valid_li_patterns):
+            return False  # tout autre LinkedIn (in/, jobs/, learning/, etc.) -> drop
+
+    return True
+
+
 # ─── CLASSIFIEUR 3 CATÉGORIES (v6) ───────────────────────────────────────
 def is_institutional_result(item):
     """
@@ -1336,7 +1546,12 @@ def matches_nomination(item):
 def categorize(item):
     """
     Retourne 1 (marche reel), 2 (signal contrat), 3 (veille) ou None (drop).
+    v6.1 — appelle pre_filter() en tout premier (drop URL/page-statique/emploi/AO clos)
     """
+    # v6.1 — pré-filtre radical
+    if not pre_filter(item):
+        return None
+
     src_id  = item.get("source_id", "") or ""
     moteur  = item.get("moteur", "rss")
     typ_src = item.get("type_source", "")
@@ -1538,7 +1753,7 @@ def formater_opportunite(item, score):
         "typeEmetteur":    "Detection automatique",
         "description":     item.get("description","")[:500],
         "datePublication": str(item.get("date_publication", datetime.now().strftime("%Y-%m-%d")))[:10],
-        "dateLimite":      None,
+        "dateLimite":      item.get("date_limite") or None,
         "budget":          "A determiner",
         "contact":         "",
         "lien":            lien,
@@ -1738,7 +1953,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v6 -- Demarrage")
+    log.info("Sideline Veille v6.1 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -1803,7 +2018,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v6")
+    ap = argparse.ArgumentParser(description="Sideline Veille v6.1")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
