@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Triggered run post-reset 2026-04-25 (v6.5)
 """
 Sideline Conseil — Moteur de veille marches sportifs v6.3
 ========================================================
