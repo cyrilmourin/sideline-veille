@@ -6,10 +6,11 @@ Note de transmission pour reprendre la maintenance du projet **Sideline Veille M
 
 ## État actuel
 
-Le projet est en **v6 (refonte 3 catégories)** depuis le 24/04/2026.
+Le projet est en **v6.1 (pré-filtre strict)** depuis le 25/04/2026.
 
 **Pipeline de scraping** (`scraper.py`, ~1800 lignes) :
 - 3 moteurs de détection : RSS/HTML (51 sources), SerpAPI/Google (3 requêtes consolidées), LinkedIn via SerpAPI (1 requête consolidée), plus l'API BOAMP OpenDataSoft (sans clé).
+- **Pré-filtre strict** (`pre_filter`) appliqué AVANT `categorize()` : drop URLs LinkedIn `/in/`, jobs/learning, pages `/presentation-de`, `/rapports-de`, `/dossier-de-presse`, `/annonce/`, PDF hors contexte AO, domaines blacklistés (alexia.fr, profilculture, indeed, apec, the-shaperz, etc.), CPV blacklistés (92331210 animation enfants, restauration coll, transport, sécurité sociale), AO clôturés (dateLimite passée), keywords page statique (présentation/rapports/biographie) et emploi (CDI/CDD/stage/h-f/business development).
 - Classification automatique en 3 catégories via `categorize(item)` :
   - **Cat.1 — Marchés réels** : appels d'offres publics formels (BOAMP, TED/JOUE, marches2030, profils acheteurs ANS/Solideo/CNOSF, France Marchés). C'est le cœur du sujet.
   - **Cat.2 — Signaux contrats** : annonces "X a confié sa communication à Y", "remporte l'appel d'offre", "renouvelle son partenariat avec…" (35 verbes conjugués précis).
@@ -36,7 +37,7 @@ Le projet est en **v6 (refonte 3 catégories)** depuis le 24/04/2026.
 - Logs archivés 7 jours via upload-artifact.
 
 **Distribution actuelle des items** (snapshot 24/04/2026 après migration v6) :
-- 36 items en cat.1 / 0 en cat.2 / 26 en cat.3 / 34 droppés depuis l'ancien JSON (essentiellement posts LinkedIn de particuliers).
+- 25 items en cat.1 / 0 en cat.2 / 21 en cat.3 (post-migration v6.1, soit 50 droppés au total depuis le snapshot v5).
 
 ---
 
@@ -72,6 +73,10 @@ Format `v6 · <short-sha-7chars>` injecté via `git rev-parse --short=7 HEAD` pu
 
 **8. Le repo `veille-parlementaire-sport` ne doit JAMAIS être touché.**
 C'est un projet séparé en production, avec son propre pipeline. On peut le LIRE en référence (notamment pour le pattern bloc meta header) mais aucune modif.
+
+**9. Pré-filtre strict avant catégorisation (v6.1).**
+Le `categorize()` v6 laissait passer trop de bruit (pubs cabinet avocat, dossiers de presse PDF, AO clôturés, profils LinkedIn perso, offres d'emploi, pages "présentation de l'ANS"). On a ajouté un `pre_filter()` radical en amont qui drop sur 9 critères : domaine blacklist, pattern URL blacklist, extensions PDF/DOC suspectes hors contexte AO, mots-clés page statique, mots-clés emploi, mots-clés AO clôturé, dateLimite passée, CPV blacklist, LinkedIn restreint à /posts//pulse//feed//company//school/.
+*Pourquoi :* la précision (peu de bruit) prime sur le rappel (capter tous les marchés). Mieux vaut rater un AO obscur que polluer la home avec 30 articles d'avocat. Si on veut être plus permissif on peut retirer un domaine ou un pattern individuellement.
 
 ---
 
@@ -123,12 +128,16 @@ Le JS faisait `(o.category||1) === 1` → tous les items legacy s'affichaient en
 **8. Le cron à 11h UTC peut tourner avec 2-4h de retard sur GitHub Actions.**
 Les runners free tier GitHub sont best-effort. Les commits "data: mise a jour opportunites" arrivent souvent autour de 15-17h UTC en pratique. Pas un bug, juste un fait.
 
-**9. Le bloc fence triple-quote dans `KEYWORDS_*` est sensible aux apostrophes Unicode.**
+**9. Pré-filtre v6.1 trop agressif sur le PDF.**
+Tout PDF (.pdf, .doc, .docx, .ppt, .pptx) est droppé sauf si l'URL OU le titre contient un signal AO explicite (`marche`, `consultation`, `appel-offre`, `dce`, `cahier-des-charges`, etc.). Si Cyril remonte qu'un AO légitime est droppé parce que c'est juste un PDF avec un titre vague, élargir la liste `ao_signals_url` ou `ao_signals_title` dans `pre_filter()`.
+
+**10. Le bloc fence triple-quote dans `KEYWORDS_*` est sensible aux apostrophes Unicode.**
 Le scraper normalise les variantes (U+2019, U+02BC, U+2032…) via `nettoyer()`. Mais quand on AJOUTE des keywords dans le code Python, écrire avec un espace au lieu de l'apostrophe ("a confie sa communication a" au lieu de "a confié sa communication à"). C'est volontaire — `nettoyer()` strip les accents et apostrophes.
 
 ---
 
 ## Historique
 
+- 2026-04-25 : v6.1 livrée — pré-filtre strict appliqué avant categorize. 9 catégories de drop (domaine blacklist, URL pattern blacklist, PDF/DOC hors AO, page statique, emploi, AO clôturé, dateLimite passée, CPV blacklist 92331210 animation enfants, LinkedIn restreint à /posts//pulse//feed//company/). Migration JSON existant : 62 → 46 items (16 nouveaux drops : alexia.fr, dossier presse PDF, jobs profilculture/welcometothejungle/fashionjobs, présentation ANS/IGESR, profils LinkedIn /in/, the-shaperz.com, etc.). Distribution finale : 25 cat.1 / 0 cat.2 / 21 cat.3.
 - 2026-04-24 : Refonte v6 livrée — 3 catégories (Marchés/Signaux/Veille), whitelists émetteurs/orgs/domaines, mots-clés signaux contrats, exclusions nominations, nouveau scoring pondéré, bloc meta version+date dans le header, 3 onglets UI, favicons par carte, `meta.json` généré au run. Hotfix `updateTimestamp` (crash spinner). Migration one-shot du JSON existant (96 → 62 items, 34 droppés posts LinkedIn perso).
 - 2026-04-19 : Audit complet livré + v5 — logique FranceMarchés stricte (26 exclusions), surpondération sources de référence (BOAMP, marches2030, TED, CNOSF), whitelist acheteurs prioritaires, normalisation Unicode NFD + apostrophes, suppression workflow dupliqué, consolidation SerpAPI 11→4 req/run × 5j/sem (~88/mois). Ajouts cat.2 sur étape v6.
