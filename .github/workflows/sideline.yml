@@ -13,6 +13,16 @@ on:
   schedule:
     # Tous les jours à 13h00 Paris (11h UTC été / 12h UTC hiver)
     - cron: '0 11 * * *'
+  # v6.5 - Trigger push sur les fichiers de code uniquement (PAS sur data/*)
+  # pour eviter une boucle infinie quand le workflow lui-meme push
+  # data/opportunites.json. Sert a relancer la veille apres une modif scraper.
+  push:
+    branches: [main]
+    paths:
+      - 'scraper.py'
+      - '.github/workflows/sideline.yml'
+      - 'index.html'
+      - 'requirements.txt'
   workflow_dispatch:
     inputs:
       mode:
