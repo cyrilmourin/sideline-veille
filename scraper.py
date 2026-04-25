@@ -1837,14 +1837,34 @@ def generer_id(item):
     return hashlib.md5((item.get("title","") + item.get("source_id","")).encode()).hexdigest()[:12]
 
 def _parse_date(date_str):
-    """Parse une date quelle que soit son format RSS ou ISO."""
+    """Parse une date quelle que soit son format RSS, ISO, ou RFC 2822.
+    Bug v6.10 : avant, format RFC 2822 (Fri, 24 Apr 2026 12:39:24 +0000)
+    n etait pas parse -> datetime(2000,1,1) -> drop par cutoff 90j -> les
+    items RSS sport business (SBC, Sporsora) finissaient en seen_ids mais
+    pas dans opportunites.json."""
     if not date_str:
         return datetime(2000, 1, 1)
-    s = str(date_str)[:10]
+    s = str(date_str).strip()
+    # Format ISO court "%Y-%m-%d"
     try:
-        return datetime.strptime(s, "%Y-%m-%d")
+        return datetime.strptime(s[:10], "%Y-%m-%d")
     except ValueError:
-        return datetime(2000, 1, 1)
+        pass
+    # Format RFC 2822 (RSS) "Fri, 24 Apr 2026 12:39:24 +0000"
+    try:
+        from email.utils import parsedate_to_datetime
+        dt = parsedate_to_datetime(s)
+        if dt is not None:
+            # Strip tzinfo pour comparaison naive avec datetime.now()
+            return dt.replace(tzinfo=None)
+    except (TypeError, ValueError):
+        pass
+    # Format ISO complet "%Y-%m-%dT%H:%M:%S"
+    try:
+        return datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        pass
+    return datetime(2000, 1, 1)
 
 def est_urgent(date_limite):
     if not date_limite:
@@ -1886,7 +1906,7 @@ def formater_opportunite(item, score):
         "emetteur":        label,
         "typeEmetteur":    "Detection automatique",
         "description":     item.get("description","")[:500],
-        "datePublication": str(item.get("date_publication", datetime.now().strftime("%Y-%m-%d")))[:10],
+        "datePublication": _parse_date(item.get("date_publication")).strftime("%Y-%m-%d") if item.get("date_publication") else datetime.now().strftime("%Y-%m-%d"),
         "dateLimite":      item.get("date_limite") or None,
         "budget":          "A determiner",
         "contact":         "",
