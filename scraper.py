@@ -428,7 +428,6 @@ SOURCE_CATEGORY = {
     "lequipe_sport_business":     3,
     "kingcom_actu":               3,
     # v6.3 — Fallbacks HTML
-    "sportbusiness_club_html":    3,
     "sporsora_html":              3,
 }
 
@@ -1032,19 +1031,6 @@ SOURCES = [
         "type": "prive",
         "url": "https://sportexpertise.com/feed/",
         "parser": "rss",
-    },
-    # v6.3 - Fallback HTML pour SportBusiness Club si /feed/ ne marche pas
-    {
-        "id": "sportbusiness_club_html",
-        "label": "SportBusiness Club — Articles",
-        "type": "prive",
-        "url": "https://www.sportbusiness.club/",
-        "parser": "html",
-        "selector": "article, .post, .entry, .article-card",
-        "title_sel": "h2, h3, .entry-title, .post-title",
-        "desc_sel": "p, .excerpt, .entry-summary",
-        "link_sel": "a",
-        "timeout": 10,
     },
     # v6.3 - Fallback HTML pour News Tank Sport (paywall mais titres en clair sur la home)
     {
