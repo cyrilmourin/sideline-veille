@@ -1713,11 +1713,14 @@ def scorer(item):
     if cat_precomp is None:
         cat_precomp = categorize(item)
 
-    # Sport requis pour toutes les catégories (filtre pertinence sujet)
-    if not any(kw in corpus for kw in KEYWORDS_SPORT):
+    # v6.7 - KEYWORDS_SPORT obligatoire seulement pour cat.1 et cat.2.
+    # Pour cat.3 (veille sport business), la source est deja sport-only
+    # par mapping SOURCE_CATEGORY (SBC, Sporsora, COSMOS, NBA, etc.) ;
+    # exiger 'sport' dans le titre eliminerait des articles legitimes type
+    # "Renouvellement partenariat Apple x Tour de France 2026".
+    if cat_precomp in (1, 2) and not any(kw in corpus for kw in KEYWORDS_SPORT):
         return 0
-    # Métier requis UNIQUEMENT pour cat.1 (marchés) : un signal cat.2 ou
-    # une veille cat.3 ne parle pas forcément en termes "affaires publiques"
+    # Métier requis UNIQUEMENT pour cat.1 (marchés)
     if cat_precomp == 1 and not any(kw in corpus for kw in KEYWORDS_METIER):
         return 0
 
