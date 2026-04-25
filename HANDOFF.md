@@ -6,7 +6,7 @@ Note de transmission pour reprendre la maintenance du projet **Sideline Veille M
 
 ## État actuel
 
-Le projet est en **v6.1 (pré-filtre strict)** depuis le 25/04/2026.
+Le projet est en **v6.3 (pré-filtre strict + LinkedIn /company/ racine drop)** depuis le 25/04/2026.
 
 **Pipeline de scraping** (`scraper.py`, ~1800 lignes) :
 - 3 moteurs de détection : RSS/HTML (51 sources), SerpAPI/Google (3 requêtes consolidées), LinkedIn via SerpAPI (1 requête consolidée), plus l'API BOAMP OpenDataSoft (sans clé).
@@ -37,7 +37,7 @@ Le projet est en **v6.1 (pré-filtre strict)** depuis le 25/04/2026.
 - Logs archivés 7 jours via upload-artifact.
 
 **Distribution actuelle des items** (snapshot 24/04/2026 après migration v6) :
-- 25 items en cat.1 / 0 en cat.2 / 21 en cat.3 (post-migration v6.1, soit 50 droppés au total depuis le snapshot v5).
+- 25 items en cat.1 / 0 en cat.2 / 10 en cat.3 (post-migration v6.3, soit 61 droppés au total depuis le snapshot v5).
 
 ---
 
@@ -138,6 +138,7 @@ Le scraper normalise les variantes (U+2019, U+02BC, U+2032…) via `nettoyer()`.
 
 ## Historique
 
+- 2026-04-25 (soir) : v6.3 livrée — fix LinkedIn /company/<slug>/ racine (page statique entreprise = drop ; seulement /company/<slug>/posts/<id> accepté). Ajout 12 domaines blacklist annuaires entreprise (pappers.fr, societe.com, manageo, infogreffe, kompass, bodacc, etc.). Correctifs sources cat.3 cassées : COSMOS asso.fr → cosmos-sports.fr (HTML), retrait sport-strategies.com (domaine inexistant), ajout fallbacks HTML pour sportbusiness.club, sport.newstank.fr/home, sporsora.com/le-mag. CPV blacklist enrichi (recrutement, formation). Migration JSON : 46 → 35 items (11 nouveaux drops dont TSM, TakeOp, CICOM SPORT, glob'AL events, Pappers SYBIOSE). UI : carte refondue avec favicon XL 56px en flag à gauche, contenu à droite (titre+score puis tags puis desc puis footer), tag-source du haut retiré.
 - 2026-04-25 : v6.1 livrée — pré-filtre strict appliqué avant categorize. 9 catégories de drop (domaine blacklist, URL pattern blacklist, PDF/DOC hors AO, page statique, emploi, AO clôturé, dateLimite passée, CPV blacklist 92331210 animation enfants, LinkedIn restreint à /posts//pulse//feed//company/). Migration JSON existant : 62 → 46 items (16 nouveaux drops : alexia.fr, dossier presse PDF, jobs profilculture/welcometothejungle/fashionjobs, présentation ANS/IGESR, profils LinkedIn /in/, the-shaperz.com, etc.). Distribution finale : 25 cat.1 / 0 cat.2 / 21 cat.3.
 - 2026-04-24 : Refonte v6 livrée — 3 catégories (Marchés/Signaux/Veille), whitelists émetteurs/orgs/domaines, mots-clés signaux contrats, exclusions nominations, nouveau scoring pondéré, bloc meta version+date dans le header, 3 onglets UI, favicons par carte, `meta.json` généré au run. Hotfix `updateTimestamp` (crash spinner). Migration one-shot du JSON existant (96 → 62 items, 34 droppés posts LinkedIn perso).
 - 2026-04-19 : Audit complet livré + v5 — logique FranceMarchés stricte (26 exclusions), surpondération sources de référence (BOAMP, marches2030, TED, CNOSF), whitelist acheteurs prioritaires, normalisation Unicode NFD + apostrophes, suppression workflow dupliqué, consolidation SerpAPI 11→4 req/run × 5j/sem (~88/mois). Ajouts cat.2 sur étape v6.
