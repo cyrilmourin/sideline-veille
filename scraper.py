@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.1
+Sideline Conseil — Moteur de veille marches sportifs v6.3
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -420,6 +420,9 @@ SOURCE_CATEGORY = {
     "gie_sport_expertise":        3,
     "lequipe_sport_business":     3,
     "kingcom_actu":               3,
+    # v6.3 — Fallbacks HTML
+    "sportbusiness_club_html":    3,
+    "sporsora_html":              3,
 }
 
 
@@ -981,21 +984,19 @@ SOURCES = [
     },
 
     # ── v6 — Ajouts cat.3 veille sport business ─────────────────────────
-    # Sport Stratégies — flux RSS (complément au scrap HTML existant plus bas)
-    {
-        "id": "sport_strategies_rss",
-        "label": "Sport Stratégies — RSS",
-        "type": "prive",
-        "url": "https://www.sport-strategies.com/feed/",
-        "parser": "rss",
-    },
-    # COSMOS — conseil social du mouvement sportif
+    # Sport Stratégies : on garde le scrap HTML existant plus bas (sportstrategies.com)
+    # COSMOS — conseil social du mouvement sportif (le vrai site est cosmos-sports.fr, pas .asso.fr)
     {
         "id": "cosmos",
         "label": "COSMOS — Mouvement sportif",
         "type": "prive",
-        "url": "https://www.cosmos.asso.fr/feed/",
-        "parser": "rss",
+        "url": "https://www.cosmos-sports.fr/actualites",
+        "parser": "html",
+        "selector": "article, .post, .news-item, .actualite",
+        "title_sel": "h2, h3, .title",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 10,
     },
     # GIE Sport Expertise
     {
@@ -1004,6 +1005,45 @@ SOURCES = [
         "type": "prive",
         "url": "https://sportexpertise.com/feed/",
         "parser": "rss",
+    },
+    # v6.3 - Fallback HTML pour SportBusiness Club si /feed/ ne marche pas
+    {
+        "id": "sportbusiness_club_html",
+        "label": "SportBusiness Club — Articles",
+        "type": "prive",
+        "url": "https://www.sportbusiness.club/",
+        "parser": "html",
+        "selector": "article, .post, .entry, .article-card",
+        "title_sel": "h2, h3, .entry-title, .post-title",
+        "desc_sel": "p, .excerpt, .entry-summary",
+        "link_sel": "a",
+        "timeout": 10,
+    },
+    # v6.3 - Fallback HTML pour News Tank Sport (paywall mais titres en clair sur la home)
+    {
+        "id": "newstank_sport_home",
+        "label": "News Tank Sport — Titres",
+        "type": "prive",
+        "url": "https://sport.newstank.fr/home",
+        "parser": "html",
+        "selector": "article, .news-item, .archive-item, h2",
+        "title_sel": "h2, h3, .title, a",
+        "desc_sel": "p, .summary",
+        "link_sel": "a",
+        "timeout": 10,
+    },
+    # v6.3 - Sporsora fallback HTML si /feed/ KO
+    {
+        "id": "sporsora_html",
+        "label": "SPORSORA — Articles",
+        "type": "prive",
+        "url": "https://www.sporsora.com/le-mag",
+        "parser": "html",
+        "selector": "article, .article-item, .news-card, .post",
+        "title_sel": "h2, h3, .title",
+        "desc_sel": "p, .excerpt",
+        "link_sel": "a",
+        "timeout": 10,
     },
     # L'Équipe — actualités sport (flux général, filtré ensuite)
     {
@@ -1227,7 +1267,7 @@ def lancer_boamp_api():
             # Filtre : exclure si pas de lien avec nos métiers
             if _boamp_score(objet, description) < 2:
                 continue
-            # v6.1 — exclure CPV blacklistés (animation enfants, restauration coll, etc.)
+            # v6.3 — exclure CPV blacklistés (animation enfants, restauration coll, etc.)
             if any(str(c) in CPV_BLACKLIST for c in cpvs):
                 log.debug(f"[BOAMP_API] CPV blacklisté drop: {cpvs} - {objet[:40]}")
                 continue
@@ -1307,7 +1347,7 @@ def bonus_acheteur_etat(item):
             bonus = max(bonus, pts)  # un seul bonus, le plus fort
     return bonus
 
-# ─── PRÉ-FILTRE STRICT v6.1 ───────────────────────────────────────────────
+# ─── PRÉ-FILTRE STRICT v6.3 ───────────────────────────────────────────────
 # Drop AVANT categorize() les URLs/domaines/contenus qui n'ont AUCUNE chance
 # d'être un marché ou un signal légitime (pages statiques, profils LinkedIn,
 # offres d'emploi, dossiers de presse, AO clôturés, etc.).
@@ -1331,6 +1371,20 @@ DOMAIN_BLACKLIST = [
     "pole-emploi.fr",
     "francetravail.fr",
     "hellowork.com",
+    # v6.3 — Annuaires / fiches entreprises (pages statiques, jamais des AO)
+    "pappers.fr",
+    "societe.com",
+    "verif.com",
+    "manageo.fr",
+    "infogreffe.fr",
+    "bilans-gratuits.fr",
+    "kompass.com",
+    "bodacc.fr",
+    "score3.fr",
+    "ellisphere.com",
+    "trouver-un-numero-rcs.fr",
+    "infonet.fr",
+    "data.gouv.fr/fr/datasets/entreprises",  # listings entreprises
     # Plateformes de cours/formation génériques
     "openclassrooms.com",
     "studyrama.com",
@@ -1429,6 +1483,11 @@ CPV_BLACKLIST = {
     "60100000": "Services de transport routier",  # transports scolaires inclus
     "75300000": "Services de securite sociale",
     "85000000": "Services de sante et services sociaux",  # large, sauf si sport health
+    # v6.3 - Recrutement / formation (jamais Sideline)
+    "79600000": "Services de recrutement",
+    "80500000": "Services de formation",
+    "80511000": "Services de formation du personnel",
+    "85312000": "Services d action sociale sans hebergement",
 }
 
 # Extensions de fichier suspectes (drop sauf si dans contexte AO explicite)
@@ -1436,7 +1495,7 @@ SUSPECT_EXTENSIONS = (".pdf", ".doc", ".docx", ".ppt", ".pptx")
 
 def pre_filter(item):
     """
-    v6.1 — Filtre strict appliqué AVANT categorize().
+    v6.3 — Filtre strict appliqué AVANT categorize().
     Retourne False si l'item doit être droppé immédiatement (bruit avéré).
     """
     lien = (item.get("lien", "") or "").lower()
@@ -1500,14 +1559,38 @@ def pre_filter(item):
             if str(cpv) in CPV_BLACKLIST:
                 return False
 
-    # 9. LinkedIn : si moteur=linkedin/google ET URL pas reconnaissable comme post
+    # 9. LinkedIn : ne garder QUE les vraies actualités
+    # v6.3 - on était trop laxe sur /company/<slug>/ racine (page statique)
+    # Refus :  linkedin.com/in/<slug>            (profil perso)
+    # Refus :  linkedin.com/company/<slug>/       (page racine entreprise)
+    # Refus :  linkedin.com/company/<slug>/about  (page about)
+    # Refus :  linkedin.com/jobs|learning|groups
+    # OK    :  linkedin.com/company/<slug>/posts/
+    # OK    :  linkedin.com/posts/...
+    # OK    :  linkedin.com/pulse/...
+    # OK    :  linkedin.com/feed/update/...
     if "linkedin.com/" in lien:
-        # Garder seulement les patterns "post / pulse / feed / company / school"
-        valid_li_patterns = ["/posts/", "/pulse/", "/feed/update/",
-                             "/company/", "/school/", "/showcase/",
-                             "/groups/"]
-        if not any(p in lien for p in valid_li_patterns):
-            return False  # tout autre LinkedIn (in/, jobs/, learning/, etc.) -> drop
+        # Patterns d'actualités (post explicite) -> OK
+        valid_actu_patterns = ["/posts/", "/pulse/", "/feed/update/",
+                               "/company/", "/showcase/"]
+        if not any(p in lien for p in valid_actu_patterns):
+            return False  # /in/, /jobs/, /learning/, /groups/, /school/ -> drop
+        # Si /company/<slug>/ racine ou /about/ ou /people/ ou /life/ -> drop
+        if "/company/" in lien:
+            # Extraire ce qui suit /company/<slug>/
+            m = re.search(r"/company/([^/]+)/?(.*)", lien)
+            if m:
+                rest = m.group(2).split("?")[0].split("#")[0].strip("/")
+                # Si rien après le slug ou about/people/life/jobs -> page statique
+                if not rest or rest.startswith(("about", "people", "life", "jobs", "products", "insights")):
+                    return False
+        # Si /showcase/<slug>/ racine -> idem
+        if "/showcase/" in lien:
+            m = re.search(r"/showcase/([^/]+)/?(.*)", lien)
+            if m:
+                rest = m.group(2).split("?")[0].split("#")[0].strip("/")
+                if not rest or rest.startswith(("about", "people")):
+                    return False
 
     return True
 
@@ -1546,9 +1629,9 @@ def matches_nomination(item):
 def categorize(item):
     """
     Retourne 1 (marche reel), 2 (signal contrat), 3 (veille) ou None (drop).
-    v6.1 — appelle pre_filter() en tout premier (drop URL/page-statique/emploi/AO clos)
+    v6.3 — appelle pre_filter() en tout premier (drop URL/page-statique/emploi/AO clos)
     """
-    # v6.1 — pré-filtre radical
+    # v6.3 — pré-filtre radical
     if not pre_filter(item):
         return None
 
@@ -1953,7 +2036,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v6.1 -- Demarrage")
+    log.info("Sideline Veille v6.3 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -2018,7 +2101,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v6.1")
+    ap = argparse.ArgumentParser(description="Sideline Veille v6.3")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
