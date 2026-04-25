@@ -1,31 +1,5 @@
 [
   {
-    "id": "d81370560ae7",
-    "title": "Les attributions du comité social et économique",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Marches publics sport (texte)",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Marches publics sport (texte)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Sport : club/fédération, contrats, transferts, règlement fédéral (discipline/sanctions), sponsoring, dopage, droit à l'image, relations club/joueur/agent.",
-    "datePublication": "2026-04-22",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.alexia.fr/fiche/12908/les-attributions-du-comite-social-et-economique.htm",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 76,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.alexia.fr"
-  },
-  {
     "id": "2f13b3742491",
     "title": "Stratégie Nationale Sport Santé 2025 - 2030 - Appel à Projet",
     "source": "marche-public",
@@ -46,59 +20,6 @@
     "nouvelle": false,
     "urgent": false,
     "score": 76,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.sports.gouv.fr"
-  },
-  {
-    "id": "1e22215b76d2",
-    "title": "Modification contrat élu cse Sujet initié par Ms, il y a 8 jours",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Marches publics sport (texte)",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Marches publics sport (texte)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Sport : club/fédération, contrats, transferts, règlement fédéral (discipline/sanctions), sponsoring, dopage, droit à l'image, relations club/joueur/agent.",
-    "datePublication": "2026-04-20",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.alexia.fr/questions/542049/modification-contrat-elu-cse.htm",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 76,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.alexia.fr"
-  },
-  {
-    "id": "7975594b5cad",
-    "title": "sport et handicap",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Marches publics sport+conseil (fusion)",
-    "moteur": "google",
-    "types": [
-      "strategie",
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Marches publics sport+conseil (fusion)",
-    "typeEmetteur": "Detection automatique",
-    "description": "La Stratégie nationale Sport et Handicap 2030 marque une nouvelle étape. Elle repose sur une ambition simple et forte : donner envie de pratiquer, rendre ...",
-    "datePublication": "2026-04-20",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.sports.gouv.fr/sites/default/files/2026-01/t-l-charger-le-dossier-de-presse-strat-gie-nationale-sport-et-handicap-2030-document-accessible-pdf-47803.pdf",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 68,
     "angles": [],
     "source_auto": true,
     "category": 1,
@@ -130,33 +51,6 @@
     "source_auto": true,
     "category": 3,
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
-  },
-  {
-    "id": "f2e74d451360",
-    "title": "Directeur/Directrice de clientèle RP Sport - Øconnection",
-    "source": "prive",
-    "sourceLabel": "Google — Signaux agence",
-    "moteur": "google",
-    "types": [
-      "communication",
-      "influence"
-    ],
-    "secteur": "Sport",
-    "emetteur": "Google — Signaux agence",
-    "typeEmetteur": "Detection automatique",
-    "description": "Expérience de 5 ans minimum en agence conseil RP / Influence dans le milieu du sport. Très bonne connaissance des relations presse, de la gestion d'influenceurs ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.welcometothejungle.com/fr/companies/oconnection/jobs/directeur-directrice-de-clientele-rp-sport_neuilly-sur-seine",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 64,
-    "angles": [],
-    "source_auto": true,
-    "category": 3,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.welcometothejungle.com"
   },
   {
     "id": "6bf0154afc72",
@@ -393,58 +287,6 @@
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
-    "id": "5862df1f9d6c",
-    "title": "Présentation de l'Agence",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Marches publics sport+conseil (fusion)",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Marches publics sport+conseil (fusion)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Deux missions principales. L'Agence a pour but de contribuer à cet objectif en rénovant le modèle de la gouvernance du sport français en activant deux leviers d ...",
-    "datePublication": "2026-04-23",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "http://www.agencedusport.fr/presentation-de-lagence",
-    "nouvelle": true,
-    "urgent": false,
-    "score": 58,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.agencedusport.fr"
-  },
-  {
-    "id": "5017568fa8f0",
-    "title": "Rapports de l'IGÉSR dans le champ du sport",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Marches publics sport+conseil (fusion)",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Marches publics sport+conseil (fusion)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Il propose dix-neuf recommandations opérationnelles à court et plus long terme, structurées autour de six grands thèmes : la gouvernance nationale et ...",
-    "datePublication": "2026-04-20",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.sports.gouv.fr/rapports-de-l-igesr-dans-le-champ-du-sport-1703",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 58,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.sports.gouv.fr"
-  },
-  {
     "id": "24698a85f472",
     "title": "Appel d'offre : Prestations de conseils en stratégie médias ...",
     "source": "marche-public",
@@ -497,58 +339,6 @@
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
-    "id": "cb07c1224c0e",
-    "title": "Business development sponsoring & partenariats sportifs",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Sport+com AO",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sport+com AO",
-    "typeEmetteur": "Detection automatique",
-    "description": "Réalisation de benchmarks des offres sponsoring du marché (concurrents, tendances, innovations). Analyse des marchés, secteurs annonceurs et besoins des marques ...",
-    "datePublication": "2026-04-02",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.profilculture.com/annonce/business-development-sponsoring-amp-partenariats-sportifs-488014.html",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.profilculture.com"
-  },
-  {
-    "id": "ec43983548b5",
-    "title": "Le contrat de sponsoring sportif. Par Brahim Ouhdi, Avocat.",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Sport+conseil AO",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sport+conseil AO",
-    "typeEmetteur": "Detection automatique",
-    "description": "Le contrat vise à organiser la relation de partenariat entre le sponsor et le sponsorisé en prenant en compte les spécificités du domaine sportif (ex : le ...",
-    "datePublication": "2026-04-02",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.village-justice.com/articles/contrat-sponsoring-sportif,55674.html",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.village-justice.com"
-  },
-  {
     "id": "5683808b1988",
     "title": "CICOM SPORT",
     "source": "prive",
@@ -572,32 +362,6 @@
     "angles": [],
     "source_auto": true,
     "category": 3,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
-  },
-  {
-    "id": "ffa6465ff67c",
-    "title": "Stéphanie JADAUD - Marketing du Sport, Sponsoring ...",
-    "source": "prive",
-    "sourceLabel": "SerpAPI — LinkedIn signaux",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — LinkedIn signaux",
-    "typeEmetteur": "Detection automatique",
-    "description": "Conception, rédaction et pilotage de la candidature à l'appel d'offre de la Classe Mini pour l'organisation des Mini Transat 2021-23-25, - Budget de l'événement ...",
-    "datePublication": "2026-03-31",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/st%C3%A9phanie-jadaud",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 52,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
@@ -731,32 +495,6 @@
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.instagram.com"
   },
   {
-    "id": "615e94e19abe",
-    "title": "Maxime Derenne - Sponsorship Strategy chez Havas Play",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "Je travaille depuis huit ans en agence conseil sur l'accompagnement de marques et d'ayant-droits dans les domaines du Sport et de l'Entertainment, ...",
-    "datePublication": "2026-04-09",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/derennemaxime/fr",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 48,
-    "angles": [],
-    "source_auto": true,
-    "category": 3,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
-  },
-  {
     "id": "8878f82cde96",
     "title": "Agence Minouche",
     "source": "prive",
@@ -807,32 +545,6 @@
     "source_auto": true,
     "category": 3,
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.pappers.fr"
-  },
-  {
-    "id": "2841ee0b4ef2",
-    "title": "Agencement magasin de sport",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Sport+etudes AO",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sport+etudes AO",
-    "typeEmetteur": "Detection automatique",
-    "description": "Bénéficiez d'un pré-audit offert pour analyser la faisabilité et les axes d'amélioration de votre projet. Nos experts vous accompagnent avec une première étude ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.the-shaperz.com/agencement-magasin-de-sport-the-shaperz/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 48,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.the-shaperz.com"
   },
   {
     "id": "189b8bb80365",
@@ -1095,32 +807,6 @@
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
-    "id": "d6c5a7254d20",
-    "title": "Offres d'emploi | Fashionjobs France",
-    "source": "prive",
-    "sourceLabel": "Google — Signaux prives",
-    "moteur": "google",
-    "types": [
-      "communication"
-    ],
-    "secteur": "Sport",
-    "emetteur": "Google — Signaux prives",
-    "typeEmetteur": "Detection automatique",
-    "description": "Apostrophe recherche actuellement des Conseillers et Conseillères de vente pour rejoindre son équipe à Deauville. En véritable ambassadeur de la marque, ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.fashionjobs.com/s/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 43,
-    "angles": [],
-    "source_auto": true,
-    "category": 3,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.fashionjobs.com"
-  },
-  {
     "id": "fab3a69c3867",
     "title": "📢 Nouvelle collaboration ! @globalevents_ et ...",
     "source": "prive",
@@ -1145,32 +831,6 @@
     "source_auto": true,
     "category": 3,
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.instagram.com"
-  },
-  {
-    "id": "9195bcdccc82",
-    "title": "Projet PRACAC : Avis d'appel d'offres national ouvert",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Sport+conseil AO",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sport+conseil AO",
-    "typeEmetteur": "Detection automatique",
-    "description": "Sport : la Fédération centrafricaine de Basket Ball ann... Fête du Nouvel ... APPEL D'OFFRE: Recrutement d'un consultant(... Centrafrique : la troupe ...",
-    "datePublication": "2026-04-02",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://oubanguimedias.com/2026/01/21/projet-pracac-avis-dappel-doffres-national-ouvert/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=oubanguimedias.com"
   },
   {
     "id": "699da7d938c1",
@@ -1225,32 +885,6 @@
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
   },
   {
-    "id": "f5a0fbf64c15",
-    "title": "Projet PRACAC : Avis d'appel d'offres national ouvert",
-    "source": "marche-public",
-    "sourceLabel": "SerpAPI — Sport+conseil AO",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "SerpAPI — Sport+conseil AO",
-    "typeEmetteur": "Detection automatique",
-    "description": "Sport : la Fédération centrafricaine de Basket Ball ann... Fête du Nouvel ... APPEL D'OFFRE: Recrutement d'un consultant(... Centrafrique : la troupe ...",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://oubanguimedias.com/2026/01/21/projet-pracac-avis-dappel-doffres-national-ouvert/",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true,
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=oubanguimedias.com"
-  },
-  {
     "id": "5d03968cf0b9",
     "title": "Appel d'offre : PRESTATIONS D'INTERVENTIONS DE ...",
     "source": "marche-public",
@@ -1275,32 +909,6 @@
     "source_auto": true,
     "category": 1,
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.francemarches.com"
-  },
-  {
-    "id": "afd3507a783a",
-    "title": "Liste postes CTS mouvement sport",
-    "source": "prive",
-    "sourceLabel": "Google — Signaux prives",
-    "moteur": "google",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "Google — Signaux prives",
-    "typeEmetteur": "Detection automatique",
-    "description": "-. Conduire des projets nationaux de développement et de structuration. -. Apporter une expertise technique et un appui stratégique aux élus et cadres fédéraux.",
-    "datePublication": "2026-03-30",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.education.gouv.fr/sites/default/files/document/Postes%20de%20CTS_compressed.pdf-480947.pdf",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 40,
-    "angles": [],
-    "source_auto": true,
-    "category": 3,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.education.gouv.fr"
   },
   {
     "id": "acb40fb1f9fe",
@@ -1405,32 +1013,6 @@
     "source_auto": true,
     "category": 1,
     "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.valleesduhautanjou.fr"
-  },
-  {
-    "id": "2377a19b65f5",
-    "title": "Cyrielle Moussiegt - Responsable événementiel",
-    "source": "prive",
-    "sourceLabel": "LinkedIn (signal)",
-    "moteur": "linkedin",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "LinkedIn (signal)",
-    "typeEmetteur": "Detection automatique",
-    "description": "- Suivi de projet : production de livrables, relation client/prestataire, bilan des opérations pour les clients FFF et PMU. - Assistance sur la livraison ...",
-    "datePublication": "2026-04-13",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://fr.linkedin.com/in/cyrielle-moussiegt",
-    "nouvelle": false,
-    "urgent": false,
-    "score": 35,
-    "angles": [],
-    "source_auto": true,
-    "category": 3,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=fr.linkedin.com"
   },
   {
     "id": "e070a69faec8",
