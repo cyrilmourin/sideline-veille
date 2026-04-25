@@ -426,7 +426,6 @@ SOURCE_CATEGORY = {
     "cosmos":                     3,
     "gie_sport_expertise":        3,
     "lequipe_sport_business":     3,
-    "kingcom_actu":               3,
     # v6.3 — Fallbacks HTML
     "sporsora_html":              3,
 }
@@ -887,19 +886,7 @@ SOURCES = [
         "parser": "rss",
     },
     # Strategies.fr — 403 bloque depuis GitHub Actions, couverte par SerpAPI
-    # Kingcom — veille communication institutionnelle et publique (fonctionne)
-    {
-        "id": "kingcom_actu",
-        "label": "Kingcom — Communication institutionnelle",
-        "type": "prive",
-        "url": "https://www.kingcom.fr/actualites/",
-        "parser": "html",
-        "selector": "article, .post, .card, .news",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 10,
-    },
+    # Kingcom — RETIRE (agence et non flux generaliste, demande Cyril 2026-04-25)
     # Strategies.fr — 403 bloque, desactive
     # La Lettre — 403 bloque, desactive
     # Sport Buzz Business — marketing sportif (fonctionne)
@@ -1796,6 +1783,22 @@ def deduire_types(item):
     return types or ["strategie"]
 
 def generer_id(item):
+    """v6.5 - Dedup par URL canonique en priorite (evite les doublons quand le
+    meme article est scrappé par 2 sources differentes : SBC institutions vs
+    SBC breves, sporsora vs sporsora_html, newstank rss vs newstank home, etc.)
+    Fallback : hash(title+source_id) si pas de lien."""
+    lien = (item.get("lien", "") or "").strip()
+    if lien:
+        # Normaliser : retirer les query params type ?utm_source, ?originalSubdomain
+        from urllib.parse import urlparse, urlunparse
+        try:
+            u = urlparse(lien.lower())
+            # Conserve scheme+host+path, drop query+fragment
+            canonical = urlunparse((u.scheme, u.netloc, u.path.rstrip("/"), "", "", ""))
+            return hashlib.md5(canonical.encode()).hexdigest()[:12]
+        except Exception:
+            pass
+    # Fallback : titre + source_id (cas RSS sans lien ou items boamp_api)
     return hashlib.md5((item.get("title","") + item.get("source_id","")).encode()).hexdigest()[:12]
 
 def _parse_date(date_str):

@@ -1,9 +1,9 @@
 {
-  "updated_at_iso": "2026-04-25T09:25:00",
-  "updated_at_human": "25/04/26 à 09h25 (migration v6.3)",
-  "system_version": "v6.3 (migration)",
-  "count_total": 35,
-  "count_cat1": 25,
+  "updated_at_iso": "2026-04-25T13:36:57",
+  "updated_at_human": "25/04/26 à 13h36 (reset v6.5)",
+  "system_version": "v6.5 (reset)",
+  "count_total": 0,
+  "count_cat1": 0,
   "count_cat2": 0,
-  "count_cat3": 10
+  "count_cat3": 0
 }
