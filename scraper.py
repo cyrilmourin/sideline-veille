@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.3
+Sideline Conseil — Moteur de veille marches sportifs v6.11
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -427,7 +427,7 @@ SOURCE_CATEGORY = {
     "cosmos":                     3,
     "gie_sport_expertise":        3,
     "lequipe_sport_business":     3,
-    # v6.3 — Fallbacks HTML
+    # v6.11 — Fallbacks HTML
     "sporsora_html":              3,
 }
 
@@ -753,17 +753,6 @@ SOURCES = [
         "desc_sel": "p, .excerpt",
         "link_sel": "a",
     },
-    {
-        "id": "ffa",
-        "label": "FFA — Federation Francaise d Athletisme",
-        "type": "federation",
-        "url": "https://www.athle.fr/actualites/",
-        "parser": "html",
-        "selector": "article, .news-item, .actu",
-        "title_sel": "h2, h3",
-        "desc_sel": "p",
-        "link_sel": "a",
-    },
     # ── FEDERATIONS SUPPLEMENTAIRES ──────────────────────────────────────────
     {
         "id": "ffhandisport",
@@ -921,81 +910,11 @@ SOURCES = [
     # ANS — timeout depuis GitHub Actions, couverte par SerpAPI, desactivee
     # UEFA — timeout, desactivee
     # NBA — fonctionne
-    {
-        "id": "nba_news",
-        "label": "NBA — Actualites",
-        "type": "prive",
-        "url": "https://www.nba.com/news",
-        "parser": "html",
-        "selector": "article, .ArticleTile, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 15,
-    },
     # Roland Garros — fonctionne
-    {
-        "id": "roland_garros",
-        "label": "Roland Garros — Actualites",
-        "type": "prive",
-        "url": "https://www.rolandgarros.com/fr-fr/article",
-        "parser": "html",
-        "selector": "article, .news-card, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 15,
-    },
     # Tour de France ASO — URL corrigee
-    {
-        "id": "tour_de_france",
-        "label": "Tour de France — Actualites ASO",
-        "type": "prive",
-        "url": "https://www.letour.fr/fr/news",
-        "parser": "html",
-        "selector": "article, .news-item, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 15,
-    },
     # F1 — fonctionne
-    {
-        "id": "f1_news",
-        "label": "F1 — Actualites",
-        "type": "prive",
-        "url": "https://www.formula1.com/en/latest/all.html",
-        "parser": "html",
-        "selector": "article, .article-card, .card",
-        "title_sel": "h2, h3",
-        "desc_sel": "p, .excerpt",
-        "link_sel": "a",
-        "timeout": 15,
-    },
 
     # ── LIGUES PROFESSIONNELLES ───────────────────────────────────────────────
-    {
-        "id": "lfp",
-        "label": "LFP — Ligue de Football Professionnel",
-        "type": "prive",
-        "url": "https://www.lfp.fr/?category=communiques",
-        "parser": "html",
-        "selector": "article, .card, .item, .communique",
-        "title_sel": "h2, h3",
-        "desc_sel": "p",
-        "link_sel": "a",
-    },
-    {
-        "id": "lnr",
-        "label": "LNR — Ligue Nationale de Rugby",
-        "type": "prive",
-        "url": "https://www.lnr.fr/actualites/toutes",
-        "parser": "html",
-        "selector": "article, .card, .actu",
-        "title_sel": "h2, h3",
-        "desc_sel": "p",
-        "link_sel": "a",
-    },
 
     # ── v6 — Ajouts cat.3 veille sport business ─────────────────────────
     # Sport Stratégies : on garde le scrap HTML existant plus bas (sportstrategies.com)
@@ -1020,7 +939,7 @@ SOURCES = [
         "url": "https://sportexpertise.com/feed/",
         "parser": "rss",
     },
-    # v6.3 - Fallback HTML pour News Tank Sport (paywall mais titres en clair sur la home)
+    # v6.11 - Fallback HTML pour News Tank Sport (paywall mais titres en clair sur la home)
     {
         "id": "newstank_sport_home",
         "label": "News Tank Sport — Titres",
@@ -1033,7 +952,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    # v6.3 - Sporsora fallback HTML si /feed/ KO
+    # v6.11 - Sporsora fallback HTML si /feed/ KO
     {
         "id": "sporsora_html",
         "label": "SPORSORA — Articles",
@@ -1268,7 +1187,7 @@ def lancer_boamp_api():
             # Filtre : exclure si pas de lien avec nos métiers
             if _boamp_score(objet, description) < 2:
                 continue
-            # v6.3 — exclure CPV blacklistés (animation enfants, restauration coll, etc.)
+            # v6.11 — exclure CPV blacklistés (animation enfants, restauration coll, etc.)
             if any(str(c) in CPV_BLACKLIST for c in cpvs):
                 log.debug(f"[BOAMP_API] CPV blacklisté drop: {cpvs} - {objet[:40]}")
                 continue
@@ -1348,7 +1267,7 @@ def bonus_acheteur_etat(item):
             bonus = max(bonus, pts)  # un seul bonus, le plus fort
     return bonus
 
-# ─── PRÉ-FILTRE STRICT v6.3 ───────────────────────────────────────────────
+# ─── PRÉ-FILTRE STRICT v6.11 ───────────────────────────────────────────────
 # Drop AVANT categorize() les URLs/domaines/contenus qui n'ont AUCUNE chance
 # d'être un marché ou un signal légitime (pages statiques, profils LinkedIn,
 # offres d'emploi, dossiers de presse, AO clôturés, etc.).
@@ -1372,7 +1291,7 @@ DOMAIN_BLACKLIST = [
     "pole-emploi.fr",
     "francetravail.fr",
     "hellowork.com",
-    # v6.3 — Annuaires / fiches entreprises (pages statiques, jamais des AO)
+    # v6.11 — Annuaires / fiches entreprises (pages statiques, jamais des AO)
     "pappers.fr",
     "societe.com",
     "verif.com",
@@ -1484,7 +1403,7 @@ CPV_BLACKLIST = {
     "60100000": "Services de transport routier",  # transports scolaires inclus
     "75300000": "Services de securite sociale",
     "85000000": "Services de sante et services sociaux",  # large, sauf si sport health
-    # v6.3 - Recrutement / formation (jamais Sideline)
+    # v6.11 - Recrutement / formation (jamais Sideline)
     "79600000": "Services de recrutement",
     "80500000": "Services de formation",
     "80511000": "Services de formation du personnel",
@@ -1494,9 +1413,69 @@ CPV_BLACKLIST = {
 # Extensions de fichier suspectes (drop sauf si dans contexte AO explicite)
 SUSPECT_EXTENSIONS = (".pdf", ".doc", ".docx", ".ppt", ".pptx")
 
+# v6.11 - Bonus de score quand le contenu touche le coeur metier Sideline
+# (affaires publiques / conseil strategique / communication / sponsoring /
+#  RP / influence / droit du sport / marketing sport)
+METIER_SIDELINE_BONUS = {
+    "affaires publiques":            22,
+    "public affairs":                20,
+    "influence":                     18,
+    "lobbying":                      18,
+    "plaidoyer":                     16,
+    "relations institutionnelles":   18,
+    "conseil strategique":           18,
+    "strategie d influence":         20,
+    "strategie de communication":    14,
+    "communication institutionnelle":14,
+    "communication corporate":       12,
+    "relations publiques":           12,
+    "relations presse":              12,
+    "media training":                10,
+    "droit du sport":                15,
+    "juridique sport":               12,
+    "sponsoring":                    12,
+    "mecenat":                       12,
+    "partenariat strategique":       12,
+    "marketing sportif":             10,
+    "marketing du sport":            10,
+    "gouvernance":                   12,
+    "schema directeur":              10,
+    "diagnostic strategique":        10,
+    "agence":                         8,   # signal cat.2/3 fort
+    "prestataire":                    8,
+    "cabinet conseil":                10,
+    "consultant senior":              8,
+    "remporte":                      10,   # signal contrat
+    "attribue":                      10,
+    "choisi par":                    10,
+    "renouvelle son partenariat":    14,
+}
+
+# v6.11 - Penalité (ou drop) quand le contenu est de l actu sportive pure
+# (resultats, finales, billetterie, calendrier, classement). Pertinent
+# uniquement pour cat.3 ou comme malus cat.1 si marche sport sans dimension
+# conseil/communication.
+ACTU_PURE_PENALTY = [
+    "resultat", "resultats", "score final", "classement", "podium",
+    "victoire", "defaite", "champion du monde", "championne du monde",
+    "qualifie pour", "qualification pour", "elimination",
+    "finale ", "demi finale", "quart de finale",
+    "billetterie", "vente des billets", "abonnement saison",
+    "calendrier ", "prochaine rencontre",
+    "blesse", "blessure", "indisponible",
+    "transferts", "rejoint le club", "signe au club",
+    "prolongation contrat joueur", "fin de contrat joueur",
+    "selectionneur", "entraineur principal",
+    "stage de preparation", "match amical",
+    "compte rendu match", "carton rouge", "penalty",
+    "buteur", "marqueur", "passeur",
+]
+
+
+
 def pre_filter(item):
     """
-    v6.3 — Filtre strict appliqué AVANT categorize().
+    v6.11 — Filtre strict appliqué AVANT categorize().
     Retourne False si l'item doit être droppé immédiatement (bruit avéré).
     """
     lien = (item.get("lien", "") or "").lower()
@@ -1592,7 +1571,7 @@ def pre_filter(item):
                 return False
 
     # 9. LinkedIn : ne garder QUE les vraies actualités
-    # v6.3 - on était trop laxe sur /company/<slug>/ racine (page statique)
+    # v6.11 - on était trop laxe sur /company/<slug>/ racine (page statique)
     # Refus :  linkedin.com/in/<slug>            (profil perso)
     # Refus :  linkedin.com/company/<slug>/       (page racine entreprise)
     # Refus :  linkedin.com/company/<slug>/about  (page about)
@@ -1623,6 +1602,17 @@ def pre_filter(item):
                 rest = m.group(2).split("?")[0].split("#")[0].strip("/")
                 if not rest or rest.startswith(("about", "people")):
                     return False
+
+    # 10. v6.11 - Pour les sources federations (type=federation), exiger un
+    # mot-cle d AO/consultation dans le titre. Sinon = actualite sportive
+    # pure (resultats, billetterie, finale, etc.) -> drop.
+    if item.get("type_source") == "federation":
+        ao_signals = ["consultation", "appel", "marche", "candidature",
+                      "ao ", " ao", "aoo", "appels d offre", "appel d offre",
+                      "mise en concurrence", "publicite", "avis"]
+        # corpus deja calcule plus haut (variable 'corpus')
+        if not any(kw in corpus for kw in ao_signals):
+            return False  # actu sportive pure (resultats, billetterie, etc.)
 
     return True
 
@@ -1661,9 +1651,9 @@ def matches_nomination(item):
 def categorize(item):
     """
     Retourne 1 (marche reel), 2 (signal contrat), 3 (veille) ou None (drop).
-    v6.3 — appelle pre_filter() en tout premier (drop URL/page-statique/emploi/AO clos)
+    v6.11 — appelle pre_filter() en tout premier (drop URL/page-statique/emploi/AO clos)
     """
-    # v6.3 — pré-filtre radical
+    # v6.11 — pré-filtre radical
     if not pre_filter(item):
         return None
 
@@ -1689,6 +1679,9 @@ def categorize(item):
 
     # 3. Marchés publics non mappés -> cat.1
     if typ_src == "marche-public":
+        return 1
+    # v6.11 - Pages /consultations des federations -> cat.1 (vrais AO)
+    if typ_src == "federation":
         return 1
 
     # 4. Scraps Google/LinkedIn : filtre institutionnel + classification
@@ -1783,24 +1776,44 @@ def scorer(item):
     # ─── 7. Bonus acheteur public prioritaire (ANS/Solideo/Paris 2024…) ──
     score += bonus_acheteur_etat(item)
 
-    # ─── 8. v6 — Pondération par catégorie (cat.1 >> cat.2 > cat.3) ──────
+    # ─── 8. v6.11 — Bonus METIER_SIDELINE (affaires publiques / conseil /
+    #     communication / sponsoring / influence / droit du sport / RP)
+    metier_hits = 0
+    for kw, bonus in METIER_SIDELINE_BONUS.items():
+        if kw in corpus:
+            score += bonus
+            metier_hits += 1
+            if metier_hits >= 3:
+                break  # cap a 3 keywords pour eviter explosion
+
+    # ─── 9. v6.11 — Penalité ACTU_PURE (resultats sportifs, billetterie,
+    #     finales, transferts joueurs). On ne drop pas mais on penalise fort.
+    actu_hits = sum(1 for kw in ACTU_PURE_PENALTY if kw in corpus)
+    if actu_hits >= 1:
+        score -= 25 * min(actu_hits, 2)   # -25 par hit, max -50
+        # Si l item ne contient PAS de mot metier ET contient actu pure
+        # -> probablement une vraie actu sport, score pratiquement nul
+        if metier_hits == 0:
+            score -= 10
+
+    # ─── 10. v6 — Pondération par catégorie ─────────────────────────────
     cat = item.get("_category") or categorize(item)
     if cat == 1:
-        score = int(score * 1.5)   # marchés réels : sur-pondération massive
+        score = int(score * 1.5)   # marchés réels : sur-pondération
     elif cat == 2:
-        score = int(score * 1.0)   # signaux contrats : neutre
+        score = int(score * 1.1)   # signaux contrats : leger boost
     elif cat == 3:
-        score = int(score * 0.80)  # veille : leger malus (cat.1 reste prioritaire via *1.5)
+        score = int(score * 0.85)  # veille : leger malus
     else:
         return 0
 
-    # ─── 9. v6 — Pénalité si source scrap imprécise (pas domaine officiel) ─
+    # ─── 11. v6 — Pénalité scrap imprécise ─────────────────────────────
     moteur = item.get("moteur")
     if moteur in ("google", "linkedin"):
         score += 3
         lien = (item.get("lien","") or "").lower()
         if not any(d in lien for d in WHITELIST_DOMAINES_SCRAP):
-            score -= 5  # post LinkedIn perso avec mention org -> score bas
+            score -= 5
 
     return max(0, min(score, 100))
 
@@ -1838,7 +1851,7 @@ def generer_id(item):
 
 def _parse_date(date_str):
     """Parse une date quelle que soit son format RSS, ISO, ou RFC 2822.
-    Bug v6.10 : avant, format RFC 2822 (Fri, 24 Apr 2026 12:39:24 +0000)
+    Bug v6.11 : avant, format RFC 2822 (Fri, 24 Apr 2026 12:39:24 +0000)
     n etait pas parse -> datetime(2000,1,1) -> drop par cutoff 90j -> les
     items RSS sport business (SBC, Sporsora) finissaient en seen_ids mais
     pas dans opportunites.json."""
@@ -2109,7 +2122,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v6.3 -- Demarrage")
+    log.info("Sideline Veille v6.11 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -2152,6 +2165,24 @@ def lancer_veille(test_mode=False, only=None):
     cutoff = datetime.now() - timedelta(days=90)
     toutes = [o for o in toutes if not o.get("source_auto") or
               _parse_date(o.get("datePublication","2000-01-01")) > cutoff]
+
+    # v6.11 - Dedup multi-source par (titre normalise + emetteur)
+    # Le meme AO peut etre publie sur BOAMP RSS, BOAMP API, France Marches
+    # avec des URLs differentes. On garde le meilleur score.
+    dedup_map = {}
+    for o in toutes:
+        title_norm = nettoyer(o.get("title", ""))[:80]
+        emetteur = nettoyer(o.get("emetteur", ""))[:40]
+        dedup_key = (title_norm, emetteur)
+        if dedup_key in dedup_map:
+            # Garde celui avec le meilleur score
+            if o.get("score", 0) > dedup_map[dedup_key].get("score", 0):
+                dedup_map[dedup_key] = o
+        else:
+            dedup_map[dedup_key] = o
+    toutes = list(dedup_map.values())
+    log.info(f"[DEDUP] {len(nouvelles_opps + opps_existantes)} -> {len(toutes)} apres dedup multi-source")
+
     toutes = sorted(toutes, key=lambda x: x["score"], reverse=True)[:200]
 
     sauvegarder_donnees(toutes)
@@ -2174,7 +2205,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v6.3")
+    ap = argparse.ArgumentParser(description="Sideline Veille v6.11")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
