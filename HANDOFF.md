@@ -6,15 +6,14 @@ Note de transmission pour reprendre la maintenance du projet **Sideline Veille M
 
 ## État actuel
 
-Le projet est en **v6.10 (3 catégories + scoring affiné + parse_date RFC 2822)** depuis le 25/04/2026.
+Le projet est en **v6.12 (2 onglets — Marchés + Veille sport business)** depuis le 25/04/2026.
 
 **Pipeline de scraping** (`scraper.py`, ~1800 lignes) :
 - 3 moteurs de détection : RSS/HTML (51 sources), SerpAPI/Google (3 requêtes consolidées), LinkedIn via SerpAPI (1 requête consolidée), plus l'API BOAMP OpenDataSoft (sans clé).
 - **Pré-filtre strict** (`pre_filter`) appliqué AVANT `categorize()` : drop URLs LinkedIn `/in/`, jobs/learning, pages `/presentation-de`, `/rapports-de`, `/dossier-de-presse`, `/annonce/`, PDF hors contexte AO, domaines blacklistés (alexia.fr, profilculture, indeed, apec, the-shaperz, etc.), CPV blacklistés (92331210 animation enfants, restauration coll, transport, sécurité sociale), AO clôturés (dateLimite passée), keywords page statique (présentation/rapports/biographie) et emploi (CDI/CDD/stage/h-f/business development).
-- Classification automatique en 3 catégories via `categorize(item)` :
-  - **Cat.1 — Marchés réels** : appels d'offres publics formels (BOAMP, TED/JOUE, marches2030, profils acheteurs ANS/Solideo/CNOSF, France Marchés). C'est le cœur du sujet.
-  - **Cat.2 — Signaux contrats** : annonces "X a confié sa communication à Y", "remporte l'appel d'offre", "renouvelle son partenariat avec…" (35 verbes conjugués précis).
-  - **Cat.3 — Veille sport business** : flux RSS qualifiés (SportBusiness Club, Café du Sport Biz, Sporsora, Sport Stratégies, COSMOS, GIE Sport Expertise, L'Équipe, News Tank, Kingcom).
+- Classification automatique en 2 catégories via `categorize(item)` (cat.2 historique fusionnée dans cat.3 le 26/04/2026, le champ existe toujours dans le code mais n'est plus retourné) :
+  - **Cat.1 — Marchés réels** : appels d'offres publics formels (BOAMP, TED/JOUE, marches2030, profils acheteurs ANS/Solideo/CNOSF, France Marchés, pages /consultations des fédérations).
+  - **Cat.3 — Veille sport business** : flux RSS qualifiés (SportBusiness Club, Café du Sport Biz, Sporsora, Sport Stratégies, COSMOS, GIE Sport Expertise, L'Équipe, News Tank, Sport Buzz Business). Inclut aussi les ex-signaux contrats (annonces "X a confié sa communication à Y", "remporte l'appel d'offre").
 - Filtre institutionnel sur scraps Google/LinkedIn : un post de particulier est droppé sauf s'il vient d'un domaine whitelisté (linkedin.com/company/, sports.gouv.fr, boamp.fr, etc.) OU mentionne une org reconnue (UCI, FFR, COJOP 2030, etc.).
 - Filtre nominations RH : drop des "nouveau directeur commercial", "prise de fonction", "nommé(e)", "promu(e)" (20 patterns).
 - Whitelist 103 émetteurs locaux FR : 13 régions, 10 métropoles, ministères, agences, fédés/ligues, organisateurs grands événements (UCI 2027, Mondial Basket 2031, Euro 2028, COJOP 2030).
@@ -23,7 +22,7 @@ Le projet est en **v6.10 (3 catégories + scoring affiné + parse_date RFC 2822)
 
 **Frontend** (`index.html`, page statique servie via GitHub Pages) :
 - Header avec bloc meta à droite : "Données M.A.J JJ/MM/AA à HHhMM" + "Version v6 · short-sha".
-- Nav à 3 onglets sous le header avec compteur dynamique par onglet (ex : "Marchés 36").
+- Nav à **2 onglets** sous le header avec compteur dynamique (Marchés + Veille sport business). Cat.2 historique fusionnée dans cat.3 le 26/04/2026.
 - Chaque carte affiche un favicon du site source (via le service Google S2).
 - Stats top-row (opportunités actives, nouvelles, échéances, score moyen) toujours basées sur cat.1, peu importe l'onglet actif.
 - Recherche, tri (score/date/titre), filtres type/source.
@@ -37,7 +36,7 @@ Le projet est en **v6.10 (3 catégories + scoring affiné + parse_date RFC 2822)
 - Logs archivés 7 jours via upload-artifact.
 
 **Distribution actuelle des items** (snapshot 24/04/2026 après migration v6) :
-- 6 items en cat.1 / 0 en cat.2 / 194 en cat.3 (200 total, limite top-200 atteinte). Sources cat.3 actives : COSMOS (49), Tour de France (35), FFR XIII (24), NBA (18), SportBusiness Club institutions/agences/brèves (29), SPORSORA (10), Sport Buzz Business (10), Sport Stratégies, FFVolley/Roland Garros/FFE/FFN/FFHandball (32).
+- ~4 items en cat.1 / ~64 en cat.3 (post-purge v6.11.1, l'ordre de grandeur va remonter au prochain run complet). Sources cat.3 actives : SportBusiness Club institutions/agences/brèves, SPORSORA, Sport Buzz Business, Sport Stratégies, COSMOS, Café du Sport Biz, GIE Sport Expertise, L'Équipe sport business. Sources d'actu sportive pure (NBA, Roland Garros, Tour de France, F1, FFA, LFP, LNR) ont été supprimées car hors-cible business.
 
 ---
 
@@ -59,22 +58,26 @@ Lors de l'audit du 19/04/2026, on a supprimé `.github/workflows/veille.yml` (do
 Plutôt que filtrer "tout sauf cat.1", on garde les 3 catégories mais on applique des coefficients (1.5/1.0/0.55) et la home n'affiche que cat.1 par défaut.
 *Pourquoi :* préserve l'historique signaux/veille pour analyse a posteriori, sans polluer la vue marchés.
 
-**5. Whitelist domaines + mention d'org pour scraps Google/LinkedIn.**
+**5. Scoring sur-pondéré sur le métier Sideline (v6.11).**
+`METIER_SIDELINE_BONUS` ajoute +8 à +22pts par mot-clé métier rencontré (cap 3 hits) : affaires publiques (+22), influence (+18), conseil stratégique (+18), communication institutionnelle (+14), droit du sport (+15), sponsoring (+12), RP (+12), gouvernance (+12). À l'inverse, `ACTU_PURE_PENALTY` retire −25pts par hit (max −50) si le contenu contient résultats/finales/billetterie/transferts/calendrier. Effet : un AO « animation enfants » ou un article « finale Coupe de France rugby » score quasi nul ; un AO « conseil affaires publiques fédération sport » ou un article « X choisit son agence pour ses RP institutionnelles » score 80-100.
+*Pourquoi :* après plusieurs versions trop binaires (drop ou pass), Cyril voulait un scoring nuancé qui priorise son cœur de métier sans éliminer les marchés sport légitimes hors AP/conseil/com.
+
+**6. Whitelist domaines + mention d'org pour scraps Google/LinkedIn.**
 Un post LinkedIn de particulier est droppé SAUF s'il mentionne une organisation institutionnelle whitelistée (UCI, fédé, COJOP, ministère, etc.) — règle "mention org = OK, score bas".
 *Pourquoi :* évite que tout post personnel ("Jean Dupont — mes réflexions sur le sport") pollue la veille, mais conserve les signaux légitimes (ex : "Appel à concurrence 2026 droit du sport UCI" posté par un consultant indépendant).
 
-**6. `meta.json` séparé du JSON de données.**
+**7. `meta.json` séparé du JSON de données.**
 `data/opportunites.json` reste un array d'items pur ; `data/meta.json` contient `updated_at_iso`, `updated_at_human`, `system_version`, et les compteurs cat.1/2/3.
 *Pourquoi :* inspiré de la structure de `veille-parlementaire-sport`. Évite de casser les consommateurs JSON existants si on ajoute des métadonnées futures.
 
-**7. `SYSTEM_VERSION` calculée dans le workflow CI, pas hardcodée.**
+**8. `SYSTEM_VERSION` calculée dans le workflow CI, pas hardcodée.**
 Format `v6 · <short-sha-7chars>` injecté via `git rev-parse --short=7 HEAD` puis variable d'env.
 *Pourquoi :* identifier précisément quelle révision a généré chaque snapshot de données.
 
-**8. Le repo `veille-parlementaire-sport` ne doit JAMAIS être touché.**
+**9. Le repo `veille-parlementaire-sport` ne doit JAMAIS être touché.**
 C'est un projet séparé en production, avec son propre pipeline. On peut le LIRE en référence (notamment pour le pattern bloc meta header) mais aucune modif.
 
-**9. Pré-filtre strict avant catégorisation (v6.1).**
+**10. Pré-filtre strict avant catégorisation (v6.1).**
 Le `categorize()` v6 laissait passer trop de bruit (pubs cabinet avocat, dossiers de presse PDF, AO clôturés, profils LinkedIn perso, offres d'emploi, pages "présentation de l'ANS"). On a ajouté un `pre_filter()` radical en amont qui drop sur 9 critères : domaine blacklist, pattern URL blacklist, extensions PDF/DOC suspectes hors contexte AO, mots-clés page statique, mots-clés emploi, mots-clés AO clôturé, dateLimite passée, CPV blacklist, LinkedIn restreint à /posts//pulse//feed//company//school/.
 *Pourquoi :* la précision (peu de bruit) prime sur le rappel (capter tous les marchés). Mieux vaut rater un AO obscur que polluer la home avec 30 articles d'avocat. Si on veut être plus permissif on peut retirer un domaine ou un pattern individuellement.
 
@@ -141,6 +144,7 @@ Le scraper normalise les variantes (U+2019, U+02BC, U+2032…) via `nettoyer()`.
 
 ## Historique
 
+- 2026-04-26 : v6.11 + v6.12 livrées. (a) Refonte scoring métier Sideline : `METIER_SIDELINE_BONUS` (+8 à +22pts par mot-clé AP/conseil/com/sponsoring/droit du sport, cap 3 hits) + `ACTU_PURE_PENALTY` (−25pts par hit résultats/billetterie/finales/transferts). (b) Suppression des sources d'actu sportive pure (NBA, Roland Garros, Tour de France, F1, FFA, LFP, LNR) qui polluaient cat.3. (c) Filtre titre AO obligatoire pour les sources `type=federation` (drop "Accueil", "Finale Coupe", "Billetterie"…). (d) Dédup multi-source par `(titre normalisé + émetteur)` qui complète la dédup par URL canonique (un même AO peut être publié sur BOAMP RSS + BOAMP API + France Marchés avec 3 URLs différentes — Cyril voyait des triplons). (e) Fédérations classées cat.1 (au lieu de cat.3 par fallback). (f) Purge JSON one-shot des 35 items legacy hors-cible. (g) **v6.12** : fusion cat.2 dans cat.3, frontend passe de 3 onglets à 2 (Marchés + Veille). Le champ `category=2` reste toléré côté JS pour rétrocompat sur les items legacy.
 - 2026-04-25 (nuit) : Épopée v6.6 → v6.10 pour faire enfin apparaître les feeds sport business (SBC, Sporsora, Sport Buzz Biz, Sport Stratégies). v6.6 baisse facteur cat.3 0.55→0.80 + seuil cat.3=12. v6.7 bypass KEYWORDS_SPORT pour cat.3 (titre "Renouvellement partenariat X" passe). v6.8 bypass KEYWORDS_PAGE_STATIQUE pour cat.3 (interview/rapport/tribune sont du contenu légitime sur SBC). v6.9 KEYWORDS_EMPLOI light pour cat.3 (drop "business development"/"sales manager" qui sont aussi des termes business). Toujours 0 SBC/Sporsora après v6.9. **Bug racine identifié v6.10** : `_parse_date` ne lisait pas RFC 2822 → datePublication des items RSS = 2000-01-01 → drop par cutoff 90j (mais après ajout à seen_ids, donc invisible dans les compteurs). Fix `email.utils.parsedate_to_datetime` + 3 fallbacks. Résultat final 200 items (limite top-200) dont 39 SBC/Sporsora/SBB/SS, top scores 80 sur articles institutionnels Alpes 2030/Conseil d'État. Aussi : retire Kingcom (agence pas généraliste), drop LinkedIn /company/ racine, dédup par URL canonique (generer_id). Workflow CI : ajout trigger `on: push` sur paths code uniquement (relance auto après modif scraper, sans boucle infinie sur data/*).
 - 2026-04-25 (soir) : v6.3 livrée — fix LinkedIn /company/<slug>/ racine (page statique entreprise = drop ; seulement /company/<slug>/posts/<id> accepté). Ajout 12 domaines blacklist annuaires entreprise (pappers.fr, societe.com, manageo, infogreffe, kompass, bodacc, etc.). Correctifs sources cat.3 cassées : COSMOS asso.fr → cosmos-sports.fr (HTML), retrait sport-strategies.com (domaine inexistant), ajout fallbacks HTML pour sportbusiness.club, sport.newstank.fr/home, sporsora.com/le-mag. CPV blacklist enrichi (recrutement, formation). Migration JSON : 46 → 35 items (11 nouveaux drops dont TSM, TakeOp, CICOM SPORT, glob'AL events, Pappers SYBIOSE). UI : carte refondue avec favicon XL 56px en flag à gauche, contenu à droite (titre+score puis tags puis desc puis footer), tag-source du haut retiré.
 - 2026-04-25 : v6.1 livrée — pré-filtre strict appliqué avant categorize. 9 catégories de drop (domaine blacklist, URL pattern blacklist, PDF/DOC hors AO, page statique, emploi, AO clôturé, dateLimite passée, CPV blacklist 92331210 animation enfants, LinkedIn restreint à /posts//pulse//feed//company/). Migration JSON existant : 62 → 46 items (16 nouveaux drops : alexia.fr, dossier presse PDF, jobs profilculture/welcometothejungle/fashionjobs, présentation ANS/IGESR, profils LinkedIn /in/, the-shaperz.com, etc.). Distribution finale : 25 cat.1 / 0 cat.2 / 21 cat.3.
