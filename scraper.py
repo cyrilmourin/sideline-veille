@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.11
+Sideline Conseil — Moteur de veille marches sportifs v6.12
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -427,7 +427,7 @@ SOURCE_CATEGORY = {
     "cosmos":                     3,
     "gie_sport_expertise":        3,
     "lequipe_sport_business":     3,
-    # v6.11 — Fallbacks HTML
+    # v6.12 — Fallbacks HTML
     "sporsora_html":              3,
 }
 
@@ -939,7 +939,7 @@ SOURCES = [
         "url": "https://sportexpertise.com/feed/",
         "parser": "rss",
     },
-    # v6.11 - Fallback HTML pour News Tank Sport (paywall mais titres en clair sur la home)
+    # v6.12 - Fallback HTML pour News Tank Sport (paywall mais titres en clair sur la home)
     {
         "id": "newstank_sport_home",
         "label": "News Tank Sport — Titres",
@@ -952,7 +952,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    # v6.11 - Sporsora fallback HTML si /feed/ KO
+    # v6.12 - Sporsora fallback HTML si /feed/ KO
     {
         "id": "sporsora_html",
         "label": "SPORSORA — Articles",
@@ -1187,7 +1187,7 @@ def lancer_boamp_api():
             # Filtre : exclure si pas de lien avec nos métiers
             if _boamp_score(objet, description) < 2:
                 continue
-            # v6.11 — exclure CPV blacklistés (animation enfants, restauration coll, etc.)
+            # v6.12 — exclure CPV blacklistés (animation enfants, restauration coll, etc.)
             if any(str(c) in CPV_BLACKLIST for c in cpvs):
                 log.debug(f"[BOAMP_API] CPV blacklisté drop: {cpvs} - {objet[:40]}")
                 continue
@@ -1267,7 +1267,7 @@ def bonus_acheteur_etat(item):
             bonus = max(bonus, pts)  # un seul bonus, le plus fort
     return bonus
 
-# ─── PRÉ-FILTRE STRICT v6.11 ───────────────────────────────────────────────
+# ─── PRÉ-FILTRE STRICT v6.12 ───────────────────────────────────────────────
 # Drop AVANT categorize() les URLs/domaines/contenus qui n'ont AUCUNE chance
 # d'être un marché ou un signal légitime (pages statiques, profils LinkedIn,
 # offres d'emploi, dossiers de presse, AO clôturés, etc.).
@@ -1291,7 +1291,7 @@ DOMAIN_BLACKLIST = [
     "pole-emploi.fr",
     "francetravail.fr",
     "hellowork.com",
-    # v6.11 — Annuaires / fiches entreprises (pages statiques, jamais des AO)
+    # v6.12 — Annuaires / fiches entreprises (pages statiques, jamais des AO)
     "pappers.fr",
     "societe.com",
     "verif.com",
@@ -1403,7 +1403,7 @@ CPV_BLACKLIST = {
     "60100000": "Services de transport routier",  # transports scolaires inclus
     "75300000": "Services de securite sociale",
     "85000000": "Services de sante et services sociaux",  # large, sauf si sport health
-    # v6.11 - Recrutement / formation (jamais Sideline)
+    # v6.12 - Recrutement / formation (jamais Sideline)
     "79600000": "Services de recrutement",
     "80500000": "Services de formation",
     "80511000": "Services de formation du personnel",
@@ -1413,7 +1413,7 @@ CPV_BLACKLIST = {
 # Extensions de fichier suspectes (drop sauf si dans contexte AO explicite)
 SUSPECT_EXTENSIONS = (".pdf", ".doc", ".docx", ".ppt", ".pptx")
 
-# v6.11 - Bonus de score quand le contenu touche le coeur metier Sideline
+# v6.12 - Bonus de score quand le contenu touche le coeur metier Sideline
 # (affaires publiques / conseil strategique / communication / sponsoring /
 #  RP / influence / droit du sport / marketing sport)
 METIER_SIDELINE_BONUS = {
@@ -1451,7 +1451,7 @@ METIER_SIDELINE_BONUS = {
     "renouvelle son partenariat":    14,
 }
 
-# v6.11 - Penalité (ou drop) quand le contenu est de l actu sportive pure
+# v6.12 - Penalité (ou drop) quand le contenu est de l actu sportive pure
 # (resultats, finales, billetterie, calendrier, classement). Pertinent
 # uniquement pour cat.3 ou comme malus cat.1 si marche sport sans dimension
 # conseil/communication.
@@ -1475,7 +1475,7 @@ ACTU_PURE_PENALTY = [
 
 def pre_filter(item):
     """
-    v6.11 — Filtre strict appliqué AVANT categorize().
+    v6.12 — Filtre strict appliqué AVANT categorize().
     Retourne False si l'item doit être droppé immédiatement (bruit avéré).
     """
     lien = (item.get("lien", "") or "").lower()
@@ -1571,7 +1571,7 @@ def pre_filter(item):
                 return False
 
     # 9. LinkedIn : ne garder QUE les vraies actualités
-    # v6.11 - on était trop laxe sur /company/<slug>/ racine (page statique)
+    # v6.12 - on était trop laxe sur /company/<slug>/ racine (page statique)
     # Refus :  linkedin.com/in/<slug>            (profil perso)
     # Refus :  linkedin.com/company/<slug>/       (page racine entreprise)
     # Refus :  linkedin.com/company/<slug>/about  (page about)
@@ -1603,7 +1603,7 @@ def pre_filter(item):
                 if not rest or rest.startswith(("about", "people")):
                     return False
 
-    # 10. v6.11 - Pour les sources federations (type=federation), exiger un
+    # 10. v6.12 - Pour les sources federations (type=federation), exiger un
     # mot-cle d AO/consultation dans le titre. Sinon = actualite sportive
     # pure (resultats, billetterie, finale, etc.) -> drop.
     if item.get("type_source") == "federation":
@@ -1651,9 +1651,9 @@ def matches_nomination(item):
 def categorize(item):
     """
     Retourne 1 (marche reel), 2 (signal contrat), 3 (veille) ou None (drop).
-    v6.11 — appelle pre_filter() en tout premier (drop URL/page-statique/emploi/AO clos)
+    v6.12 — appelle pre_filter() en tout premier (drop URL/page-statique/emploi/AO clos)
     """
-    # v6.11 — pré-filtre radical
+    # v6.12 — pré-filtre radical
     if not pre_filter(item):
         return None
 
@@ -1661,15 +1661,13 @@ def categorize(item):
     moteur  = item.get("moteur", "rss")
     typ_src = item.get("type_source", "")
 
-    # 1. Mapping prioritaire
+    # 1. Mapping prioritaire (v6.12 - cat.2 fusionnee dans cat.3)
     if src_id in SOURCE_CATEGORY:
         cat_src = SOURCE_CATEGORY[src_id]
-        # Cas spécial : cat.3 avec signal contrat -> requalifier cat.2
-        if cat_src == 3 and detect_signal_contrat(item):
-            return 2
         # Cas spécial : cat.3 + nomination -> drop
         if cat_src == 3 and matches_nomination(item):
             return None
+        # Note v6.12 : on a retire la requalification cat.2 (fusion avec cat.3)
         return cat_src
 
     # 2. Préfixes (ex: boamp_api_xxxxxx)
@@ -1680,7 +1678,7 @@ def categorize(item):
     # 3. Marchés publics non mappés -> cat.1
     if typ_src == "marche-public":
         return 1
-    # v6.11 - Pages /consultations des federations -> cat.1 (vrais AO)
+    # v6.12 - Pages /consultations des federations -> cat.1 (vrais AO)
     if typ_src == "federation":
         return 1
 
@@ -1689,8 +1687,7 @@ def categorize(item):
         if not is_institutional_result(item):
             return None
         corpus = nettoyer(item.get("title", "") + " " + item.get("description", ""))
-        if detect_signal_contrat(item):
-            return 2
+        # v6.12 - signal contrat fusionne avec cat.3 (veille)
         market_signals = ["appel d offre", "consultation", "marche public",
                           "mise en concurrence", "appel a candidature",
                           "avis de marche", "dialogue competitif"]
@@ -1776,7 +1773,7 @@ def scorer(item):
     # ─── 7. Bonus acheteur public prioritaire (ANS/Solideo/Paris 2024…) ──
     score += bonus_acheteur_etat(item)
 
-    # ─── 8. v6.11 — Bonus METIER_SIDELINE (affaires publiques / conseil /
+    # ─── 8. v6.12 — Bonus METIER_SIDELINE (affaires publiques / conseil /
     #     communication / sponsoring / influence / droit du sport / RP)
     metier_hits = 0
     for kw, bonus in METIER_SIDELINE_BONUS.items():
@@ -1786,7 +1783,7 @@ def scorer(item):
             if metier_hits >= 3:
                 break  # cap a 3 keywords pour eviter explosion
 
-    # ─── 9. v6.11 — Penalité ACTU_PURE (resultats sportifs, billetterie,
+    # ─── 9. v6.12 — Penalité ACTU_PURE (resultats sportifs, billetterie,
     #     finales, transferts joueurs). On ne drop pas mais on penalise fort.
     actu_hits = sum(1 for kw in ACTU_PURE_PENALTY if kw in corpus)
     if actu_hits >= 1:
@@ -1851,7 +1848,7 @@ def generer_id(item):
 
 def _parse_date(date_str):
     """Parse une date quelle que soit son format RSS, ISO, ou RFC 2822.
-    Bug v6.11 : avant, format RFC 2822 (Fri, 24 Apr 2026 12:39:24 +0000)
+    Bug v6.12 : avant, format RFC 2822 (Fri, 24 Apr 2026 12:39:24 +0000)
     n etait pas parse -> datetime(2000,1,1) -> drop par cutoff 90j -> les
     items RSS sport business (SBC, Sporsora) finissaient en seen_ids mais
     pas dans opportunites.json."""
@@ -2122,7 +2119,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v6.11 -- Demarrage")
+    log.info("Sideline Veille v6.12 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -2166,7 +2163,7 @@ def lancer_veille(test_mode=False, only=None):
     toutes = [o for o in toutes if not o.get("source_auto") or
               _parse_date(o.get("datePublication","2000-01-01")) > cutoff]
 
-    # v6.11 - Dedup multi-source par (titre normalise + emetteur)
+    # v6.12 - Dedup multi-source par (titre normalise + emetteur)
     # Le meme AO peut etre publie sur BOAMP RSS, BOAMP API, France Marches
     # avec des URLs differentes. On garde le meilleur score.
     dedup_map = {}
@@ -2205,7 +2202,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v6.11")
+    ap = argparse.ArgumentParser(description="Sideline Veille v6.12")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()

@@ -225,13 +225,10 @@
     ⚙️ <strong>Mode démo</strong> — Les données affichées sont des exemples. Pour connecter le scraper : placez <code>data/opportunites.json</code> sur votre hébergement OVH au même niveau que ce fichier HTML.
   </div>
 
-  <!-- v6 : Onglets 3 catégories -->
+  <!-- v6.12 : 2 onglets (cat.2 fusionnee dans cat.3) -->
   <div class="tabs-nav" role="tablist">
     <button class="tab active" id="tab1" role="tab" onclick="setTab(1)">
       Marchés<span class="tab-count" id="count1">—</span>
-    </button>
-    <button class="tab" id="tab2" role="tab" onclick="setTab(2)">
-      Signaux contrats<span class="tab-count" id="count2">—</span>
     </button>
     <button class="tab" id="tab3" role="tab" onclick="setTab(3)">
       Veille sport business<span class="tab-count" id="count3">—</span>
@@ -569,17 +566,21 @@ function setFilter(key, val) {
 }
 function filterOpps() {
   const q = (document.getElementById('searchInput').value||'').toLowerCase();
-  // v6 — mise à jour des compteurs d'onglets (toujours basée sur TOUTES_OPPS)
+  // v6.12 — 2 onglets (cat.2 fusionnee avec cat.3)
   const count1 = TOUTES_OPPS.filter(o => (o.category||1) === 1).length;
-  const count2 = TOUTES_OPPS.filter(o => o.category === 2).length;
-  const count3 = TOUTES_OPPS.filter(o => o.category === 3).length;
+  const count3 = TOUTES_OPPS.filter(o => o.category === 2 || o.category === 3).length;
   document.getElementById('count1').textContent = count1;
-  document.getElementById('count2').textContent = count2;
   document.getElementById('count3').textContent = count3;
 
   VISIBLE_OPPS = TOUTES_OPPS.filter(o => {
     // v6 — filtre par onglet (category)
-    if((o.category||1) !== activeTab) return false;
+    // v6.12 - tab3 affiche cat.2 OR cat.3 (fusion)
+    const itemCat = o.category || 1;
+    if(activeTab === 3) {
+      if(itemCat !== 2 && itemCat !== 3) return false;
+    } else {
+      if(itemCat !== activeTab) return false;
+    }
     if(activeFilter.type !== 'tous' && !(o.types||[]).includes(activeFilter.type)) return false;
     if(activeFilter.source !== 'tous' && o.source !== activeFilter.source) return false;
     if(q && !o.title.toLowerCase().includes(q) && !(o.description||'').toLowerCase().includes(q) && !(o.emetteur||'').toLowerCase().includes(q)) return false;
