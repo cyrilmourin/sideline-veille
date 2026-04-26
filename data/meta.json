@@ -1,9 +1,9 @@
 {
-  "updated_at_iso": "2026-04-26T07:45:33",
-  "updated_at_human": "26/04/26 à 07h45",
-  "system_version": "v6 · c6eaa05",
-  "count_total": 103,
-  "count_cat1": 2,
-  "count_cat2": 1,
-  "count_cat3": 100
+  "updated_at_iso": "2026-04-26T07:46:28",
+  "updated_at_human": "26/04/26 à 07h46 (purge v6.11.1)",
+  "system_version": "v6.11.1 (purge)",
+  "count_total": 68,
+  "count_cat1": 4,
+  "count_cat2": 0,
+  "count_cat3": 64
 }
