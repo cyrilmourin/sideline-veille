@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.12
+Sideline Conseil — Moteur de veille marches sportifs v6.13
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -21,8 +21,8 @@ Sources Couche 2 (federations / acteurs sport) :
   FF Handisport, FF Voile, FF Badminton, FF Gym, FF Montagne, FF Equitation
 
 Sources Couche 3 (signaux de marche / medias sectoriels) :
-  SportBusiness Club, SPORSORA, News Tank Sport, Le Cafe du Sport Biz
-  LFP, LNR (communiques)
+  SportBusiness Club, SPORSORA, Sport Buzz Business, Sport Strategies, COSMOS
+  News Tank Sport (fallback HTML home)
 
 Usage :
   python scraper.py              # veille complete + email
@@ -416,17 +416,12 @@ SOURCE_CATEGORY = {
     "sportbusiness_club_breves":       3,
     "sportbusiness_club":              3,  # legacy si jamais ré-utilisé
     "sportbusiness_club_signaux":      3,  # legacy
-    "cafe_sport_business":        3,
-    "cafe_sport_biz":             3,
     "sporsora":                   3,
     "sporsora_actu":              3,
     "sport_strategies":           3,
     "sport_strategies_rss":       3,
-    "newstank_sport":             3,
     "newstank_sport_home":        3,
     "cosmos":                     3,
-    "gie_sport_expertise":        3,
-    "lequipe_sport_business":     3,
     # v6.12 — Fallbacks HTML
     "sporsora_html":              3,
 }
@@ -859,22 +854,8 @@ SOURCES = [
         "url": "https://sporsora.com/categorie/actualites/feed/",
         "parser": "rss",
     },
-    # News Tank Sport — media pro sport business
-    {
-        "id": "newstank_sport",
-        "label": "News Tank Sport — Actualites pro",
-        "type": "prive",
-        "url": "https://www.newstanksport.fr/rss/actualites/",
-        "parser": "rss",
-    },
-    # Le Cafe du Sport Biz
-    {
-        "id": "cafe_sport_biz",
-        "label": "Le Cafe du Sport Biz — Signaux",
-        "type": "prive",
-        "url": "https://www.lecafedusportbiz.fr/feed/",
-        "parser": "rss",
-    },
+    # v6.13 - News Tank Sport RSS retire (newstanksport.fr DNS dead) — fallback HTML sport.newstank.fr/home conserve plus bas
+    # v6.13 - Le Cafe du Sport Biz retire (site Beehiiv sans RSS public)
     # Strategies.fr — 403 bloque depuis GitHub Actions, couverte par SerpAPI
     # Kingcom — RETIRE (agence et non flux generaliste, demande Cyril 2026-04-25)
     # Strategies.fr — 403 bloque, desactive
@@ -931,14 +912,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    # GIE Sport Expertise
-    {
-        "id": "gie_sport_expertise",
-        "label": "GIE Sport Expertise",
-        "type": "prive",
-        "url": "https://sportexpertise.com/feed/",
-        "parser": "rss",
-    },
+    # v6.13 - GIE Sport Expertise retire (sportexpertise.com DNS dead)
     # v6.12 - Fallback HTML pour News Tank Sport (paywall mais titres en clair sur la home)
     {
         "id": "newstank_sport_home",
@@ -965,14 +939,7 @@ SOURCES = [
         "link_sel": "a",
         "timeout": 10,
     },
-    # L'Équipe — actualités sport (flux général, filtré ensuite)
-    {
-        "id": "lequipe_sport_business",
-        "label": "L'Équipe — Sport Business",
-        "type": "prive",
-        "url": "https://www.lequipe.fr/rss/actu_rss.xml",
-        "parser": "rss",
-    },
+    # v6.13 - L'Equipe RSS retire (lequipe.fr/rss/actu_rss.xml 404, RSS publics decommissionnes par L'Equipe)
 ]
 
 

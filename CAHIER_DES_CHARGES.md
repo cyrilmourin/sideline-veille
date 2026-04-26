@@ -138,7 +138,7 @@ Métadonnées du dernier run, lues par le frontend pour afficher la version + da
 {
   "updated_at_iso": "2026-04-26T13:00:00",
   "updated_at_human": "26/04/26 à 13h00",
-  "system_version": "v6.12 · abc1234",  // injecté par CI : <version>·<short-sha>
+  "system_version": "v6 · abc1234",  // injecté par CI : v6·<short-sha-7> (format figé v6 par convention, pas la version mineure du scraper)
   "count_total": 200,
   "count_cat1": 45,
   "count_cat2": 0,                       // gardé pour rétrocompat
@@ -285,7 +285,7 @@ Score final clampé `[0, 100]`.
 
 ### 7.1 Composants
 
-- **Header** : logo + bloc meta à droite ("Données M.A.J 26/04/26 à 13h00 · Version v6.12 · abc1234")
+- **Header** : logo + bloc meta à droite ("Données M.A.J 26/04/26 à 13h00 · Version v6 · abc1234")
 - **Page-title** : titre éditorial + barre de recherche + bouton "Actualiser"
 - **Nav onglets** (2 onglets v6.12) : Marchés (cat.1) + Veille sport business (cat.3, ex-cat.2 fusionnée)
 - **Stats row** : 4 cards calculées **toujours sur cat.1** quel que soit l'onglet actif (Opportunités actives, Nouvelles 48h, Échéance <15j, Score moyen)
@@ -328,7 +328,7 @@ on:
 2. Setup Python 3.11 + cache pip
 3. `pip install -r requirements.txt`
 4. `mkdir -p data logs`
-5. **Calculer SYSTEM_VERSION** : `SHORT_SHA=$(git rev-parse --short=7 HEAD); echo "system_version=v6.12 · $SHORT_SHA" >> $GITHUB_OUTPUT`
+5. **Calculer SYSTEM_VERSION** : `SHORT_SHA=$(git rev-parse --short=7 HEAD); echo "system_version=v6 · $SHORT_SHA" >> $GITHUB_OUTPUT`
 6. **Lancer le scraper** : passe la version env, mode lundi-vendredi (RSS+SerpAPI+LinkedIn) sinon week-end (RSS-only pour préserver quota SerpAPI)
 7. **Sauvegarder data** : `git add data/opportunites.json data/seen_ids.json data/meta.json; git commit -m "data: ... [skip ci]"; git push`
 8. **Archiver logs** : upload-artifact 7 jours
