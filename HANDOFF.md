@@ -101,7 +101,7 @@ Le `categorize()` v6 laissait passer trop de bruit (pubs cabinet avocat, dossier
 - Étendre la whitelist `WHITELIST_EMETTEURS_LOCAUX_FR` avec les départements importants (Seine-Saint-Denis, Hauts-de-Seine…) si Cyril remarque que des marchés pertinents sont droppés.
 
 **Sécurité** :
-- Le token PAT GitHub `ghp_AVGhVg…` configuré dans l'URL du remote du dossier Drive a été utilisé pour push depuis la sandbox Cowork. Cyril doit le révoquer dans https://github.com/settings/tokens et passer à `gh auth login` (ou trousseau macOS) — pas encore fait au moment du handoff.
+- ~~Le token PAT GitHub `ghp_AVGhVg…` configuré dans l'URL du remote du dossier Drive~~ **Bascule effectuée 26/04/2026** : URL du remote nettoyée (`https://github.com/cyrilmourin/sideline-veille.git` sans credentials), auth git désormais via `gh` credential helper qui pioche dans le keychain macOS (`gh auth setup-git` déjà configuré dans `~/.gitconfig`). Fetch + push testés OK. **Action restante côté Cyril** : révoquer manuellement le PAT `ghp_AVGhVg…` dans https://github.com/settings/tokens (chercher dans la liste le token classic dont le prefix commence par `ghp_AVGhVg`, cliquer Delete). Tant que pas révoqué, le token reste actif et exploitable s'il a fuité ailleurs.
 
 ---
 
