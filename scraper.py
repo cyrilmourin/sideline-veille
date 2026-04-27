@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.14
+Sideline Conseil — Moteur de veille marches sportifs v6.15
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -966,6 +966,60 @@ def parse_rss(source):
     return items
 
 
+# ─── ENRICHISSEMENT achatpublic.com (v6.15) ───────────────────────────────
+# Marches 2030 (et autres profils acheteurs) listent des AO dont le detail
+# vit sur achatpublic.com. La page liste n'expose pas la date limite ; on
+# la recupere par fetch supplementaire de la page detail.
+_MOIS_FR = {
+    "janvier":1, "fevrier":2, "février":2, "mars":3, "avril":4, "mai":5,
+    "juin":6, "juillet":7, "aout":8, "août":8, "septembre":9, "octobre":10,
+    "novembre":11, "decembre":12, "décembre":12,
+}
+
+def _parse_fr_date(s):
+    """'29 avril 2026' -> '2026-04-29'. Renvoie None si parse impossible."""
+    if not s:
+        return None
+    m = re.match(r"\s*(\d{1,2})\s+([a-zA-Zéèêûôîàç]+)\s+(\d{4})", s.strip())
+    if not m:
+        return None
+    jour, mois, annee = m.groups()
+    mois_l = mois.lower()
+    if mois_l not in _MOIS_FR:
+        return None
+    return f"{annee}-{_MOIS_FR[mois_l]:02d}-{int(jour):02d}"
+
+def enrich_achatpublic_date(lien, timeout=8):
+    """Pour les liens achatpublic.com, recupere la 'Date limite de remise des plis'."""
+    if not lien or "achatpublic.com" not in lien:
+        return None
+    try:
+        r = requests.get(
+            lien,
+            headers={"User-Agent": "Mozilla/5.0 (SidelineVeille)"},
+            timeout=timeout,
+        )
+        if r.status_code != 200:
+            return None
+        # Pattern principal : label "Date limite de remise des plis :" suivi
+        # plusieurs balises plus loin par "<span class='textLatoReg--14'> JJ MOIS AAAA ...</span>".
+        m = re.search(
+            r"Date limite de remise des plis[^<]*</span>[^<]*<span[^>]*>\s*(\d{1,2}\s+[a-zA-Zéèêûôîàç]+\s+\d{4})",
+            r.text, re.IGNORECASE | re.DOTALL,
+        )
+        if not m:
+            # Fallback : date apres le label, sans contrainte de structure HTML
+            m = re.search(
+                r"Date limite[^0-9]{0,400}?(\d{1,2}\s+(?:janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre)\s+\d{4})",
+                r.text, re.IGNORECASE,
+            )
+        if m:
+            return _parse_fr_date(m.group(1))
+    except Exception as e:
+        log.debug(f"[ACHATPUBLIC] enrich KO {lien}: {e}")
+    return None
+
+
 def parse_html(source):
     items = []
     try:
@@ -991,7 +1045,7 @@ def parse_html(source):
                 base = "/".join(source["url"].split("/")[:3])
                 href = base + ("" if href.startswith("/") else "/") + href
             if title:
-                items.append({
+                item = {
                     "title":            title,
                     "description":      desc,
                     "lien":             href,
@@ -1000,7 +1054,12 @@ def parse_html(source):
                     "source_label":     source["label"],
                     "type_source":      source["type"],
                     "moteur":           "html",
-                })
+                }
+                # v6.15 - enrichissement date limite si lien pointe sur achatpublic
+                dl = enrich_achatpublic_date(href)
+                if dl:
+                    item["date_limite"] = dl
+                items.append(item)
     except Exception as e:
         log.warning(f"[HTML] Erreur {source['label']}: {e}")
     return items
