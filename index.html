@@ -48,6 +48,9 @@
   /* ─── v6 : Favicon dans les cartes ─── */
   /* v6.2 — Favicon XL en flag à gauche de la carte */
   .opp-favicon { width: 56px; height: 56px; border-radius: 10px; object-fit: contain; flex-shrink: 0; background: var(--fond); padding: 8px; border: 1px solid var(--gris-clair); }
+  /* v6.17 - fallback favicon (Google S2 vide ou en erreur) : pastille doree avec losange neutre */
+  .opp-favicon-fallback { width: 56px; height: 56px; border-radius: 10px; flex-shrink: 0; background: linear-gradient(135deg, var(--or-pale) 0%, var(--or) 100%); padding: 0; border: 1px solid var(--gris-clair); display: flex; align-items: center; justify-content: center; color: var(--noir); font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; }
+  .opp-favicon-fallback::after { content: '◆'; opacity: 0.55; }
   .opp-content { flex: 1; min-width: 0; }
   .opp-card-inner { display: flex; gap: 18px; align-items: flex-start; }
   .pulse-dot { width: 8px; height: 8px; background: #4caf7d; border-radius: 50%; animation: pulse 2s infinite; }
@@ -472,7 +475,7 @@ function renderOpps(opps) {
     const stars = '★'.repeat(Math.round((o.score||0)/20)) + '☆'.repeat(5-Math.round((o.score||0)/20));
     return `<div class="opp-card ${o.nouvelle?'nouvelle':''}" onclick="openModal('${o.id}')">
       <div class="opp-card-inner">
-        ${o.faviconUrl ? `<img class="opp-favicon" src="${o.faviconUrl}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<div class="opp-favicon" aria-hidden="true"></div>'}
+        ${o.faviconUrl ? `<img class="opp-favicon" src="${o.faviconUrl}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;opp-favicon-fallback&quot; aria-hidden=&quot;true&quot;></div>'">` : '<div class="opp-favicon-fallback" aria-hidden="true"></div>'}
         <div class="opp-content">
           <div class="opp-header">
             <div class="opp-title">${o.title}</div>
@@ -620,9 +623,12 @@ function openModal(id) {
   document.getElementById('modalTags').innerHTML = `<span class="tag tag-source">${o.sourceLabel||''}</span>${typeTags}<span class="tag tag-secteur">${o.secteur||'Sport'}</span>`;
   document.getElementById('modalTitle').textContent = o.title;
   const daysLeft = o.dateLimite ? Math.ceil((new Date(o.dateLimite)-new Date())/86400000) : null;
+  // v6.17 - libelle de categorie pour le modal (cat.1 = marche public, cat.3 = veille business)
+  const catLabel = (o.category||1) === 1 ? 'Marché public' : ((o.category||1) === 3 ? 'Veille sport business' : 'Signal');
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-text">${o.description||''}</div></div>
     <div class="modal-section"><div class="info-grid">
+      <div class="info-item"><div class="info-item-label">Catégorie</div><div class="info-item-val">${catLabel}</div></div>
       <div class="info-item"><div class="info-item-label">Émetteur</div><div class="info-item-val">${o.emetteur||'—'}</div></div>
       <div class="info-item"><div class="info-item-label">Type</div><div class="info-item-val">${o.typeEmetteur||'—'}</div></div>
       <div class="info-item"><div class="info-item-label">Budget</div><div class="info-item-val">${o.budget||'À déterminer'}</div></div>

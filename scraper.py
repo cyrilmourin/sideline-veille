@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.16
+Sideline Conseil — Moteur de veille marches sportifs v6.17
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -298,6 +298,42 @@ WHITELIST_EMETTEURS_LOCAUX_FR = [
     "metropole nice cote d azur", "ville de nice",
     "nantes metropole", "ville de nantes",
     "eurometropole de strasbourg", "ville de strasbourg",
+    # v6.17 - metropoles regionales complementaires (capitales budget sport)
+    "montpellier mediterranee metropole", "ville de montpellier",
+    "metropole rouen normandie", "ville de rouen",
+    "metropole tours val de loire", "ville de tours",
+    "grenoble alpes metropole", "ville de grenoble",
+    "saint etienne metropole", "ville de saint etienne",
+    "clermont auvergne metropole", "ville de clermont ferrand",
+    "metropole toulon provence mediterranee", "ville de toulon",
+    "metropole orleans", "ville d orleans",
+    "metropole de dijon", "ville de dijon",
+    "metropole de nancy", "ville de nancy",
+    "metropole de metz", "ville de metz",
+    "metropole de reims", "ville de reims",
+    "metropole de brest", "ville de brest",
+    "metropole de caen", "ville de caen",
+    # v6.17 - departements importants (gros budgets sport / ile-de-france + grands departements)
+    "departement de paris", "conseil departemental 75", "cd 75",
+    "departement des hauts de seine", "conseil departemental 92", "cd 92", "hauts de seine",
+    "departement de la seine saint denis", "conseil departemental 93", "cd 93", "seine saint denis",
+    "departement du val de marne", "conseil departemental 94", "cd 94", "val de marne",
+    "departement des yvelines", "conseil departemental 78", "cd 78",
+    "departement de l essonne", "conseil departemental 91", "cd 91",
+    "departement du val d oise", "conseil departemental 95", "cd 95",
+    "departement de seine et marne", "conseil departemental 77", "cd 77",
+    "departement du nord", "conseil departemental 59", "cd 59",
+    "departement du pas de calais", "conseil departemental 62", "cd 62",
+    "departement du rhone", "conseil departemental 69", "cd 69",
+    "departement des bouches du rhone", "conseil departemental 13", "cd 13",
+    "departement de la haute garonne", "conseil departemental 31", "cd 31",
+    "departement de la gironde", "conseil departemental 33", "cd 33",
+    "departement du var", "conseil departemental 83", "cd 83",
+    "departement des alpes maritimes", "conseil departemental 06", "cd 06",
+    "departement de l isere", "conseil departemental 38", "cd 38",
+    "departement de l herault", "conseil departemental 34", "cd 34",
+    "departement d ille et vilaine", "conseil departemental 35", "cd 35",
+    "departement de la loire atlantique", "conseil departemental 44", "cd 44",
     # Ministères / État
     "ministere des sports", "sports gouv", "sports.gouv",
     "ministere de l education", "premier ministre", "matignon", "elysee",
