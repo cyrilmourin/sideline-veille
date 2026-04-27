@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.15
+Sideline Conseil — Moteur de veille marches sportifs v6.16
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -1020,6 +1020,30 @@ def enrich_achatpublic_date(lien, timeout=8):
     return None
 
 
+# v6.16 - dispatcher generique d enrichissement date_limite via fetch d une
+# page detail. Aujourd hui couvre achatpublic.com. Pour etendre :
+#   1. Ajouter une fonction enrich_<plateforme>_date(lien) sur le meme modele.
+#   2. Ajouter le routing dans le dispatcher ci-dessous.
+# Plateformes potentiellement a couvrir plus tard :
+#   - maximilien.fr (Maximilien IDF) : aucun item au moment de la v6.16,
+#     a regarder quand un AO maximilien apparaitra dans le JSON.
+#   - cnosf.e-marchespublics.com : la page liste est actuellement vide,
+#     pas de cas test disponible.
+#   - boamp.fr : page detail rendue cote client (AngularJS). On utilise
+#     l API BOAMP OpenDataSoft (lancer_boamp_api) qui retourne date_limite
+#     dans la reponse JSON, pas besoin de fetch HTML.
+def enrich_date_limite_from_link(lien, timeout=8):
+    """Dispatcher : route vers le bon enricher selon le domaine du lien."""
+    if not lien:
+        return None
+    if "achatpublic.com" in lien:
+        return enrich_achatpublic_date(lien, timeout=timeout)
+    # Extensions futures :
+    # if "maximilien.fr" in lien: return enrich_maximilien_date(lien, timeout)
+    # if "e-marchespublics.com" in lien: return enrich_emarchespublics_date(lien, timeout)
+    return None
+
+
 def parse_html(source):
     items = []
     try:
@@ -1055,8 +1079,9 @@ def parse_html(source):
                     "type_source":      source["type"],
                     "moteur":           "html",
                 }
-                # v6.15 - enrichissement date limite si lien pointe sur achatpublic
-                dl = enrich_achatpublic_date(href)
+                # v6.16 - enrichissement date limite via dispatcher generique
+                # (couvre achatpublic.com aujourd hui ; extensible)
+                dl = enrich_date_limite_from_link(href)
                 if dl:
                     item["date_limite"] = dl
                 items.append(item)
@@ -1223,6 +1248,9 @@ def lancer_boamp_api():
                 "description":      f"{acheteur} — {description}"[:500],
                 "lien":             lien,
                 "date_publication": date_pub or datetime.now().strftime("%Y-%m-%d"),
+                # v6.16 - bug : date_lim etait extrait mais jamais inclus dans
+                # l item, donc tous les items BOAMP API avaient dateLimite=None.
+                "date_limite":      date_lim or None,
                 "source_id":        f"boamp_api_{hashlib.md5(objet.encode()).hexdigest()[:6]}",
                 "source_label":     "BOAMP API — Services sport/conseil",
                 "type_source":      "marche-public",
@@ -1970,10 +1998,33 @@ def formater_opportunite(item, score):
 # ─── PERSISTANCE ─────────────────────────────────────────────────────────────
 
 def charger_donnees():
-    if DATA_FILE.exists():
-        with open(DATA_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    return []
+    """
+    Charge les opportunites du JSON. v6.16 : drop a la lecture les items dont
+    la dateLimite est passee (cat.1/2 uniquement, cat.3 n'a pas de notion de
+    deadline). Ainsi un AO clos disparait automatiquement le lendemain de sa
+    date limite, sans attendre qu il soit retraite par pre_filter.
+    """
+    if not DATA_FILE.exists():
+        return []
+    with open(DATA_FILE, encoding="utf-8") as f:
+        opps = json.load(f)
+    today = datetime.now().strftime("%Y-%m-%d")
+    n_before = len(opps)
+    kept = []
+    for o in opps:
+        dl = o.get("dateLimite")
+        # Bypass cat.3 (veille business, pas de deadline)
+        if o.get("category") == 3:
+            kept.append(o)
+            continue
+        # Drop si dateLimite < aujourd hui (compare au format YYYY-MM-DD)
+        if dl and str(dl)[:10] < today:
+            log.info(f"[CHARGER] Drop AO clos (dateLimite={dl}): {o.get('title','')[:60]}")
+            continue
+        kept.append(o)
+    if len(kept) < n_before:
+        log.info(f"[CHARGER] {n_before - len(kept)} AO clos droppes au chargement, {len(kept)} restants")
+    return kept
 
 def sauvegarder_donnees(opps):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
