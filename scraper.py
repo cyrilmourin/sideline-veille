@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.13
+Sideline Conseil — Moteur de veille marches sportifs v6.14
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -1436,6 +1436,8 @@ ACTU_PURE_PENALTY = [
     "stage de preparation", "match amical",
     "compte rendu match", "carton rouge", "penalty",
     "buteur", "marqueur", "passeur",
+    # v6.14 - expressions idiomatiques avec "appel" qui ne sont pas des AO
+    "appel du large", "appel a l aide", "lance l appel",
 ]
 
 
@@ -1574,8 +1576,18 @@ def pre_filter(item):
     # mot-cle d AO/consultation dans le titre. Sinon = actualite sportive
     # pure (resultats, billetterie, finale, etc.) -> drop.
     if item.get("type_source") == "federation":
-        ao_signals = ["consultation", "appel", "marche", "candidature",
-                      "ao ", " ao", "aoo", "appels d offre", "appel d offre",
+        # v6.14 - on n accepte plus "appel" seul (matchait "appel du large",
+        # "appel a l aide", etc.). Seulement les formes prepositionnelles
+        # explicites d AO.
+        ao_signals = ["consultation",
+                      "appel d offre", "appels d offre",
+                      "appel a candidature", "appels a candidature",
+                      "appel a projet", "appels a projet",
+                      "appel a la concurrence",
+                      "appel a manifestation",
+                      "appel a propositions",
+                      "marche", "candidature",
+                      "ao ", " ao", "aoo",
                       "mise en concurrence", "publicite", "avis"]
         # corpus deja calcule plus haut (variable 'corpus')
         if not any(kw in corpus for kw in ao_signals):

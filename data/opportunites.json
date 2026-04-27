@@ -1717,32 +1717,6 @@
     "source_auto": true
   },
   {
-    "id": "27490ad3fdb5",
-    "title": "Pacifique XIII lance l’appel du large !",
-    "source": "federation",
-    "sourceLabel": "FFR XIII — Rugby a XIII",
-    "moteur": "html",
-    "category": 1,
-    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.ffr13.fr",
-    "types": [
-      "strategie"
-    ],
-    "secteur": "Sport",
-    "emetteur": "FFR XIII — Rugby a XIII",
-    "typeEmetteur": "Detection automatique",
-    "description": "À Nouméa, le seul club de rugby à XIII du territoire se structure, mais manque de moyens pour équiper et faire grandir une jeunesse en quête de rebond.\n\nFidèle à ses principes, Pacifique XIII avance avec l’énergie des bâtisseurs. Le projet longtemps rêvé prend forme, depuis la signature d’un partenariat en...",
-    "datePublication": "2026-04-25",
-    "dateLimite": null,
-    "budget": "A determiner",
-    "contact": "",
-    "lien": "https://www.ffr13.fr/pacifique-xiii-lance-lappel-du-large/",
-    "nouvelle": true,
-    "urgent": false,
-    "score": 24,
-    "angles": [],
-    "source_auto": true
-  },
-  {
     "id": "4d1c805ec3a0",
     "title": "Hello bank! s’associe à l’adidas 10K Paris jusqu’en 2027",
     "source": "prive",
