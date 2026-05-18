@@ -78,6 +78,32 @@
     "source_auto": true
   },
   {
+    "id": "1f497f17382e",
+    "title": "L'avocat qui protège les sportifs de France intervient dans ...",
+    "source": "marche-public",
+    "sourceLabel": "SerpAPI — Marches publics sport (texte)",
+    "moteur": "google",
+    "category": 1,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.instagram.com",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "SerpAPI — Marches publics sport (texte)",
+    "typeEmetteur": "Detection automatique",
+    "description": "Le marché du droit du sport étant profondément international, un accompagnement efficace passe nécessairement par une maîtrise des différents cadres juridiques ...",
+    "datePublication": "2026-05-18",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.instagram.com/p/DYSR5-qDUqL/",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 91,
+    "angles": [],
+    "source_auto": true
+  },
+  {
     "id": "791eaf9000fd",
     "title": "Natation. Quies poursuit sa stratégie de sponsoring sportif",
     "source": "prive",
@@ -3650,6 +3676,32 @@
     "nouvelle": false,
     "urgent": false,
     "score": 37,
+    "angles": [],
+    "source_auto": true
+  },
+  {
+    "id": "592eefd7725f",
+    "title": "Les cabines Photomaton aux couleurs des Bleus pour la Coupe du monde 2026",
+    "source": "prive",
+    "sourceLabel": "Sport Buzz Business — Marketing sportif",
+    "moteur": "rss",
+    "category": 3,
+    "faviconUrl": "https://www.google.com/s2/favicons?sz=64&domain=www.sportbuzzbusiness.fr",
+    "types": [
+      "strategie"
+    ],
+    "secteur": "Sport",
+    "emetteur": "Sport Buzz Business — Marketing sportif",
+    "typeEmetteur": "Detection automatique",
+    "description": "Photomaton déploie depuis le 12 mai une expérience dédiée à l’équipe de France dans 6.000 cabines photo et&#8230;",
+    "datePublication": "2026-05-18",
+    "dateLimite": null,
+    "budget": "A determiner",
+    "contact": "",
+    "lien": "https://www.sportbuzzbusiness.fr/les-cabines-photomaton-aux-couleurs-des-bleus-pour-la-coupe-du-monde-2026.html",
+    "nouvelle": true,
+    "urgent": false,
+    "score": 35,
     "angles": [],
     "source_auto": true
   },
