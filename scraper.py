@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Triggered run post-reset 2026-04-25 (v6.5)
 """
-Sideline Conseil — Moteur de veille marches sportifs v6.17
+Sideline Conseil — Moteur de veille marches sportifs v6.18
 ========================================================
 Trois moteurs de detection :
   1. RSS/HTML  — flux officiels BOAMP (CPV enrichis), federations, agregateurs
@@ -2244,7 +2244,7 @@ def traiter_items(items, vus):
 
 def lancer_veille(test_mode=False, only=None):
     log.info("=" * 60)
-    log.info("Sideline Veille v6.12 -- Demarrage")
+    log.info("Sideline Veille v6.18 -- Demarrage")
     log.info("=" * 60)
 
     vus             = charger_vus()
@@ -2285,8 +2285,10 @@ def lancer_veille(test_mode=False, only=None):
 
     toutes = nouvelles_opps + opps_existantes
     cutoff = datetime.now() - timedelta(days=90)
-    toutes = [o for o in toutes if not o.get("source_auto") or
-              _parse_date(o.get("datePublication","2000-01-01")) > cutoff]
+    n_before_purge = len(toutes)
+    toutes = [o for o in toutes
+              if _parse_date(o.get("datePublication","2000-01-01")) > cutoff]
+    log.info(f"[PURGE 90j] {n_before_purge} -> {len(toutes)} ({n_before_purge - len(toutes)} items >3 mois supprimes)")
 
     # v6.12 - Dedup multi-source par (titre normalise + emetteur)
     # Le meme AO peut etre publie sur BOAMP RSS, BOAMP API, France Marches
@@ -2305,7 +2307,7 @@ def lancer_veille(test_mode=False, only=None):
     toutes = list(dedup_map.values())
     log.info(f"[DEDUP] {len(nouvelles_opps + opps_existantes)} -> {len(toutes)} apres dedup multi-source")
 
-    toutes = sorted(toutes, key=lambda x: x["score"], reverse=True)[:200]
+    toutes = sorted(toutes, key=lambda x: x["score"], reverse=True)[:1000]
 
     sauvegarder_donnees(toutes)
     sauvegarder_vus(vus)
@@ -2327,7 +2329,7 @@ def lancer_veille(test_mode=False, only=None):
 # ─── POINT D'ENTREE ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Sideline Veille v6.12")
+    ap = argparse.ArgumentParser(description="Sideline Veille v6.18")
     ap.add_argument("--test", action="store_true", help="Sans envoi email")
     ap.add_argument("--only", choices=["rss","google","linkedin"], help="Un seul moteur")
     args = ap.parse_args()
